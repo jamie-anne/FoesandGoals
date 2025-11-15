@@ -4,7 +4,7 @@ import os
 pygame.mixer.init()
 #init()
 from CASE_STUDY_JAM import ADVENTURE ,shop, HOUSE
-
+from CASE_STUDY_JAM.HOUSE import visit_house
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -1044,9 +1044,9 @@ def main_menu(player, item_name=None):
         choice = input("\tEnter your choice: ")
         if choice == "1":
             pygame.mixer.music.stop()
-            HOUSE.show_bought_item(item_name)
+            HOUSE.visit_house(player)
             clear()
-            menuu = False
+            print(menu)
         elif choice == "2":
             pygame.mixer.music.stop()
             clear()
@@ -1087,13 +1087,13 @@ def main_menu(player, item_name=None):
             print(mechanics)
             print(" ")
             input(f"\t[ Press enter to continue... ] ")
-            ADVENTURE.main(ADVENTURE.player, main_menu)
-            menuu = False
+            ADVENTURE.main(player, main_menu)
+
         elif choice == "3":
             pygame.mixer.music.stop()
             clear()
-            shop.main(ADVENTURE.player, main_menu)
-            menuu = False
+            shop.main(player, main_menu)
+
         elif choice == "4":
             pygame.mixer.music.stop()
             clear()
