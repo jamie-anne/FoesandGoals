@@ -3,18 +3,15 @@ import os
 #from colorama import Fore, Back, Style, init
 pygame.mixer.init()
 #init()
-from CASE_STUDY_JAM import ADVENTURE ,shop
-
-
+from CASE_STUDY_JAM import ADVENTURE ,shop, HOUSE
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
-hello =f"""  
+mission =f"""  
 \t█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-"""
-ascii= f"""
+
 
                                       ███╗   ███╗██╗███████╗███████╗██╗ ██████╗ ███╗   ██╗           ██╗  ██╗ ██████╗ ██╗  ██╗
                                       ████╗ ████║██║██╔════╝██╔════╝██║██╔═══██╗████╗  ██║    ██╗    ██║  ██║██╔═████╗██║  ██║
@@ -52,10 +49,11 @@ ascii= f"""
                                                                   .-*#######################-.           
                                                                  
                                                                                
+
+
+    \t█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
 """
-print(hello)
-print(ascii)
-print("\t█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████" )
+print(mission)
 
 
 '''
@@ -997,7 +995,7 @@ clear()
 
 
 
-def main_menu(player):
+def main_menu(player, item_name=None):
     menu = f""" 
     \t███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
     
@@ -1046,6 +1044,7 @@ def main_menu(player):
         choice = input("\tEnter your choice: ")
         if choice == "1":
             pygame.mixer.music.stop()
+            HOUSE.show_bought_item(item_name)
             clear()
             menuu = False
         elif choice == "2":
@@ -1091,6 +1090,7 @@ def main_menu(player):
             ADVENTURE.main(ADVENTURE.player, main_menu)
             menuu = False
         elif choice == "3":
+            pygame.mixer.music.stop()
             clear()
             shop.main(ADVENTURE.player, main_menu)
             menuu = False
