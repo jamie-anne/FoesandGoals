@@ -1,5 +1,3 @@
-# HOUSE.py
-
 import os
 from CASE_STUDY_JAM.utils import house_ascii
 

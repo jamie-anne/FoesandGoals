@@ -1,10 +1,8 @@
 import pygame
 import os
-#from colorama import Fore, Back, Style, init
 pygame.mixer.init()
 #init()
 from CASE_STUDY_JAM import ADVENTURE ,shop, HOUSE
-from CASE_STUDY_JAM.HOUSE import visit_house
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -70,13 +68,6 @@ print(Fore.WHITE + "White")
 print("")
 input("\t[ Press enter to continue... ]")
 clear()
-import time
-import os
-
-
-def clear():
-    os.system('cls' if os.name == 'nt' else 'clear')
-
 
 ani1 = f"""
                                                                                                                                                                     
