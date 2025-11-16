@@ -682,7 +682,7 @@ def show_bought_items(player):
         input("\n\t\t[ Press Enter to view it in your HOUSE... ]")
         clear()
 
-input("\n\t\t[ Press Enter to go back to Main Menu... ]")
+    input("\n\t\t[ Press Enter to go back to Main Menu... ]")
 """
     # Then show HOUSE ASCII
     print(f"\n\t\tYour latest HOUSE item: {last_item}\n")

@@ -2,9 +2,12 @@ import os
 import time
 import random
 import string
+import pygame
 import pyfiglet
+import sys
+import shutil
 from LP_STORY_MENU import main_menu, ADVENTURE
-
+pygame.mixer.init()
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -255,7 +258,7 @@ def go_to_jail(world, level):
     print("\t███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████")
     while True:
         print(f"\tChoose an option:")
-        print("\1. TIMER")
+        print("\t1. TIMER")
         print("\t2. LOOSE COINS")
         choice = input("\tEnter your choice: ")
         if choice == "1":
@@ -267,12 +270,63 @@ def go_to_jail(world, level):
 
 
 def timer_option():
-    # Your TIMER function logic here
+    # Get terminal width
+    columns = shutil.get_terminal_size().columns
+
+    for i in range(5, -1, -1):
+        # Clear the previous output
+        sys.stdout.write("\033c")
+
+        # Render the number in big ASCII art
+        ascii_number = pyfiglet.figlet_format(str(i))
+
+        # Center each line
+        print(
+            "\t███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████")
+        print()
+        print()
+        print()
+        print()
+        print()
+        centered_number = "\n".join(line.center(columns) for line in ascii_number.splitlines())
+        print(centered_number)
+        print()
+        print()
+        print()
+        print()
+        print()
+        print(
+            "\t███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████")
+        time.sleep(1)
+
+    input(f"\tPress Enter to continue...")
+    clear()
+    main_menu(player)
+    """
+     Center "Time's up!" message
+    sys.stdout.write("\033c")
+    times_up = pyfiglet.figlet_format("Time's up!")
+    centered_times_up = "\n".join(line.center(columns) for line in times_up.splitlines())
+    print(centered_times_up)
+    """
     pass
 
 def loose_coins_option():
-    # Your LOOSE COINS function logic here
-    pass
+    print("\tAttempting to lose 20 coins...")
+    time.sleep(1)
+
+    if player["coins"] >= 20:
+        player["coins"] -= 20
+        print(f"\t20 coins have been deducted. You now have {player['coins']} coins.")
+        input("\tPress Enter to continue...")
+        clear()
+        main_menu(player)
+    else:
+        print("\tNot enough coins! You can't lose 20 coins.")
+        print(f"\tYou currently have {player['coins']} coins.")
+
+      # Go back to the main menu after handling coins
+
 
 def game2():
     symbols = (
@@ -771,7 +825,7 @@ def main(player, main_menu_fun):
             break
         elif choice not in worlds:
             print("")
-            print(f"\t Error 404: Place not found!")
+            print(f"\tError 404: Place not found!")
             input(f"\tPress Enter to continue...")
         elif not worlds[choice]["unlocked"]:
             print("")

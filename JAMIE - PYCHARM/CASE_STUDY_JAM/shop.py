@@ -1,5 +1,7 @@
 import os
+import pygame
 from CASE_STUDY_JAM.utils import show_bought_items, house_ascii, get_house_ascii
+pygame.mixer.init()
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -81,6 +83,8 @@ def buy_item(player, item_name, price):
             break
 
 def main(player, main_menu_func):
+    pygame.mixer.music.play(-1, fade_ms=2000)
+    pygame.mixer.music.load("MUSIC/shop_music.mp3")
     while True:
         clear()
         update_unlocks()

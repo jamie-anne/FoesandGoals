@@ -1,6 +1,7 @@
 import os
 from CASE_STUDY_JAM.utils import house_ascii
-
+import pygame
+pygame.mixer.init()
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
