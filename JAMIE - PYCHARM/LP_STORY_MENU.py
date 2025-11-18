@@ -56,12 +56,12 @@ def mission():
 
     \t█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
     """
-    missi= pygame.mixer.Sound("MUSIC/first.mp3")
-    missi.play()
+    jam_shop = pygame.mixer.Sound("MUSIC/first.mp3")
+    jam_shop.play()
     print(mission)
     print("")
     input("\t[ Press enter to continue... ]")
-    missi.stop()
+    jam_shop.stop()
     clear()
 
     ani1 = f"""
@@ -1227,13 +1227,23 @@ def main_menu(player, item_name=None):
         print("\t[ 3 ] OPEN SHOP")
         print("\t[ 4 ] EXIT GAME")
         print("")
-        choice = input("\tEnter your choice: ")
-        if choice == "1":
+        choice = input("\tEnter your choice: ").strip()
+
+        if not choice.isdigit():
+            print("\n\tInvalid input! Numbers only (1-4).")
+            input("\t[ Press enter to continue... ] ")
+            clear()
+            print(menu)
+            continue
+
+        choicee = int(choice)
+
+        if choicee == 1:
             pygame.mixer.music.stop()
             HOUSE.visit_house(player)
             clear()
             print(menu)
-        elif choice == "2":
+        elif choicee == 2:
             pygame.mixer.music.stop()
             clear()
             mechanics = f"""
@@ -1275,20 +1285,23 @@ def main_menu(player, item_name=None):
             input(f"\t[ Press enter to continue... ] ")
             ADVENTURE.main(player, main_menu)
 
-        elif choice == "3":
+        elif choicee == 3:
             pygame.mixer.music.stop()
             clear()
             shop.main(player, main_menu)
 
-        elif choice == "4":
+        elif choicee == 4:
             pygame.mixer.music.stop()
             clear()
             exit()
         else:
-            print("")
-            print("\tInvalid choice — try selecting a valid option.")
-            print("")
+            print("\n\tInvalid choice! Please select 1–4.")
+            input("\t[ Press enter to continue... ] ")
+            clear()
+            print(menu)
+            continue
+
 
 if __name__ == "__main__":
-    mission()
+    #mission()
     main_menu(ADVENTURE.player)

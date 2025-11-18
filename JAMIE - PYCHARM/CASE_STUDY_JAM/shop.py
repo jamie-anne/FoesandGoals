@@ -2,6 +2,7 @@ import os
 import pygame
 from CASE_STUDY_JAM.utils import show_bought_items, house_ascii, get_house_ascii
 pygame.mixer.init()
+
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -83,8 +84,8 @@ def buy_item(player, item_name, price):
             break
 
 def main(player, main_menu_func):
-    pygame.mixer.music.play(-1, fade_ms=2000)
-    pygame.mixer.music.load("MUSIC/shop_music.mp3")
+    shop = pygame.mixer.Sound("MUSIC/shop_music.mp3")
+    shop.play()
     while True:
         clear()
         update_unlocks()
@@ -94,6 +95,7 @@ def main(player, main_menu_func):
 
         if choice == '0':
             clear()
+            shop.stop()
             main_menu_func(player)
             break
         elif choice.isdigit() and 1 <= int(choice) <= len(shop_items):
@@ -108,4 +110,4 @@ def main(player, main_menu_func):
             buy_item(player, item["name"], item["cost"])
         else:
             print("\n\t\tInvalid choice.")
-            input("\t\tPress Enter to continue...")
+            input("\t\t[ Press Enter to continue... ]")

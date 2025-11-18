@@ -8,6 +8,7 @@ import sys
 import shutil
 from LP_STORY_MENU import main_menu, ADVENTURE
 pygame.mixer.init()
+
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -119,15 +120,29 @@ def symbol_guess_game():
     print(plaza)
     plaza_pip = True
     while plaza_pip:
-        choice_plaza = int(input(f"\tChoose a target by number: "))
-        if choice_plaza > 0 and choice_plaza < 5:
+        choice_plaza = (input(f"\tChoose a target by number: ")).strip()
+
+        if not choice_plaza.isdigit():
+            print("\n\tInvalid input! Numbers only (1-4).")
+            input("\t[ Press enter to continue... ] ")
+            clear()
+            print(plaza)
+            continue
+
+        choice_plazaa = int(choice_plaza)
+
+        if 0 < choice_plazaa < 5:
             plaza_pip = False
         else:
             print("\tInvalid choice — try selecting a valid option.")
+            input("\t[ Press enter to continue... ] ")
+            clear()
+            print(plaza)
+            continue
     clear()
-    print(f"\t\t\t\t\t\t=========================================================")
-    print(f"\t\t\t\t\t\t\tCommit the symbols to memory. Hack in 3…2…1.")
-    print(f"\t\t\t\t\t\t=========================================================")
+    print(f"\t\t\t\t\t\t   =========================================================")
+    print(f"\t\t\t\t\t\t\t   Commit the symbols to memory. Hack in 3…2…1.")
+    print(f"\t\t\t\t\t\t   =========================================================")
     print("")
     print("")
     print("")
@@ -158,7 +173,6 @@ def symbol_guess_game():
             lives -= 1
             print(f"You guessed {correct} correctly.")
             print(f"Lives remaining: {lives}\n")
-
     clear()
     print(pyfiglet.figlet_format("GAME OVER", font="doom"))
     print("Guess who’s out of lives? You.")
@@ -281,25 +295,39 @@ def timer_option():
         ascii_number = pyfiglet.figlet_format(str(i))
 
         # Center each line
+        print()
+        print()
+        print()
+        print()
+        print()
+        print()
+        print()
+        print()
+        print()
+        print()
         print(
-            "\t███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████")
-        print()
-        print()
-        print()
-        print()
+            "\t\t\t\t███████████████████████████████████████████████████████████████████████████████████████████████████████████")
+        print("\t\t\t\t█\t\t\t\t\t\t\t\t\t\t\t\t\t  █")
+        print("\t\t\t\t█\t\t\t\t\t\t\t\t\t\t\t\t\t  █")
+        print("\t\t\t\t█\t\t\t\t\t\t\t\t\t\t\t\t\t  █")
+        print("\t\t\t\t█\t\t\t\t\t\t\t\t\t\t\t\t\t  █")
+        print("\t\t\t\t█\t\t\t\t\t\t\t\t\t\t\t\t\t  █")
+        print("\t\t\t\t█\t\t\t\t\t\t\t\t\t\t\t\t\t  █")
         print()
         centered_number = "\n".join(line.center(columns) for line in ascii_number.splitlines())
         print(centered_number)
         print()
-        print()
-        print()
-        print()
-        print()
+        print("\t\t\t\t█\t\t\t\t\t\t\t\t\t\t\t\t\t  █")
+        print("\t\t\t\t█\t\t\t\t\t\t\t\t\t\t\t\t\t  █")
+        print("\t\t\t\t█\t\t\t\t\t\t\t\t\t\t\t\t\t  █")
+        print("\t\t\t\t█\t\t\t\t\t\t\t\t\t\t\t\t\t  █")
+        print("\t\t\t\t█\t\t\t\t\t\t\t\t\t\t\t\t\t  █")
+        print("\t\t\t\t█\t\t\t\t\t\t\t\t\t\t\t\t\t  █")
         print(
-            "\t███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████")
+            "\t\t\t\t███████████████████████████████████████████████████████████████████████████████████████████████████████████")
         time.sleep(1)
 
-    input(f"\tPress Enter to continue...")
+    input("\t\t\t\t[ Press enter to continue... ] ")
     clear()
     main_menu(player)
     """
@@ -318,14 +346,13 @@ def loose_coins_option():
     if player["coins"] >= 20:
         player["coins"] -= 20
         print(f"\t20 coins have been deducted. You now have {player['coins']} coins.")
-        input("\tPress Enter to continue...")
+        input("\t[ Press enter to continue... ] ")
         clear()
         main_menu(player)
     else:
         print("\tNot enough coins! You can't lose 20 coins.")
         print(f"\tYou currently have {player['coins']} coins.")
 
-      # Go back to the main menu after handling coins
 
 
 def game2():
@@ -384,16 +411,29 @@ def game2():
     print(arcade)
     arcade_pip = True
     while arcade_pip:
-        choice_arcade = int(input(f"\tChoose a target by number: "))
-        if choice_arcade > 0 and choice_arcade < 5:
+        choice_arcade = (input(f"\tChoose a target by number: ")).strip()
+
+        if not choice_arcade.isdigit():
+            print("\n\tInvalid input! Numbers only (1-4).")
+            input("\t[ Press enter to continue... ] ")
+            clear()
+            print(arcade)
+            continue
+        choice_arcadee = int(choice_arcade)
+
+        if 0 < choice_arcadee < 5:
             print()
             arcade_pip = False
         else:
             print("\tInvalid choice — try selecting a valid option.")
+            input("\t[ Press enter to continue... ] ")
+            clear()
+            print(arcade)
+            continue
     clear()
-    print(f"\t\t\t\t\t\t=========================================================")
-    print(f"\t\t\t\t\t\t\tCommit the symbols to memory. Hack in 3…2…1.")
-    print(f"\t\t\t\t\t\t=========================================================")
+    print(f"\t\t\t\t\t\t   =========================================================")
+    print(f"\t\t\t\t\t\t\t   Commit the symbols to memory. Hack in 3…2…1.")
+    print(f"\t\t\t\t\t\t   =========================================================")
     big(secret)
     time.sleep(4)
     clear()
@@ -487,15 +527,30 @@ def game3():
     print(cafeteria)
     cafeteria_pip = True
     while cafeteria_pip:
-        choice_cafeteria = int(input(f"\tChoose a target by number: "))
-        if choice_cafeteria > 0 and choice_cafeteria < 6:
+        choice_cafeteria = (input(f"\tChoose a target by number: ")).strip()
+
+        if not choice_cafeteria.isdigit():
+            print("\n\tInvalid input! Numbers only (1-5).")
+            input("\t[ Press enter to continue... ] ")
+            clear()
+            print(cafeteria)
+            continue
+
+        choice_cafeteriaa = int(choice_cafeteria)
+
+        if 0 < choice_cafeteriaa < 6:
             print()
             cafeteria_pip = False
         else:
             print("\tInvalid choice — try selecting a valid option.")
-    print(f"\t\t\t\t\t\t=========================================================")
-    print(f"\t\t\t\t\t\t\tCommit the symbols to memory. Hack in 3…2…1.")
-    print(f"\t\t\t\t\t\t=========================================================")
+            input("\t[ Press enter to continue... ] ")
+            clear()
+            print(cafeteria)
+            continue
+
+    print(f"\t\t\t\t\t\t   =========================================================")
+    print(f"\t\t\t\t\t\t\t   Commit the symbols to memory. Hack in 3…2…1.")
+    print(f"\t\t\t\t\t\t   =========================================================")
 
     big(secret)
     time.sleep(4)
@@ -590,15 +645,29 @@ def game4():
     print(hotel)
     hotel_pip = True
     while hotel_pip:
-        choice_hotel = int(input(f"\tChoose a target by number: "))
-        if choice_hotel > 0 and choice_hotel < 4:
+        choice_hotel = input(f"\tChoose a target by number: ").strip()
+
+        if not choice_hotel.isdigit():
+            print("\n\tInvalid input! Numbers only (1-3).")
+            input("\t[ Press enter to continue... ] ")
+            clear()
+            print(hotel)
+            continue
+
+        choice_hotell = int(choice_hotel)
+
+        if 0 < choice_hotell < 4:
             print()
             hotel_pip = False
         else:
             print("\tInvalid choice — try selecting a valid option.")
-    print(f"\t\t\t\t\t\t=========================================================")
-    print(f"\t\t\t\t\t\t\tCommit the symbols to memory. Hack in 3…2…1.")
-    print(f"\t\t\t\t\t\t=========================================================")
+            input("\t[ Press enter to continue... ] ")
+            clear()
+            print(hotel)
+            continue
+    print(f"\t\t\t\t\t\t   =========================================================")
+    print(f"\t\t\t\t\t\t\t   Commit the symbols to memory. Hack in 3…2…1.")
+    print(f"\t\t\t\t\t\t   =========================================================")
 
     big(secret)
     time.sleep(4)
@@ -693,15 +762,28 @@ def game5():
     print(bank)
     bank_pip = True
     while bank_pip:
-        choice_bank = int(input(f"\tChoose a target by number: "))
-        if choice_bank > 0 and choice_bank < 6:
+        choice_bank = input(f"\tChoose a target by number: ").strip()
+        if not choice_bank.isdigit():
+            print("\n\tInvalid input! Numbers only (1-5).")
+            input("\t[ Press enter to continue... ] ")
+            clear()
+            print(bank)
+            continue
+
+        choice_bankk = int(choice_bank)
+
+        if 0 < choice_bankk < 6:
             print()
             bank_pip = False
         else:
             print("\tInvalid choice — try selecting a valid option.")
-    print(f"\t\t\t\t\t\t=========================================================")
-    print(f"\t\t\t\t\t\t\tCommit the symbols to memory. Hack in 3…2…1.")
-    print(f"\t\t\t\t\t\t=========================================================")
+            input("\t[ Press enter to continue... ] ")
+            clear()
+            print(bank)
+            continue
+    print(f"\t\t\t\t\t\t   =========================================================")
+    print(f"\t\t\t\t\t\t\t   Commit the symbols to memory. Hack in 3…2…1.")
+    print(f"\t\t\t\t\t\t   =========================================================")
 
     big(secret)
     time.sleep(4)
@@ -773,7 +855,7 @@ def play_level(world):
         time.sleep(1.2)
         go_to_jail(world, current_level)
 
-    input("\tPress Enter to return to Adventure Menu...")
+    input("\t[ Press enter to continue... ] ")
 
 
 def adventure_menu():
@@ -816,7 +898,7 @@ def main(player, main_menu_fun):
         except ValueError:
             print("")
             print(f"\tOops! You need to enter a number to continue.")
-            input(f"\tPress Enter to conti nue...")
+            input("\t[ Press enter to continue... ] ")
             continue
 
         if choice == 6:
@@ -826,15 +908,15 @@ def main(player, main_menu_fun):
         elif choice not in worlds:
             print("")
             print(f"\tError 404: Place not found!")
-            input(f"\tPress Enter to continue...")
+            input("\t[ Press enter to continue... ] ")
         elif not worlds[choice]["unlocked"]:
             print("")
             print(f"\tHold up! That world’s still locked — clear the earlier one to unlock it!")
-            input(f"\tPress Enter to continue...")
+            input("\t[ Press enter to continue... ] ")
         elif worlds[choice]["completed_levels"] == worlds[choice]["levels"]:
             print("")
             print("\tMission log: place secured. Nothing left to hack.")
-            input(f"\tPress Enter to continue...")
+            input("\t[ Press enter to continue... ] ")
         else:
             play_level(choice)
 

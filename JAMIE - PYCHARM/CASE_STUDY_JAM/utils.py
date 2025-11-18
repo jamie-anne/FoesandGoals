@@ -679,7 +679,7 @@ def show_bought_items(player):
     if bought_art:
         print(f"\n\t\tYOU BOUGHT: {last_item}!\n")
         print(bought_art)
-        input("\n\t\t[ Press Enter to view it in your HOUSE... ]")
+        input("\n\t\t[ Press Enter to continue... ]")
         clear()
 
     input("\n\t\t[ Press Enter to go back to Main Menu... ]")
