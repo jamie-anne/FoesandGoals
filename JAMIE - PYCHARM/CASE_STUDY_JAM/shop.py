@@ -1,47 +1,130 @@
 import os
 import pygame
-from CASE_STUDY_JAM.utils import show_bought_items, house_ascii, get_house_ascii
+from CASE_STUDY_JAM.utils import show_bought_items
 pygame.mixer.init()
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
+things = [
+    {
+        "art": [
+            "LAMP"
+        ]
+    },
+    {
+        "art": [
+            "FAN"
+        ]
+    },
+    {
+        "art": [
+            "MOUSE"
+        ]
+    },
+    {
+        "art": [
+            "KEYBOARD"
+        ]
+    },
+    {
+        "art": [
+            "MIC"
+        ]
+    },
+    {
+        "art": [
+            "HEADSET"
+        ]
+    },
+    {
+        "art": [
+            "CHAIR"
+        ]
+    },
+    {
+        "art": [
+            "MONITOR"
+        ]
+    },
+    {
+        "art": [
+            "UNIT"
+        ]
+    }
+]
+
+
+
+
+def display_row(fruit_row):
+    """Displays one horizontal row of fruits.
+       ASCII always shows. Status + press option always show."""
+
+    max_height = max(len(f["art"]) for f in fruit_row)
+
+    # Print ASCII art first (always visible)
+    for i in range(max_height):
+        parts = []
+        for fruit in fruit_row:
+            if i < len(fruit["art"]):
+                parts.append(fruit["art"][i])
+            else:
+                parts.append(" " * len(fruit["art"][0]))
+        print("    ".join(parts))
+
+    # Print STATUS (locked/unlocked)
+    status_line = []
+    for fruit in fruit_row:
+        if fruit["unlocked"]:
+            status_line.append("[UNLOCKED]")
+        else:
+            status_line.append("[LOCKED]")
+    print("    ".join(status_line))
+
+    # Print PRESS number
+    press_line = []
+    for fruit in fruit_row:
+        press_line.append(f"[PRESS {fruit['id']}] - {fruit['name']}")
+    print("    ".join(press_line))
+
+    # Print PRICE
+    price_line = []
+    for fruit in fruit_row:
+        price_line.append(f"Price: {fruit['price']}")
+    print("    ".join(price_line))
+
+    print("\n")
+
+
 def shop_menu():
-    menu_shop = """
-    \t█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-   
-    \t\t\t                    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀       ⢠⡄⠂⠐⢐⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-    \t\t\t                 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀         ⠐⠿⢕⣤⣾⠩⢜⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-    \t\t\t                 ⠀⠀⣴⣶⣶⣶⣶⣦⣴⡀⠀         ⠰⠀⠀⣹⡏⠀⠠⠃⠀ ⠀     ⠐⢄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀   ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀            ⣤⣤⣤⡄⠀⠀⠀⠀⠀
-    \t\t\t                 ⠀⢠⣿⣿⣿⣿⣿⢿⣿⣇⠀⠀         ⠁⠸⢮⠛⠄⠉⠀   ⠀   ⣠⣼⣾⣿⣿⣿⣶⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀   ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀             ⣽⣷⣿⠁⠀⠀⠀⠀⠀
-    \t\t\t                 ⠀⠀⠀⠀⠀⡾⠀⠀⠀⠀⠀⠀⠀⠀         ⠘⠀⠀⠀⠀⠀⠀     ⠘⢿⣿⣿⣿⣿⣿⣿⣦⠀⠀⠀   ⠀      ⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⠀⠀        ⢠⣼⣷⣿⣢⣤⠀⠘⠃⠀
-    \t\t\t                 ⠀⠀⠀⠀⠀⢹⠀⠀⠀⠀⠀⠀⠀⠀         ⢸⠆⠀⠀⠀⠀⠀⠀      ⠈⠻⣿⣿⣿⣿⣿⣿⣧⠀⠀⠀        ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡷⠀⠀        ⠈⠙⠛⠛⢹⡇⡄⠊⠑⡄
-    \t\t\t                 ⠀⠀⠀⠀⠀⢺⠀⠀⠀⠀⠀⠀⠀⠀         ⢸⡃⠀⠀⠀⠀⠀⠀⠀⠀       ⢻⣿⣿⣿⣿⣿⣿⡇⠀⠀       ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡷⠀⠀⠀⠀  ⠀⠀      ⢸⡇⠁⣀⠐⠁
-    \t\t\t                 ⠀⠀⠀⠀⠀⡎⡀⠀⠀⠀⠀⠀⠀⠀         ⢸⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀       ⠙⠻⢿⣿⠿⠛⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀   ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀            ⠤⠄⠸⠷⠀⠀⠀⠀
-    \t\t\t                 ⠀⠀⠀⠐⠛⠛⠛⠓⠀⠀⠀⠀         ⢾⣽⣟⣛⣯⡷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-    \t\t\t
-    \t\t\t
-    \t\t\t               PRESS[1] - LAMP   PRESS [2] - FAN    PRESS[3] - MOUSE     PRESS[4] - KEYBOARD     PRESS[5] - MIC 
-    \t\t\t                  PHP 10.00         PHP 15.00          PHP 20.00             PHP 25.00              PHP 40.00
-    \t\t\t                 
-    \t\t\t                 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      ⢀⣤⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀                       ⢀⣀⣀⠀⠀⠀⠀⠀⠀
-    \t\t\t                 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      ⢰⣿⣿⣿⣿⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀                  ⣀⣾⣿⣿⣿⣿⣶⣶⣆⠀⠀
-    \t\t\t                 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      ⢠⣿⣿⣿⣿⣿⣿⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀                   ⣠⣴⣿⣿⣿⣿⣿⡟⣟⣻⣿⢿⠀⠀
-    \t\t\t                 ⠀⠀⠀⠀⣤⠞⠛⠛⠓⠣⡠⠀⠀⠀ ⠀       ⢸⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀         ⣀⣀⣀⣀⣀⣀⢀⡀⣀⣀⣀⣀⣀⣀⠀⠀⠀          ⣿⣿⣿⡿⢿⣟⣿⣿⣧⣙⡟⣿⠀⠀
-    \t\t\t                 ⠀⠀⠀⡾⠁⠀⠀⠀⠀⠀⢳⡆⠀⠀⠀⠀⠀      ⢸⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀        ⡟⠊⠗⡈⠘⠈⠄⠙⠀⠫⠘⠌⠼⣸⠀⠀⠀         ⣯⠀⢞⡇⡸⣿⣿⣿⣿⡿⣿⣿⣿⠀⠀
-    \t\t\t                 ⠀⠀⢸⡇⠀⠀⠀⠀⠀⠀⣿⠁⠀⠀⠀⠀⠀      ⢼⣿⣿⣿⣿⣿⣿⣷⠆⠀⠀⠀⠀        ⠦⠄⠀⠀⠈⠀⠀⠀⠀⠀⠈⠀⠀ ⠀⠀          ⣿⣿⣶⣃⣱⠇⣹⣿⣧⠝⠟⣿⣿⠀⠀
-    \t\t\t                 ⠀⠀⢸⣇⣀⡀⠀⠀⠀⣼⡟⠀⠀⠀⠀⠀⠀      ⢸⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀        ⡃⠐⠒⠀⠐⠚⠒⡻⠒⠃⠁⠚⠉⢹⠀⠀         ⢀⣿⣿⡶⠿⡇⣀⣿⣿⣿⣷⣷⣿⣿⠇⠀
-    \t\t\t                 ⠀⠀⢠⣿⣼⣿⣦⣾⣿⣿⣆⠀⠀⠀⠀⠀⠀      ⠈⠉⠉⢹⡏⠉⠉⠁⠀⠀⠀⠀⠀        ⣿⣷⣶⣴⣾⣶⣵⣶⣶⣦⣶⣮⣿⣾⠀⠀         ⠠⣿⣿⡟⠺⠧⠈⣿⣿⣿⠫⣽⣿⣿⡆⠀
-    \t\t\t                 ⣀⠀⠈⠿⣿⣿⠿⣿⣿⣿⡿⠀⠀⠀⠀⠀       ⣀⣤⠴⢾⡷⠶⣤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀        ⣀⣀⣼⣧⣀⣀⠀⠀⠀⠀⠀⠀         ⢐⡏⠀⢨⠐⡄⠡⢸⣿⣿⣍⣫⣽⣿⡅⠀
-    \t\t\t                 ⠉⠛⠒⠒⠒⠒⠚⢛⠋⠉⠀⠀⠀⠀⠀⠀      ⠘⠃⠀⠀⢰⡇⠀⠀⠀⠛⠀⠀⠀⠀⠀⠀⠀ ⠀       ⠈⠉⠉⠉⠉⠉⠀⠀⠀⠀⠀⠀         ⠘⠱⠶⠙⠲⠸⠶⠿⠟⠛⠛⠻⠿⠛⠃⠀
-    \t\t\t
-    \t\t\t
-    \t\t\t             PRESS[6] - HEADSET     PRESS[7] - CHAIR       PRESS[8] - MONITOR      PRESS[9] - SYSTEM UNIT
-    \t\t\t                  PHP 45.00            PHP 50.00                PHP 70.00                PHP 100.00
-    
-    \t█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-    """
-    print(menu_shop)
+    clear()
+    print("\n" + "█" * 150)
+    print("\n\t\t\t\t\t      SHOP MENU\n")
+
+    # Prepare rows
+    first_row = []
+    second_row = []
+
+    # Attach ASCII & metadata into row objects
+    for i, item in enumerate(shop_items):
+        row_item = {
+            "id": i + 1,
+            "name": item["name"],
+            "price": item["cost"],
+            "unlocked": item["unlocked"],
+            "art": things[i]["art"]
+        }
+
+        if i < 5:
+            first_row.append(row_item)
+        else:
+            second_row.append(row_item)
+
+    display_row(first_row)
+    display_row(second_row)
+    print("Press [0] to exit")
+    print("█" * 150)
 
 
 shop_items = [
