@@ -4,6 +4,7 @@ import random
 import string
 import pygame
 import pyfiglet
+import io
 import sys
 import shutil
 from LP_STORY_MENU import main_menu, ADVENTURE
@@ -39,27 +40,27 @@ def big(symbols):
         normalized.append(padded)
 
     for _ in symbols:
-        print(f"\t\t\t\t ┌" + "─" * (max_width + 2) + "┐", end=" ")
+        print(f"\t┌" + "─" * (max_width + 2) + "┐", end=" ")
     print()
 
     for line_idx in range(max_height):
         for r in normalized:
-            print(f"\t\t\t\t │ " + r[line_idx] + " │", end=" ")
+            print(f"\t│ " + r[line_idx] + " │", end=" ")
         print()
 
     for _ in symbols:
-        print(f"\t\t\t\t └" + "─" * (max_width + 2) + "┘", end=" ")
+        print(f"\t└" + "─" * (max_width + 2) + "┘", end=" ")
     print()
 
 def print_box(symbols):
     for _ in symbols:
-        print(f"\t\t\t\t ┌─────┐", end=" ")
+        print(f"\t┌─────┐", end=" ")
     print()
     for s in symbols:
-        print(f"\t\t\t\t │  {s}  │", end=" ")
+        print(f"\t│  {s}  │", end=" ")
     print()
     for _ in symbols:
-        print("\t\t\t\t └─────┘", end=" ")
+        print("\t└─────┘", end=" ")
     print()
 
 def symbol_guess_game():
@@ -72,51 +73,56 @@ def symbol_guess_game():
     secret = [random.choice(symbols) for _ in range(4)]
     lives = 3
     plaza = f"""
-    \t\t███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████      
-
-
-                  .==*@@@.                                                                                                                                              
-               -+@@@@@@@@@=.                                                                .%@#.                                                                      
-              *@@@@@@@@@@@@@-                                                            *@@@@@@@@.                                     ..                             
-               :@@@@@@@@@@#:                                                          -@@@@@@@@@@@@@#                                   .*.                            
-                 ........                                                              #@@@@@@@@@@@@.                               :+**##*.+****-                     
-                                 .+**-                         =%=                      .%@*@%#@#:                               -**#######**####*:                    
-                           -.::..:#*++..-.::.              =@@@@@@@@:                                                          .*##########*.=##*-.==::                
-                      --- .*@@@:  .:= .-#@@@-..--:      :@@@@@@@@@@@@@*                                            .:.         .++*###*****=:*##**####+.               
-                     :==-@==.-  =-+++*:.:.-..*@:-#      .%@@@@@@@@@@@@-                                       .#@@@@@@%:        .*#*#######**#########-.               
-                     :@#:.:-@#.    :    .=@+==.=%%.       -@@@@@@@@+                                        :@@@@@@@@@@@@@.      :###############=  .                  
-                 =.:%=.-.%-::      :       -.#=-.:%+-.+                                                     -@@@@@@@@@@@@@:       =*=*#########=.-****##*.:.           
-                 %@@# .@-   .:     :     .-   .#=.-@@@=                                                       #@@@@@@@@-      .+***=:.:**##%%%#############:           
-                 =%..+*       -    :    .=      :@=+*@.                                                                     .-*######+:.   .*+*###########*.           
-              -..#: ===.      .=   :    -       :=#.:-=-:-                                                                 =**######*##**:=**+.=%######*#+.            
-              #@@#.+*   .=.     :  :  .:     --   :%.=@@@=                                                              ..****##***##########***####-#+   :*****+.     
-               -%. *        =:   =.: .-  .=:       =:- @                                                              .+**#########*#############**=*=== :*###*=  .    
-             ..#- +*           :-.=:.:.+.          :+.*%-..                                                           -*###################%%###########:+###-.-+###:  
-            .=:.= :+..............:@@..............:*:=-:.-                                                           :*#######%%%%%%%%%####%%%%%%%####:+*##*####*.-**.
-             =%@-.*+            :+:@@.+.           .*::#%%:                                                           .+**#***%%%%%%%%%#%%%%%%%%%+...+*##########*####:
-               +#- *         --  .%%@%  .+.        --:*@:                                                                ..       +#*=.#%%%%%%%#**##*#####%%%%%#######=
-              -..=.%-    .+:    -=@:.@=.   .=:     #.==-:-                                                                            +%%%%%%%%###########%%%%%%%#-.   
-              #@@#= #..*.      =-@-: +@-:     .:=.*:.+@@@=                                                                           -#*=*#%%%%#####%%%%###%%#*.       
-                 #=.:@-       :.%* :  ##:.       #-:.#=                                                                                   .#%%%%##%%%%#=##.####:       
-                 ++++ =*    .- *%  :  .@+.:    .@**#*+-                                                                                    .*#%%%%%%%##.    -#:        
-                 #%%%.:.#*. =.-@:  :   -@..- :@: =-@@%+                                             [ 4 ]             .*@@-..@@@-.:@@#       *%%#=..+=.                
-                    .%#.+:-@=.@=   :    +@.%#.= :@+    [ 1 ]               [ 2 ]   [ 3 ]            .#%:             :@@@#..:@@@*..-@@@-     #%#                       
-                     :-=:=.:=#%@@@%##%@@*@+-.=+.-+      *@-                =@@+   :@@#.            -@@@@+           +@@@%...*@@@#...%@@@%.   +%%=                      
-                     .@@@:%@%@#- = - -.::%@@@+=@@%     .@@+               *@@@@%.+@@@@@.           .*%%@:          .@@@@@@@@@@@@@@@@@@@@@.   -#%#                      
-                           =+++%@@=: %@@%=++.          @@@@%              -@##@*.-@@@@#             -%@@@@*.         -@:..:...:...:...@+.    :#%#.                     
-                           %#..  .%@@+  ...##         #@@@@@-          .%@@@@@@@#......            .@@@@@@*@@@@@@@:  -@:..............@=     .#%#.                     
-                          *%               .@=       :@+@@%=#          .%%+%@@+@@@@@@@@@:           :#@@%+=          -@:..............@=     .#%%:                     
-                         -@:                -@.      *++@@@.%-         -@@@@@@@%.+@@@@@@@*          .@@@**@@@@@@   .*%@###############@%#:   .#%%+                     
-                        .@@@@@@@@@@@@@@@@@@@@@@.       #@*@-          .@@=*@@@@%.+@@@@@:@@+          #@@@@@-       :#@@@@@@@@@@@@@@@@@@@%-   :#%%#  .@@@@@@@@@@@@@@@@+ 
-                   :@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@%.  %%:@*           =@@@@@@@%.+@@@@@@@#          .%@@#@@.         %@@@@@@@@@@@@@@@@@@-    :#%%#  .@@@@@@@@@@@%%%%@+ 
-                   :@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@%. .@* @@.           .@@@@@@%.+@@@@@@-           .@@%%@%          @@@@@@@@@@@@@@@@@@@=    :#%%%: +@@@@@@@@@@@@@@@@@:
-                   :@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@%. =@= #@:             #@##@%.+@@=@@.            :@@+@@+          %@@@@@@@@@@@@@@@@@@=    -#%%%+ .#:             +* 
-                   ..................................                     *@##@#.+@@+@@.            -@@-@@:          %@@@@@@@@@@@@@@@@@@=   .*#%%%%#:*              .* 
-                                                                          #@##@#.=@@+@@.            *@%*@@.          %@@@@@@@@@@@@@@@@@@=..:-+%%%*++*#*.               
-                                                                          *@*#@#.=@@=@@.            #@##@%.          %@@@@@@@@@@@@@@@@@@=   ....                            
-
-    \t\t███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-    """
+    ████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+    
+    
+    
+    
+    
+            ░░▓█▓░                                                                                                                                                                  
+         ░░▒████████▒░    ░░░░░   ░▒▒▒▒░   ░░░░░                                              ░░░░▒███░░                                              ░░▓▒                             
+         ▓████████████░  ░▒░░░▒░░░▒▒▒▒▓▒░░░▓ ▒░▓                                            ░░▒█████████▓░░                                       ░░░░▒▓▓▓▒░░▓▓▒▒▒░                    
+         ░░█████████▒░   ░██████▓▒▒▓▓▓▒▒▓██████▓                                           ░███████████████░                                   ░░▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒░                   
+           ░░░░░░░▒   ▓▓██▓▒▒▒░▒░ ░░ ░▒░▒░░▒░░▓███▒▒░▒░▒            ░░░░▓██▒               ░███████████████░                                 ░▒▓▓▓▓▓▓▓▓▓▓▓▓▓▒▓▓▓▓▓▒░░░ ░               
+                 ░▓▓▓▓█▒▒░▒░▒░░▒▓███████▓▓▒▒▒░ ░░░▓█▓▓▓▓         ░░░█████████▓░░            ░▒██████████░                                    ▒▓▓▓▓▓▓█████▓▓░░▓▓▓▒░▒▓▓▓▓▓░              
+                 ░▓█▓▒░░▒░▓█▓▒░░░   ░░   ░░░▓█▓░▒▒▒░▓██▒░       ░▓██████████████▒                                        ░░░░              ░░▒▓▓▓▓▓▓▓▓▓▓▓▓▒███▓▓▓▓▓▓▓▓▒              
+           ░▒▒▒▒▓█▒░░ ░▓█▒▒         ░░        ░▒▓▓░░▒ ░▓█▓▒▒▒▒  ░▓██████████████▒                                     ░░▓█▓████▒░             ░▒▓▓▓▓▓▓▓▓▓▓▓▓▓███▓▓▓▓▓▓▓▒░              
+           ░▓░▒░▓░░░▒▓▓░  ░▒░       ░░       ░▒░  ▒█▓░░░▒▓░▒░▓    ░██████████▒░                                    ░░▒████████████▒░           ░▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░ ░░░░            
+           ░▓███▒ ░▓▓░     ░▒       ░░      ░▒░    ░░█░░░▓███▒                                                     ░▓███████████████░          ░▒▓▓▓▓▓▓▓▓▓▓▓███▒░░▓▓▓▓▓▓▓▓▒░░          
+           ░▒█░ ░░█▒        ░▒░     ░░     ░░        ░▓▓░░░▓█░                                                      ░▒████████████▓░       ░░▒▓▓▒░░░░▓▓▓██████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░         
+        ░▒▒▓█▒░░░█▒░░        ░▒░    ░░    ░▒         ░░▓▓░░▒▓█▒▒▒░                                                    ░▓▓▒▓▓▒▓▓▒░        ░░▒▓▓▓▓▓▓▓▓▒░░ ░▓▒▓██▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░         
+        ▓░▒░▓░░░█░ ░░▒░       ░▒░   ░░   ░░       ░░▒░░░▓▓▒░░▒░░░▒                                                                      ░░▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░▓▒▓▓▓▓▓████▓███▒░         
+        ████▓░▒█▒     ░░▒░░    ░▒░  ░░  ░░     ░░▒░░    ░█▒░░████▒                                                                    ░░░▓▓▓▓▓▓▓▓▓▓▓███▓▓▓▓▓▓▓▓████████▓░░░░░░░░░░░    
+         ░█▓░ ▒█░         ░▒░░░  ▒░ ░░░▒░  ░░░▒░         ░▓░▒░█▓                                                                    ░░▒▓▓▓▓▓▓▓▓▓▓▓▓███▓▓▓▓██▓▓▓▓▓▓▓▓▒░▒▒░░ ░▓▓▓▓▓▓▓▒░  
+         ▒█░░▒█▒            ░░▒░░ ░░░░▒░░░▒░░            ░█░▒░▒█                                                                   ░▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓████▓▓▓▓▓▓▓▓▓▓▓▓▒░▓▓▓▓▓▓░░ ░░░
+        ▒▒▒▒░▒█░                ░▒▒▒▒▒░▒▒░               ░▓▒ ░▒▒▒░▓░                                                              ░▓▓▓▓▓▓▓▓▓▓▓▓▓▓████▓▓▓▓▓███▓█▓▓▓▓▓▓▓▓▓▓▒▒▓▓▓▓▒▒▒▒▓▓▓▓
+        ▒▒▓▒░░█▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓███▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█▒▒░▒▒▒▒█░                                                              ░▒▓▓▓▓████████████████▓▓▓██████████▓▓█▒░▓▓▓▓▓▓▓▓▓▓▓░░
+        ▒██░░▒█░               ░▒▒░▓██░░▒░░              ░▓░░▒▒█▓▒░░                                                              ░░▓▓▓▓▓▓▓▓██████████████████████▓▒░░░▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+         ▒█▒▒░▓▒            ░▒▒░  ▒████▒░░░▒░░           ░▓░░░▓█░                                                                     ░▒░░░░░░▒▒▓███▓▒██████████▓▒▓▓▓▓▓▓▓▓▓███████▓▓▓▓█
+        ░░█▓░░▒█░       ░░▒▒░   ░▒▓█▒▒██░    ░▒░░░       ▒█░░░█▓░░                                                                                  ░▓█████████▓▓▓▓▓▓▓▓▓▓▓███████████▓▒
+        ▓ ▒░▓░▒▓▒     ░▒░░     ░▒▒█▒░░▒█▒▒░     ░░▒░    ░█░░▒▒░░░▒                                                                                  ▒██████████▓▓▓▓▓▓▓██▓▓██████▓▓▓▓▓░ 
+        ████▓▒░░▓░░▒▒░        ░▒▒█▓░░░░▓█▒▒        ░▒▒░░█▓▒░▒████▓                                                                                  ░▒░░░▓▓████████████████▓████▓░     
+        ░░░▒█▓▓▓▓█▒░         ░░░██░ ░░ ░██░▒░         ░▓▒▒░░▓█░░░                                                                                         ▒████▓▓██████▓░░▓▒░▓█▓▓▒     
+            ░█▒░▒░▓▓░       ░▒░▓█▒  ░░  ▒█▓░▒        ░█░░░▒█▓░                                                                                            ░░▒██████████▓░   ░░░▒░░     
+           ░▒░░░▒░▒▓█▒     ░░ ▒█▓░  ░░   ▓█▒░▒░    ░▓▓▒░░▓░▒░▓                                                                        ░▒██▒░░▓███▒░▒██▓░░   ░███▓▓░░░▓▒░░              
+           ░█████░░▒░▒█▒░ ░▒ ░██░   ░░   ░██░░▒░░░▓▓░  ▒▒████▓                                                                      ░▒███▓░░░████░░░▒███▓░  ░███░                      
+           ░░░░░▒█▓▒░░▒▓██▒  ▓█░    ░░    ░█▓ ░▓█▒░░░░▒█▓░░░░░                                                    ████▓░            ▓████░░░░████▒░░░▓████░ ░███▓░                     
+                 ░▒▒▓▒▒▒ ░░▓██▓▒░░  ░░ ░░░▒███▓▒░░░▒▒▒▒▒░     ░▒░                         ░█████░ ░█████          █████░          ░████████████████████████░ ▒██▓░                     
+                 ░▒░▒░██░▒░░██░░▓▓▓███▓▓▒░▒▒██▒░░▒█▓░▒░▓     ████▒                        ▓█████▓░▓█████▓         ▒██▓░░░          ▒█████████████▓████████▓  ▒██▓░                     
+                 ░▒███▒░▓█▓▒▓▒▒░░▒░░▒░░░ ▒░▒▒▓▒██▒░▓██▓░     ░██▓░                        ░▓▓█▓█░ ░█████          ▓██████▓▒░        ░██                ▒█░░  ░▓██░                     
+                         ░▓░░░█████▒▒░▒█████░▒░▓           ░██████▒                     █████████▓▒▒▒▓▒▒▒         ███████▓████████  ░██                ▒█░   ░▓██▒                     
+                        ░▒████▒   ▒▓▒▓▓░   ▓████▒░         ▒███████░                    ██▓▓██▓███████████         ████▓█▒          ░██                ▒█░   ░▓██▓                     
+                        ░██░      ░▒▒▒▒░      ░██░        ░████████▓░                   ████████▓░▓████████        ███▓████████   ░▒▓██▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█▓▒░ ░▓███░                    
+                       ░██░                    ░█▓       ░▓█ ████ ▓█░                  ██▓▓█████▓ ▓██████▓██       ▓██████        ▒████████████████████████▓ ░██████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█▒  
+                      ░▓█▒░                     ▒█▒░     ░█▓ ████▓ █▓                  ███▓█████▓ ▓█████████       ▓█████▓          ▓█████████████████████   ░██████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█▒  
+                      ░██░                      ░██░        ▒█████                      ████████▒ ▓████████        ███▓██▓          ▓█████████████████████   ░████▓▓▓▓▓▓▓▒▓▓▒▒▒▒▒▒▒▓▒░ 
+               ░▒▒▒▒▒▒██████████████████████████████▒▒▒▒▒▒  ▓██ ██░                      ▓███▓██▒ ▓██▓███▓         ███▓██▒          ▓█████████████████████   ▒█████▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▓█░ 
+               ▒██████████████████████████████████████████  ██▓ ██▒                       ▓██▓██▒ ▓██░██▓          ██▓▓██           ▓█████████████████████  ░▓█████▓░             ░▒▓  
+               ▒██████████████████████████████████████████  ██▒ ██▓                       ▓██▓██▒ ▓██▒██▓         ▓██ ███           ▓█████████████████████  ▓████████▓░░          ░░▓  
+               ▒██████████████████████████████████████████  ██░ ▓██                       ▓██▓██▒ ▓██▒██▓         ▓██ ███           ▓█████████████████████  █▓▓▒▒▒▒▒▒▒░░             
+               ▒██████████████████████████████████████████  ██░ ▒██                       ▓██▒██▒ ▒██░██▓         ███ ██            ▓█████████████████████                     
+   ████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+   """
     print(plaza)
     plaza_pip = True
     while plaza_pip:
@@ -140,13 +146,34 @@ def symbol_guess_game():
             print(plaza)
             continue
     clear()
-    print(f"\t\t\t\t\t\t   =========================================================")
-    print(f"\t\t\t\t\t\t\t   Commit the symbols to memory. Hack in 3…2…1.")
-    print(f"\t\t\t\t\t\t   =========================================================")
+
+    memorize_the_code = """
+    
+    
+
+                                        ██      ▄▄▄   ▄▄▄▄ ▄▄ ▄▄   ▄▄ ▄▄  ▄▄   ▄▄▄▄▄▄ ▄▄ ▄▄ ▄▄▄▄▄    ▄▄▄▄  ▄▄▄  ▄▄▄▄  ▄▄▄▄▄         ███  ██ ▄████▄ ██     ██  ██ 
+                                        ██     ██▀██ ██▀▀▀ ██▄█▀   ██ ███▄██     ██   ██▄██ ██▄▄    ██▀▀▀ ██▀██ ██▀██ ██▄▄    ▄▄▄   ██ ▀▄██ ██  ██ ██ ▄█▄ ██  ██ 
+                                        ██████ ▀███▀ ▀████ ██ ██   ██ ██ ▀██     ██   ██ ██ ██▄▄▄   ▀████ ▀███▀ ████▀ ██▄▄▄         ██   ██ ▀████▀  ▀██▀██▀   ▄▄ 
+
+
+
+    """
+    print(memorize_the_code)
     print("")
     print("")
     print("")
+
+    buffer = io.StringIO()
+    sys.stdout = buffer
     big(secret)
+    sys.stdout = sys.__stdout__
+
+    lines = buffer.getvalue().splitlines()
+    padding = "\t\t\t\t\t\t\t"  # 3 tabs
+    for line in lines:
+        print(padding + line)
+
+
     time.sleep(4)
     clear()
     print("")
@@ -239,7 +266,6 @@ def go_to_jar(world, level, coins):
     print()
     print()
     print("\t\t███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████")
-    time.sleep(2.5)
 
 def go_to_jail(world, level):
     clear()
@@ -351,8 +377,9 @@ def timer_option():
         print("\t\t\t\t\t█\t\t\t\t\t\t\t\t\t\t\t\t\t  █")
         print("\t\t\t\t\t███████████████████████████████████████████████████████████████████████████████████████████████████████████")
         time.sleep(1)
-    print()
-    input("\t\t\t\t[ Press enter to continue... ] ")
+    print(" ")
+    print(" ")
+    input("\t\t\t\t\t[ Press enter to continue... ] ")
     clear()
     main_menu(player)
     """
@@ -450,10 +477,10 @@ def game2():
             clear()
             print(arcade)
             continue
+
         choice_arcadee = int(choice_arcade)
 
         if 0 < choice_arcadee < 5:
-            print()
             arcade_pip = False
         else:
             print("\t\tInvalid choice — try selecting a valid option.")
@@ -462,10 +489,30 @@ def game2():
             print(arcade)
             continue
     clear()
-    print(f"\t\t\t\t\t\t   =========================================================")
-    print(f"\t\t\t\t\t\t\t   Commit the symbols to memory. Hack in 3…2…1.")
-    print(f"\t\t\t\t\t\t   =========================================================")
+
+    memorize_the_code = """
+    
+    
+
+                                        ██      ▄▄▄   ▄▄▄▄ ▄▄ ▄▄   ▄▄ ▄▄  ▄▄   ▄▄▄▄▄▄ ▄▄ ▄▄ ▄▄▄▄▄    ▄▄▄▄  ▄▄▄  ▄▄▄▄  ▄▄▄▄▄         ███  ██ ▄████▄ ██     ██  ██ 
+                                        ██     ██▀██ ██▀▀▀ ██▄█▀   ██ ███▄██     ██   ██▄██ ██▄▄    ██▀▀▀ ██▀██ ██▀██ ██▄▄    ▄▄▄   ██ ▀▄██ ██  ██ ██ ▄█▄ ██  ██ 
+                                        ██████ ▀███▀ ▀████ ██ ██   ██ ██ ▀██     ██   ██ ██ ██▄▄▄   ▀████ ▀███▀ ████▀ ██▄▄▄         ██   ██ ▀████▀  ▀██▀██▀   ▄▄ 
+
+
+
+    """
+    print(memorize_the_code)
+
+    buffer = io.StringIO()
+    sys.stdout = buffer
     big(secret)
+    sys.stdout = sys.__stdout__
+
+    lines = buffer.getvalue().splitlines()
+    padding = "\t\t\t\t\t\t"
+    for line in lines:
+        print(padding + line)
+
     time.sleep(4)
     clear()
 
@@ -499,6 +546,7 @@ def game2():
     print("Guess who’s out of lives? You.")
     print("The correct symbols were:")
     print_box(secret)
+    time.sleep(3)
     return False
 
 def game3():
@@ -512,6 +560,8 @@ def game3():
     lives = 3
     cafeteria = f"""
    ████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+           
+           
            
            
                                                                                  ░▓▓▓▓▓▓▓▓▓▓▒░ ░▒▓▓▓▓▓▓▓▓▓▒░ ░▒▓▓▓▓▓▓▓▓▓▓░  ▒▓▓▓▓▓▓▓▓▓▓▒  ░▓▓▓▓▓▓▓▓▓▓▒  ░▓▓▓▓▓▓▓▓▓▓▓   ▒▓▓▓▓▓▓▓▓▓▓░    
@@ -573,7 +623,6 @@ def game3():
         choice_cafeteriaa = int(choice_cafeteria)
 
         if 0 < choice_cafeteriaa < 6:
-            print()
             cafeteria_pip = False
         else:
             print("\tInvalid choice — try selecting a valid option.")
@@ -581,12 +630,32 @@ def game3():
             clear()
             print(cafeteria)
             continue
+    clear()
 
-    print(f"\t\t\t\t\t\t   =========================================================")
-    print(f"\t\t\t\t\t\t\t   Commit the symbols to memory. Hack in 3…2…1.")
-    print(f"\t\t\t\t\t\t   =========================================================")
+    memorize_the_code = """
 
+
+
+                                        ██      ▄▄▄   ▄▄▄▄ ▄▄ ▄▄   ▄▄ ▄▄  ▄▄   ▄▄▄▄▄▄ ▄▄ ▄▄ ▄▄▄▄▄    ▄▄▄▄  ▄▄▄  ▄▄▄▄  ▄▄▄▄▄         ███  ██ ▄████▄ ██     ██  ██ 
+                                        ██     ██▀██ ██▀▀▀ ██▄█▀   ██ ███▄██     ██   ██▄██ ██▄▄    ██▀▀▀ ██▀██ ██▀██ ██▄▄    ▄▄▄   ██ ▀▄██ ██  ██ ██ ▄█▄ ██  ██ 
+                                        ██████ ▀███▀ ▀████ ██ ██   ██ ██ ▀██     ██   ██ ██ ██▄▄▄   ▀████ ▀███▀ ████▀ ██▄▄▄         ██   ██ ▀████▀  ▀██▀██▀   ▄▄ 
+
+
+
+    """
+    print(memorize_the_code)
+
+
+    buffer = io.StringIO()
+    sys.stdout = buffer
     big(secret)
+    sys.stdout = sys.__stdout__
+
+    lines = buffer.getvalue().splitlines()
+    padding = "\t\t\t\t\t"  # 3 tabs
+    for line in lines:
+        print(padding + line)
+
     time.sleep(4)
     clear()
     print("")
@@ -619,6 +688,7 @@ def game3():
     print("Guess who’s out of lives? You.")
     print("The correct symbols were:")
     print_box(secret)
+    time.sleep(3)
     return False
 
 def game4():
@@ -632,6 +702,9 @@ def game4():
     lives = 3
     hotel = f"""
    ████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+                                       
+                                       
+                                       
                                                                                                                                                                                      
                                           ░▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░                                                                                               ░░▒▒▒▓█████▒▓▓▓▒░░      
                                           ░▒░░▓▒▓▒▓▓▓▒▓▓▓░▓▓▒░▓░░░▒░                          ░░░░                                                             ░░░░█████████████████▒░░░░░░
@@ -691,7 +764,6 @@ def game4():
         choice_hotell = int(choice_hotel)
 
         if 0 < choice_hotell < 4:
-            print()
             hotel_pip = False
         else:
             print("\t\tInvalid choice — try selecting a valid option.")
@@ -699,11 +771,31 @@ def game4():
             clear()
             print(hotel)
             continue
-    print(f"\t\t\t\t\t\t   =========================================================")
-    print(f"\t\t\t\t\t\t\t   Commit the symbols to memory. Hack in 3…2…1.")
-    print(f"\t\t\t\t\t\t   =========================================================")
+    clear()
+    memorize_the_code = """
 
+
+
+                                        ██      ▄▄▄   ▄▄▄▄ ▄▄ ▄▄   ▄▄ ▄▄  ▄▄   ▄▄▄▄▄▄ ▄▄ ▄▄ ▄▄▄▄▄    ▄▄▄▄  ▄▄▄  ▄▄▄▄  ▄▄▄▄▄         ███  ██ ▄████▄ ██     ██  ██ 
+                                        ██     ██▀██ ██▀▀▀ ██▄█▀   ██ ███▄██     ██   ██▄██ ██▄▄    ██▀▀▀ ██▀██ ██▀██ ██▄▄    ▄▄▄   ██ ▀▄██ ██  ██ ██ ▄█▄ ██  ██ 
+                                        ██████ ▀███▀ ▀████ ██ ██   ██ ██ ▀██     ██   ██ ██ ██▄▄▄   ▀████ ▀███▀ ████▀ ██▄▄▄         ██   ██ ▀████▀  ▀██▀██▀   ▄▄ 
+
+
+
+    """
+    print(memorize_the_code)
+
+
+    buffer = io.StringIO()
+    sys.stdout = buffer
     big(secret)
+    sys.stdout = sys.__stdout__
+
+    lines = buffer.getvalue().splitlines()
+    padding = "\t\t\t\t       "  # 3 tabs
+    for line in lines:
+        print(padding + line)
+
     time.sleep(4)
     clear()
     print("")
@@ -735,6 +827,7 @@ def game4():
     print("Guess who’s out of lives? You.")
     print("The correct symbols were:")
     print_box(secret)
+    time.sleep(3)
     return False
 
 
@@ -816,11 +909,32 @@ def game5():
             clear()
             print(bank)
             continue
-    print(f"\t\t\t\t\t\t   =========================================================")
-    print(f"\t\t\t\t\t\t\t   Commit the symbols to memory. Hack in 3…2…1.")
-    print(f"\t\t\t\t\t\t   =========================================================")
+    clear()
 
+    memorize_the_code = """
+
+
+
+                                        ██      ▄▄▄   ▄▄▄▄ ▄▄ ▄▄   ▄▄ ▄▄  ▄▄   ▄▄▄▄▄▄ ▄▄ ▄▄ ▄▄▄▄▄    ▄▄▄▄  ▄▄▄  ▄▄▄▄  ▄▄▄▄▄         ███  ██ ▄████▄ ██     ██  ██ 
+                                        ██     ██▀██ ██▀▀▀ ██▄█▀   ██ ███▄██     ██   ██▄██ ██▄▄    ██▀▀▀ ██▀██ ██▀██ ██▄▄    ▄▄▄   ██ ▀▄██ ██  ██ ██ ▄█▄ ██  ██ 
+                                        ██████ ▀███▀ ▀████ ██ ██   ██ ██ ▀██     ██   ██ ██ ██▄▄▄   ▀████ ▀███▀ ████▀ ██▄▄▄         ██   ██ ▀████▀  ▀██▀██▀   ▄▄ 
+
+
+
+    """
+    print(memorize_the_code)
+
+
+    buffer = io.StringIO()
+    sys.stdout = buffer
     big(secret)
+    sys.stdout = sys.__stdout__
+
+    lines = buffer.getvalue().splitlines()
+    padding = "\t\t\t    "  # 3 tabs
+    for line in lines:
+        print(padding + line)
+
     time.sleep(4)
     clear()
     print("")
@@ -852,22 +966,12 @@ def game5():
     print("Guess who’s out of lives? You.")
     print("The correct symbols were:")
     print_box(secret)
+    time.sleep(3)
     return False
 
 def play_level(world):
     current_level = worlds[world]["completed_levels"] + 1
     clear()
-
-    print("=" * 35)
-    print(" ")
-    print(f"\t\t{worlds[world]['name']} - Level {current_level}")
-    print(" ")
-    print("=" * 35)
-    print(" ")
-    print(" ")
-    print("")
-    print("")
-
     game_funcs = {1: symbol_guess_game, 2: game2, 3: game3, 4: game4, 5: game5}
     result = game_funcs[world]()
 
@@ -928,33 +1032,90 @@ def adventure_menu():
 def main(player, main_menu_fun):
     while True:
         adventure_menu()
+        print("")
+        choice = input("\t\tChoose a place to play: ").strip()
+
+        if choice.lower() == "plaza":
+            worlds[1]["completed_levels"] = worlds[1]["levels"]
+            worlds[2]["unlocked"] = True
+            player["coins"] += 300
+            clear()
+            print(pyfiglet.figlet_format("PLAZA CLEARED!", font="starwars"))
+            print("\t\tArcade unlocked and +300 coins added!")
+            input("\t\t[ Press Enter to continue... ] ")
+            continue
+
+            # 2. ARCADE CHEAT — finishes ARCADE & unlocks CAFETERIA
+        if choice.lower() == "arcade":
+            worlds[2]["completed_levels"] = worlds[2]["levels"]
+            worlds[3]["unlocked"] = True
+            player["coins"] += 300
+            clear()
+            print(pyfiglet.figlet_format("ARCADE CLEARED!", font="starwars"))
+            print("\t\tCafeteria unlocked and +300 coins added!")
+            input("\t\t[ Press Enter to continue... ] ")
+            continue
+
+            # 3. CAFETERIA CHEAT — finishes CAFETERIA & unlocks HOTEL
+        if choice.lower() == "cafeteria":
+            worlds[3]["completed_levels"] = worlds[3]["levels"]
+            worlds[4]["unlocked"] = True
+            player["coins"] += 300
+            clear()
+            print(pyfiglet.figlet_format("CAFETERIA CLEARED!", font="starwars"))
+            print("\t\tHotel unlocked and +300 coins added!")
+            input("\t\t[ Press Enter to continue... ] ")
+            continue
+
+            # 4. HOTEL CHEAT — finishes HOTEL & unlocks BANK
+        if choice.lower() == "hotel":
+            worlds[4]["completed_levels"] = worlds[4]["levels"]
+            worlds[5]["unlocked"] = True
+            player["coins"] += 300
+            clear()
+            print(pyfiglet.figlet_format("HOTEL CLEARED!", font="starwars"))
+            print("\t\tBank unlocked and +300 coins added!")
+            input("\t\t[ Press Enter to continue... ] ")
+            continue
+
+            # 5. BANK CHEAT — finishes BANK & unlocks SECRET FILE
+        if choice.lower() == "bank":
+            worlds[5]["completed_levels"] = worlds[5]["levels"]
+            player["coins"] += 300
+            clear()
+            print(pyfiglet.figlet_format("BANK CLEARED!", font="starwars"))
+            print("\t\tSECRET FILE UNLOCKED! +300 coins added!")
+            # You can trigger your secret file here
+            # e.g., load_secret_file()
+            input("\t\t[ Press Enter to continue... ] ")
+            continue
+
         try:
-            print("")
-            choice = int(input("\t\tChoose a place to play: "))
+            choicee = int(choice)
         except ValueError:
             print("")
-            print(f"\t\tOops! You need to enter a number to continue.")
+            print("\t\tOops! Please enter a number, not letters.")
             input("\t\t[ Press enter to continue... ] ")
             continue
 
-        if choice == 6:
+        if choicee == 6:
             clear()
             main_menu_fun(player)
             break
-        elif choice not in worlds:
+        elif choicee not in worlds:
             print("")
             print(f"\t\tError 404: Place not found!")
             input("\t\t[ Press enter to continue... ] ")
-        elif not worlds[choice]["unlocked"]:
+        elif not worlds[choicee]["unlocked"]:
             print("")
             print(f"\t\tHold up! That world’s still locked — clear the earlier one to unlock it!")
             input("\t\t[ Press enter to continue... ] ")
-        elif worlds[choice]["completed_levels"] == worlds[choice]["levels"]:
+        elif worlds[choicee]["completed_levels"] == worlds[choicee]["levels"]:
             print("")
             print("\t\tMission log: place secured. Nothing left to hack.")
             input("\t\t[ Press enter to continue... ] ")
         else:
-            play_level(choice)
+            play_level(choicee)
 
 if __name__ == "__main__":
     main(ADVENTURE.player, main_menu)
