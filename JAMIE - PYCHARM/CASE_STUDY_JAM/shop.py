@@ -58,12 +58,8 @@ things = [
 
 
 def display_row(fruit_row):
-    """Displays one horizontal row of fruits.
-       ASCII always shows. Status + press option always show."""
-
     max_height = max(len(f["art"]) for f in fruit_row)
 
-    # Print ASCII art first (always visible)
     for i in range(max_height):
         parts = []
         for fruit in fruit_row:
@@ -73,7 +69,6 @@ def display_row(fruit_row):
                 parts.append(" " * len(fruit["art"][0]))
         print("    ".join(parts))
 
-    # Print STATUS (locked/unlocked)
     status_line = []
     for fruit in fruit_row:
         if fruit["unlocked"]:
@@ -82,13 +77,11 @@ def display_row(fruit_row):
             status_line.append("[LOCKED]")
     print("    ".join(status_line))
 
-    # Print PRESS number
     press_line = []
     for fruit in fruit_row:
         press_line.append(f"[PRESS {fruit['id']}] - {fruit['name']}")
     print("    ".join(press_line))
 
-    # Print PRICE
     price_line = []
     for fruit in fruit_row:
         price_line.append(f"Price: {fruit['price']}")
@@ -96,17 +89,14 @@ def display_row(fruit_row):
 
     print("\n")
 
-
 def shop_menu():
     clear()
     print("\n" + "█" * 150)
     print("\n\t\t\t\t\t      SHOP MENU\n")
 
-    # Prepare rows
     first_row = []
     second_row = []
 
-    # Attach ASCII & metadata into row objects
     for i, item in enumerate(shop_items):
         row_item = {
             "id": i + 1,

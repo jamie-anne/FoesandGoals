@@ -23,3 +23,4 @@ def visit_house(player):
             print("\n\t\t\t[ ASCII art not found for this item ]\n")
 
     input("\n\t\t\t[ Press Enter to continue... ]")
+    clear()
