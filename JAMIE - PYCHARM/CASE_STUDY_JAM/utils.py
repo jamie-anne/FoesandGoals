@@ -660,8 +660,8 @@ def show_bought_items(player):
     clear()
     last_item = player.get('last_bought_item')
     if not last_item:
-        print("\n\t\tYou have not bought any items yet.\n")
-        input("\n\t\t[ Press Enter to continue... ]")
+        print("\n\t\t\tYou have not bought any items yet.\n")
+        input("\n\t\t\t[ Press Enter to continue... ]")
         return
     """
 
@@ -670,26 +670,26 @@ def show_bought_items(player):
     clear()
     last_item = player.get('last_bought_item')
     if not last_item:
-        print("\n\t\tYou have not bought any items yet.\n")
-        input("\n\t\t[ Press Enter to continue... ]")
+        print("\n\t\t\tYou have not bought any items yet.\n")
+        input("\n\t\t\t[ Press Enter to continue... ]")
         return
 
     # Show "YOU BOUGHT" first
     bought_art = bought_ascii.get(last_item)
     if bought_art:
-        print(f"\n\t\tYOU BOUGHT: {last_item}!\n")
+        print(f"\n\t\t\tYOU BOUGHT: {last_item}!\n")
         print(bought_art)
-        input("\n\t\t[ Press Enter to continue... ]")
+        input("\n\t\t\t[ Press Enter to continue... ]")
         clear()
 
-    input("\n\t\t[ Press Enter to go back to Main Menu... ]")
+    input("\n\t\t\t[ Press Enter to go back to Main Menu... ]")
 """
     # Then show HOUSE ASCII
-    print(f"\n\t\tYour latest HOUSE item: {last_item}\n")
+    print(f"\n\t\t\tYour latest HOUSE item: {last_item}\n")
     art = get_house_ascii(last_item)
     if art:
         print(art)
     else:
-        print("\n\t\t[ASCII not found for this item]\n")
+        print("\n\t\t\t[ASCII not found for this item]\n")
 """
 

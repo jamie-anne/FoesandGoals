@@ -146,13 +146,13 @@ def update_unlocks():
 
 def buy_item(player, item_name, price):
     if item_name in player['inventory']:
-        print("\n\t\tYou already own this item!\n")
-        input("\n\t\t[ Press Enter to continue... ]")
+        print("\n\t\t\tYou already own this item!\n")
+        input("\n\t\t\t[ Press Enter to continue... ]")
         return
 
     if player['coins'] < price:
-        print("\n\t\tNot enough coins!\n")
-        input("\n\t\t[ Press Enter to continue... ]")
+        print("\n\t\t\tNot enough coins!\n")
+        input("\n\t\t\t[ Press Enter to continue... ]")
         return
 
     player['coins'] -= price
@@ -173,8 +173,8 @@ def main(player, main_menu_func):
         clear()
         update_unlocks()
         shop_menu()
-        print(f"\n\t\tYour Balance: {player['coins']} coins\n")
-        choice = input("\t\tEnter your choice (1-9 or 0 to exit): ")
+        print(f"\n\t\t\tYour Balance: {player['coins']} coins\n")
+        choice = input("\t\t\tEnter your choice (1-9 or 0 to exit): ")
 
         if choice == '0':
             clear()
@@ -186,11 +186,11 @@ def main(player, main_menu_func):
             item = shop_items[index]
 
             if not item["unlocked"]:
-                print("\n\t\tItem locked! Buy the previous item first.\n")
-                input("\n\t\t[ Press Enter to continue... ]")
+                print("\n\t\t\tItem locked! Buy the previous item first.\n")
+                input("\n\t\t\t[ Press Enter to continue... ]")
                 continue
 
             buy_item(player, item["name"], item["cost"])
         else:
-            print("\n\t\tInvalid choice.")
-            input("\t\t[ Press Enter to continue... ]")
+            print("\n\t\t\tInvalid choice.")
+            input("\t\t\t[ Press Enter to continue... ]")
