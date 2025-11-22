@@ -2118,7 +2118,7 @@ def main_menu(player, item_name=None):
                                                         
                                              \033[96m           █▀   ▀▀█   ▀█\33[0m   █▀▀ █ █ █▀█ █▀█                    
                                              \033[96m           █     ▀▄    █\33[0m   ▀▀█ █▀█ █ █ █▀▀                    
-                                             \033[96m           ▀▀   ▀▀▀   ▀▀\33[0m   ▀▀▀ ▀ ▀▀▀ ▀ ▀                    
+                                             \033[96m           ▀▀   ▀▀▀   ▀▀\33[0m   ▀▀▀ ▀ ▀ ▀▀▀ ▀                    
                                                        
                                              \033[96m           █▀   █ █   ▀█\33[0m   █▀▄ █▀▀ █ █ █▀▀ █   █▀█ █▀█ █▀▀ █▀█
                                              \033[96m           █    ▀▀█    █\33[0m   █ █ █▀▀ ▀▄▀ █▀▀ █   █ █ █▀▀ █▀▀ █▀▄
@@ -2139,6 +2139,7 @@ def main_menu(player, item_name=None):
     pygame.mixer.music.play(-1)
     menuu = True
     while menuu:
+        clear()
         print(menu)
         if not pygame.mixer.music.get_busy():
             pygame.mixer.music.play(-1)
@@ -2147,7 +2148,7 @@ def main_menu(player, item_name=None):
 
         if not choice.isdigit():
             print("\n\t\tInvalid input! Numbers only (1-4).")
-            input("\t[ Press enter to continue... ] ")
+            input("\t[ Press enter to continue ] ")
             clear()
             print(menu)
             continue
@@ -2220,7 +2221,6 @@ def main_menu(player, item_name=None):
         else:
             print("\n\t\tInvalid choice! Please select 1–4.")
             input("\t[ Press enter to continue... ] ")
-            clear()
             print(menu)
             continue
 

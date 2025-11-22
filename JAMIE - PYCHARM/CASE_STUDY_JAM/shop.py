@@ -9,50 +9,69 @@ def clear():
 things = [
     {
         "art": [
-            "LAMP"
+            "\t\t\t\t    █   █▀█ █▄█ █▀█",
+            "\t\t\t\t    █   █▀█ █ █ █▀▀",
+            "\t\t\t\t    ▀▀▀ ▀ ▀ ▀ ▀ ▀"
         ]
     },
     {
         "art": [
-            "FAN"
+            "\t\t\t\t\t█▀▀ █▀█ █▀█",
+            "\t\t\t\t\t█▀▀ █▀█ █ █",
+            "\t\t\t\t\t▀   ▀ ▀ ▀ ▀"
         ]
     },
     {
         "art": [
-            "MOUSE"
+            "\t\t\t\t   █ █ █▀█ █ █ █▀▀ █▀▀",
+            "\t\t\t\t   █▀█ █ █ █ █ ▀▀█ █▀▀",
+            "\t\t\t\t   ▀ ▀ ▀▀▀ ▀▀▀ ▀▀▀ ▀▀▀"
         ]
     },
     {
         "art": [
-            "KEYBOARD"
+            "\t\t\t     █ █ █▀▀ █ █ █▀█ █▀█ █▀█ █▀█ █▀▄",
+            "\t\t\t     █▀▄ █▀▀  █  █▀█ █ █ █▀█ █▀▄ █ █",
+            "\t\t\t     ▀ ▀ ▀▀▀  ▀  ▀▀▀ ▀▀▀ ▀ ▀ ▀ ▀ ▀▀ "
         ]
     },
     {
         "art": [
-            "MIC"
+            "\t  █▄█ ▀█▀ █▀▀ █▀█ █▀█ █▀█ █ █ █▀█ █▀█ █▀▀",
+            "\t  █ █  █  █   █▀▄ █ █ █▀▀ █▀█ █ █ █ █ █▀▀",
+            "\t  ▀ ▀ ▀▀▀ ▀▀▀ ▀ ▀ ▀▀▀ ▀   ▀ ▀ ▀▀▀ ▀ ▀ ▀▀▀"
         ]
     },
     {
         "art": [
-            "HEADSET"
+            "\t\t█ █ █▀▀ █▀█ █▀▄ █▀▀ █▀▀ ▀█▀",
+            "\t\t█▀█ █▀▀ █▀█ █ █ ▀▀█ █▀▀  █",
+            "\t\t▀ ▀ ▀▀▀ ▀ ▀ ▀▀  ▀▀▀ ▀▀▀  ▀"
         ]
     },
     {
         "art": [
-            "CHAIR"
+            "\t\t\t\t   █▀▀ █ █ █▀█ ▀█▀ █▀█",
+            "\t\t\t\t   █   █▀█ █▀█  █  █▀▄",
+            "\t\t\t\t   ▀▀▀ ▀ ▀ ▀ ▀ ▀▀▀ ▀ ▀"
         ]
     },
     {
         "art": [
-            "MONITOR"
+            "\t\t    █▄█ █▀█ █▀█ ▀█▀ ▀█▀ █▀█ █▀█",
+            "\t\t    █ █ █ █ █ █  █   █  █ █ █▀▄",
+            "\t\t    ▀ ▀ ▀▀▀ ▀ ▀ ▀▀▀  ▀  ▀▀▀ ▀ ▀"
         ]
     },
     {
         "art": [
-            "UNIT"
+            "\t\t█▀▀ █ █ █▀▀ ▀█▀ █▀▀ █▄█  █ █ █▀█ ▀█▀ ▀█▀",
+            "\t\t▀▀█  █  ▀▀█  █  █▀▀ █ █  █ █ █ █  █   █",
+            "\t\t▀▀▀  ▀  ▀▀▀  ▀  ▀▀▀ ▀ ▀  ▀▀▀ ▀ ▀ ▀▀▀  ▀"
         ]
     }
 ]
+
 
 
 
@@ -72,30 +91,39 @@ def display_row(fruit_row):
     status_line = []
     for fruit in fruit_row:
         if fruit["unlocked"]:
-            status_line.append("[UNLOCKED]")
+            status_line.append(f"\t\t\t\t\t[UNLOCKED]")
         else:
-            status_line.append("[LOCKED]")
+            status_line.append(f"\t\t\t\t\t [LOCKED]")
     print("    ".join(status_line))
 
     press_line = []
     for fruit in fruit_row:
-        press_line.append(f"[PRESS {fruit['id']}] - {fruit['name']}")
+        press_line.append(f"\t\t\t\t\t[PRESS {fruit['id']}]")
     print("    ".join(press_line))
 
     price_line = []
     for fruit in fruit_row:
-        price_line.append(f"Price: {fruit['price']}")
+        price_line.append(f"\t\t\t\t\tPrice: {fruit['price']}")
     print("    ".join(price_line))
 
     print("\n")
 
 def shop_menu():
     clear()
-    print("\n" + "█" * 150)
-    print("\n\t\t\t\t\t      SHOP MENU\n")
-
+    print("    ███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████")
+    shop="""
+    
+                                ████████╗███████╗ ██████╗██╗  ██╗    ██╗   ██╗██████╗  ██████╗ ██████╗  █████╗ ██████╗ ███████╗    ███████╗██╗  ██╗ ██████╗ ██████╗ 
+                                ╚══██╔══╝██╔════╝██╔════╝██║  ██║    ██║   ██║██╔══██╗██╔════╝ ██╔══██╗██╔══██╗██╔══██╗██╔════╝    ██╔════╝██║  ██║██╔═══██╗██╔══██╗
+                                   ██║   █████╗  ██║     ███████║    ██║   ██║██████╔╝██║  ███╗██████╔╝███████║██║  ██║█████╗      ███████╗███████║██║   ██║██████╔╝
+                                   ██║   ██╔══╝  ██║     ██╔══██║    ██║   ██║██╔═══╝ ██║   ██║██╔══██╗██╔══██║██║  ██║██╔══╝      ╚════██║██╔══██║██║   ██║██╔═══╝ 
+                                   ██║   ███████╗╚██████╗██║  ██║    ╚██████╔╝██║     ╚██████╔╝██║  ██║██║  ██║██████╔╝███████╗    ███████║██║  ██║╚██████╔╝██║     
+                                   ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝     ╚═════╝ ╚═╝      ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝    ╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝     
+    """
+    print(shop)
     first_row = []
     second_row = []
+    third_row=[]
 
     for i, item in enumerate(shop_items):
         row_item = {
@@ -106,15 +134,21 @@ def shop_menu():
             "art": things[i]["art"]
         }
 
-        if i < 5:
+        if i < 3:
             first_row.append(row_item)
-        else:
+        elif i < 6:
             second_row.append(row_item)
+        else:
+            third_row.append(row_item)
 
+    print("\n" * 2)
     display_row(first_row)
+    print("\n" * 4)
     display_row(second_row)
-    print("Press [0] to exit")
-    print("█" * 150)
+    print("\n" * 4)
+    display_row(third_row)
+    print("\n" * 2)
+    print("    ███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████")
 
 
 shop_items = [
@@ -133,6 +167,19 @@ def update_unlocks():
     for i in range(1, len(shop_items)):
         if shop_items[i-1]["bought"]:
             shop_items[i]["unlocked"] = True
+
+def unit_feature(player):
+    clear()
+    print("=======================================")
+    print("   SYSTEM UNIT — SPECIAL FUNCTION")
+    print("=======================================\n")
+
+    print("You have unlocked the SYSTEM UNIT feature!")
+    print("You can now run your special codes here.\n")
+    print("Running your system unit program...\n")
+
+    input("[ Press Enter to return to the shop ]")
+
 
 def buy_item(player, item_name, price):
     if item_name in player['inventory']:
@@ -155,6 +202,9 @@ def buy_item(player, item_name, price):
         if shop_item["name"] == item_name:
             shop_item["bought"] = True
             break
+
+    if item_name.lower() == "unit":
+        unit_feature(player)
 
 def main(player, main_menu_func):
     shop = pygame.mixer.Sound("MUSIC/shop_music.mp3")
