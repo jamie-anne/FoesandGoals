@@ -795,8 +795,8 @@ def show_bought_items(player):
     # Show "YOU BOUGHT" first
     bought_art = bought_ascii.get(last_item)
     if bought_art:
-        print(f"\n\t\t\tYOU BOUGHT: {last_item}!\n")
         print(bought_art)
+        print(f"\t\t\t\t\t\t\t\t\t\t\tYOU BOUGHT: {last_item}!\n")
         input("\t\t\t\t\t\t\t\t\t\t[ Press Enter to continue... ]")
         clear()
 
