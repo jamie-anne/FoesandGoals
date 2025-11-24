@@ -2258,7 +2258,7 @@ def main_menu(player, item_name=None):
     """
             print(mechanics)
             print(" ")
-            input(f"    [ Press enter to continue... ] ")
+            input("\t\t\t\t\t\t\t\t\t\t[ Press enter to continue... ]")
             ADVENTURE.main(player, main_menu)
 
         elif choicee == 3:
