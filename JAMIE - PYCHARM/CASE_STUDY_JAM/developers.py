@@ -105,7 +105,7 @@ def programmers(player):
 
     """
     print(gumawa)
-    input("    [ Press Enter to continue... ]")
+    input("\t\t\t\t\t\t\t\t\t\t[ Press enter to continue... ]")
     from LP_STORY_MENU import main_menu
     clear()
     main_menu(player)  # Go back to main menu
