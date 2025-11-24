@@ -916,10 +916,10 @@ def show_bought_items(player):
 def show_bought_items(player):
     clear()
     last_item = player.get('last_bought_item')
-    if not last_item:
-        print("\n\t\t\tYou have not bought any items yet.\n")
-        input("\t\t\t\t\t\t\t\t\t\t[ Press Enter to continue... ]")
-        return
+    #if not last_item:
+        #print("\n\t\t\tYou have not bought any items yet.\n")
+        #input("\t\t\t\t\t\t\t\t\t\t[ Press Enter to continue... ]")
+        #return
 
     # Show "YOU BOUGHT" first
     bought_art = bought_ascii.get(last_item)
