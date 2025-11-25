@@ -1,5 +1,6 @@
 import os
 import pygame
+import time
 from CASE_STUDY_JAM.utils import show_bought_items
 pygame.mixer.init()
 
@@ -171,15 +172,6 @@ def update_unlocks():
 
 def unit_feature(player):
     clear()
-    print("=======================================")
-    print("   SYSTEM UNIT — SPECIAL FUNCTION")
-    print("=======================================\n")
-
-    print("You have unlocked the SYSTEM UNIT feature!")
-    print("You can now run your special codes here.\n")
-    print("Running your system unit program...\n")
-
-    input("[ Press Enter to return to the shop ]")
 
 
 def buy_item(player, item_name, price):
@@ -250,8 +242,9 @@ def buy_item(player, item_name, price):
             shop_item["bought"] = True
             break
 
-    if item_name.lower() == "unit":
-        unit_feature(player)
+    #if item_name.lower() == "unit":
+        #print("Your now")
+        #unit_feature(player)
 
 def main(player, main_menu_func):
     shop = pygame.mixer.Sound("MUSIC/shop_music.mp3")

@@ -1692,7 +1692,7 @@ def mission():
 
 
 
-
+"""
     # sun
     birds = pygame.mixer.Sound("MUSIC/birds.mp3")
     birds.play()
@@ -1865,7 +1865,7 @@ def mission():
     sad.fadeout(1000)
     input("\t\t\t\t\t\t\t\t\t\t[ Press enter to continue... ]")
     clear()
-
+"""
 '''
 print(Fore.BLACK + "Black")
 print(Fore.RED + "Red")
