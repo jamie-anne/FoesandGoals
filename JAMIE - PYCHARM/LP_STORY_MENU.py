@@ -1689,10 +1689,24 @@ def mission():
                     ████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
                     ████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
             """
+    ani34 = """
+                        ▐▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▌
+                        ▐                                                                                                                                                 ▌
+                        ▐                                                                                                                                                 ▌
+                        ▐   \033[96m██╗  ██╗ █████╗  ██████╗██╗  ██╗    ███╗   ███╗ ██████╗ ██████╗ ███████╗    ███████╗███╗   ██╗ ██████╗  █████╗  ██████╗ ███████╗██████╗ ██╗\033[0m   ▌
+                        ▐   \033[96m██║  ██║██╔══██╗██╔════╝██║ ██╔╝    ████╗ ████║██╔═══██╗██╔══██╗██╔════╝    ██╔════╝████╗  ██║██╔════╝ ██╔══██╗██╔════╝ ██╔════╝██╔══██╗██║\033[0m   ▌
+                        ▐   \033[96m███████║███████║██║     █████╔╝     ██╔████╔██║██║   ██║██║  ██║█████╗      █████╗  ██╔██╗ ██║██║  ███╗███████║██║  ███╗█████╗  ██║  ██║██║\033[0m   ▌
+                        ▐   \033[96m██╔══██║██╔══██║██║     ██╔═██╗     ██║╚██╔╝██║██║   ██║██║  ██║██╔══╝      ██╔══╝  ██║╚██╗██║██║   ██║██╔══██║██║   ██║██╔══╝  ██║  ██║╚═╝\033[0m   ▌
+                        ▐   \033[96m██║  ██║██║  ██║╚██████╗██║  ██╗    ██║ ╚═╝ ██║╚██████╔╝██████╔╝███████╗    ███████╗██║ ╚████║╚██████╔╝██║  ██║╚██████╔╝███████╗██████╔╝██╗\033[0m   ▌
+                        ▐   \033[96m╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝    ╚═╝     ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝    ╚══════╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═════╝ ╚═╝\033[0m   ▌
+                        ▐                                                                                                                                                 ▌
+                        ▐                                                                                                                                                 ▌
+                        ▐▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▌
+    """
 
 
 
-"""
+
     # sun
     birds = pygame.mixer.Sound("MUSIC/birds.mp3")
     birds.play()
@@ -1734,51 +1748,56 @@ def mission():
     time.sleep(2)
     clear()
 
-    #type
-    #dance = pygame.mixer.Sound("MUSIC/dance.mp3")
-    #dance.set_volume(0.8)
-    #dance.play()
+    #TYPING
+    typing = pygame.mixer.Sound("MUSIC/TYPING.mp3")
+    typing.set_volume(0.8)
+    typing.play()
     print(ani12)
-    time.sleep(0.4)
+    time.sleep(0.3)
     clear()
     print(ani13)
-    time.sleep(0.4)
+    time.sleep(0.3)
     clear()
     print(ani14)
-    time.sleep(0.4)
+    time.sleep(0.3)
     clear()
     print(ani15)
-    time.sleep(0.4)
+    time.sleep(0.3)
     clear()
     print(ani16)
-    time.sleep(0.4)
+    time.sleep(0.3)
     clear()
     print(ani17)
-    time.sleep(0.4)
+    time.sleep(0.3)
     clear()
     print(ani18)
-    time.sleep(0.4)
+    time.sleep(0.3)
     clear()
     print(ani19)
-    time.sleep(0.4)
+    time.sleep(0.3)
     clear()
     print(ani20)
-    time.sleep(0.4)
+    time.sleep(0.3)
     clear()
     print(ani21)
-    time.sleep(0.4)
+    time.sleep(0.3)
     clear()
     print(ani22)
-    time.sleep(0.4)
+    time.sleep(0.3)
     clear()
-    #dance.fadeout(1000)
+    typing.fadeout(1000)
 
     #hacker
+    gig = pygame.mixer.Sound("MUSIC/GIGGLING.wav")
+    gig.play()
     print(ani23)
-    time.sleep(0.4)
+    time.sleep(0.8)
     clear()
+    gig.fadeout(1000)
 
     #dance
+    dance = pygame.mixer.Sound("MUSIC/dance.mp3")
+    dance.play()
     print(ani24)
     time.sleep(0.4)
     clear()
@@ -1815,26 +1834,25 @@ def mission():
     print(ani27)
     time.sleep(0.4)
     clear()
-    print(ani26)
-    time.sleep(0.4)
-    clear()
-    print(ani27)
-    time.sleep(0.4)
-    clear()
+    dance.fadeout(1000)
+
 
     heart  = pygame.mixer.Sound("MUSIC/heart.mp3")
     whis = pygame.mixer.Sound("MUSIC/whis.mp3")
     heart.play()
     # heart and kiss
     print(ani28)
-    time.sleep(2)
+    time.sleep(4)
     clear()
     whis.play()
+    kiss = pygame.mixer.Sound("MUSIC/KISS.wav")
+    kiss.play()
     print(ani29)
     time.sleep(2)
     clear()
     heart.fadeout(1000)
     whis.fadeout(1000)
+    kiss.fadeout(1000)
 
     #overheating
     print(ani30)
@@ -1850,10 +1868,11 @@ def mission():
     bomb.fadeout(1000)
 
     # shock
-    shock = pygame.mixer.Sound("MUSIC/eh.mp3")
-    shock.play()
+    huh = pygame.mixer.Sound("MUSIC/HUHH.mp3")
+    huh.set_volume(1.0)
+    huh.play()
     print(ani32)
-    time.sleep(1.5)
+    time.sleep(1)
     clear()
 
     # sad
@@ -1861,21 +1880,14 @@ def mission():
     sad.set_volume(1.0)
     sad.play()
     print(ani33)
-    time.sleep(0.5)
+    time.sleep(2.1)
     sad.fadeout(1000)
+    huh.fadeout(1000)
+    clear( )
+    print("\n"*9)
+    print(ani34)
     input("\t\t\t\t\t\t\t\t\t\t[ Press enter to continue... ]")
     clear()
-"""
-'''
-print(Fore.BLACK + "Black")
-print(Fore.RED + "Red")
-print(Fore.GREEN + "Green")
-print(Fore.YELLOW + "Yellow")
-print(Fore.BLUE + "Blue")
-print(Fore.MAGENTA + "Magenta")
-print(Fore.CYAN + "Cyan")
-print(Fore.WHITE + "White")
-'''
 
 def main_menu(player, item_name=None):
     menu = f""" 

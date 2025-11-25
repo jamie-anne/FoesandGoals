@@ -2435,176 +2435,190 @@ def after_house_action():
     clear()
     print(file35)
     time.sleep(0.2)
+    clear()
     print(file36)
     time.sleep(0.2)
+    clear()
     print(file37)
+    time.sleep(0.2)
+    clear()
     print(file38)
     time.sleep(0.2)
+    clear()
     print(file39)
     time.sleep(0.2)
+    clear()
     print(file40)
     time.sleep(0.2)
+    clear()
     print(file41)
     time.sleep(0.2)
+    clear()
     print(file42)
     time.sleep(0.2)
+    clear()
     print(file43)
     time.sleep(0.2)
+    clear()
     print(file44)
     time.sleep(0.2)
+    clear()
     print(file45)
     time.sleep(0.2)
+    clear()
     print(file46)
     time.sleep(0.2)
+    clear()
     print(file47)
     time.sleep(0.2)
+    clear()
     print(file48)
     time.sleep(0.2)
+    clear()
     print(file49)
     time.sleep(0.2)
-
+    clear()
 
     print(file50)
     time.sleep(0.2)
-
+    clear()
     print(file51)
     time.sleep(0.2)
-
+    clear()
     print(file52)
     time.sleep(0.2)
-
+    clear()
     print(file53)
     time.sleep(0.2)
-
+    clear()
     print(file54)
     time.sleep(0.2)
-
+    clear()
     print(file55)
     time.sleep(0.2)
-
+    clear()
     print(file56)
     time.sleep(0.2)
-
+    clear()
     print(file57)
     time.sleep(0.2)
-
+    clear()
     print(file57)
     time.sleep(0.2)
-
+    clear()
     print(file58)
     time.sleep(0.2)
-
+    clear()
     print(file59)
     time.sleep(0.2)
-
+    clear()
     print(file60)
     time.sleep(0.2)
-
+    clear()
     print(file61)
     time.sleep(0.2)
-
+    clear()
     print(file62)
     time.sleep(0.2)
-
+    clear()
     print(file63)
     time.sleep(0.2)
-
+    clear()
     print(file64)
     time.sleep(0.2)
-
+    clear()
     print(file65)
     time.sleep(0.2)
-
+    clear()
     print(file66)
     time.sleep(0.2)
-
+    clear()
     print(file67)
     time.sleep(0.2)
-
+    clear()
     print(file68)
     time.sleep(0.2)
-
+    clear()
     print(file69)
     time.sleep(0.2)
-
+    clear()
     print(file70)
     time.sleep(0.2)
-
+    clear()
     print(file71)
     time.sleep(0.2)
-
+    clear()
     print(file72)
     time.sleep(0.2)
-
-    print(file71)
+    clear()
+    print(file73)
     time.sleep(0.2)
-
+    clear()
     print(file74)
     time.sleep(0.2)
-
+    clear()
     print(file75)
     time.sleep(0.2)
-
+    clear()
     print(file76)
     time.sleep(0.2)
-
+    clear()
     print(file77)
     time.sleep(0.2)
-
+    clear()
     print(file78)
     time.sleep(0.2)
-
+    clear()
     print(file79)
     time.sleep(0.2)
-
+    clear()
     print(file80)
     time.sleep(0.2)
-
+    clear()
     print(file81)
     time.sleep(0.2)
-
-
+    clear()
     # DANCE
     print(file82)
     time.sleep(0.4)
-
+    clear()
     print(file83)
     time.sleep(0.4)
-
+    clear()
     print(file82)
     time.sleep(0.4)
-
+    clear()
     print(file83)
     time.sleep(0.4)
-
+    clear()
     print(file84)
     time.sleep(0.4)
-
+    clear()
     print(file85)
     time.sleep(0.4)
-
+    clear()
     print(file84)
     time.sleep(0.4)
-
+    clear()
     print(file85)
     time.sleep(0.4)
-
+    clear()
     print(file86)
     time.sleep(0.4)
-
+    clear()
     print(file87)
     time.sleep(0.4)
-
+    clear()
     print(file86)
     time.sleep(0.4)
-
+    clear()
     print(file87)
     time.sleep(0.4)
-
+    clear()
 
     print(file88)
     time.sleep(0.3)
-
+    clear()
     print(file89)
     input("\t\t\t\t\t\t\t\t[ Press enter to continue... ]")
     clear()
