@@ -170,10 +170,6 @@ def update_unlocks():
         if shop_items[i-1]["bought"]:
             shop_items[i]["unlocked"] = True
 
-def unit_feature(player):
-    clear()
-
-
 def buy_item(player, item_name, price):
     if item_name in player['inventory']:
         text = """
@@ -242,9 +238,6 @@ def buy_item(player, item_name, price):
             shop_item["bought"] = True
             break
 
-    #if item_name.lower() == "unit":
-        #print("Your now")
-        #unit_feature(player)
 
 def main(player, main_menu_func):
     shop = pygame.mixer.Sound("MUSIC/shop_music.mp3")
