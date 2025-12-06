@@ -201,6 +201,8 @@ def buy_item(player, item_name, price):
         print(text)
         input("\t\t\t\t\t\t\t\t\t    [ Press Enter to continue... ]")
         print("\n" * 10)
+        button = pygame.mixer.Sound("MUSIC/CONTINUE.mp3")
+        button.play()
         return
 
     if player['coins'] < price:
@@ -225,6 +227,8 @@ def buy_item(player, item_name, price):
         print(broke)
         input("\t\t\t\t\t\t\t\t\t    [ Press Enter to continue... ]")
         print("\n" * 10)
+        button = pygame.mixer.Sound("MUSIC/CONTINUE.mp3")
+        button.play()
         return
 
     player['coins'] -= price
@@ -249,6 +253,8 @@ def main(player, main_menu_func):
         #print(f"\n\t\t\tYour Balance: {player['coins']} coins\n")
         print()
         choice = input("    Enter your choice (\033[96m1-9\033[0m or \033[96m0\033[0m to exit): ")
+        button = pygame.mixer.Sound("MUSIC/CONTINUE.mp3")
+        button.play()
 
         if choice == '0':
             clear()
@@ -296,6 +302,8 @@ def main(player, main_menu_func):
                 print(locked)
                 input("\t\t\t\t\t\t\t\t\t    [ Press Enter to continue... ]")
                 print("\n" * 10)
+                button = pygame.mixer.Sound("MUSIC/CONTINUE.mp3")
+                button.play()
                 continue
 
             buy_item(player, item["name"], item["cost"])
@@ -333,3 +341,5 @@ def main(player, main_menu_func):
             print(invalid)
             input("\t\t\t\t\t\t\t\t\t\t[ Press Enter to continue... ]")
             print("\n" * 10)
+            button = pygame.mixer.Sound("MUSIC/CONTINUE.mp3")
+            button.play()

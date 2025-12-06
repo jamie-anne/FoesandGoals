@@ -1,5 +1,5 @@
 import os
-
+import pygame
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -911,15 +911,9 @@ def show_bought_items(player):
         print(bought_art)
         print(f"\t\t\t\t\t\t\t\t\t\t\tYOU BOUGHT: {last_item}!\n")
         input("\t\t\t\t\t\t\t\t\t\t[ Press Enter to continue... ]")
+        button = pygame.mixer.Sound("MUSIC/CONTINUE.mp3")
+        button.play()
         clear()
 
 
-"""
-    print(f"\n\t\t\tYour latest HOUSE item: {last_item}\n")
-    art = get_house_ascii(last_item)
-    if art:
-        print(art)
-    else:
-        print("\n\t\t\t[ASCII not found for this item]\n")
-"""
 

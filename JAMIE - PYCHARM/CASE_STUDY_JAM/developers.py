@@ -61,5 +61,7 @@ def programmers(player):
     """
     print(hihi)
     input("\t\t\t\t\t\t\t\t\t\t[ Press enter to continue... ]")
+    button = pygame.mixer.Sound("MUSIC/CONTINUE.mp3")
+    button.play()
     clear()
     return  # Go back to main menu

@@ -70,6 +70,8 @@ def mission():
     print("")
     input("\t\t\t\t\t\t\t\t\t\t[ Press enter to continue... ]")
     jam_shop.stop()
+    button = pygame.mixer.Sound("MUSIC/CONTINUE.mp3")
+    button.play()
     clear()
 
     ani1 = """
@@ -1888,6 +1890,8 @@ def mission():
     print("\n"*9)
     print(ani34)
     input("\t\t\t\t\t\t\t\t\t\t[ Press enter to continue... ]")
+    button = pygame.mixer.Sound("MUSIC/CONTINUE.mp3")
+    button.play()
     clear()
 
 def main_menu(player, item_name=None):
@@ -1996,29 +2000,40 @@ def main_menu(player, item_name=None):
             print("\n" * 10)
             clear()
             print(menu)
+            button = pygame.mixer.Sound("MUSIC/CONTINUE.mp3")
+            button.play()
             continue
 
         choicee = int(choice)
 
         if choicee == 1:
             clear()
+            button = pygame.mixer.Sound("MUSIC/CONTINUE.mp3")
+            button.play()
             HOUSE.visit_house(player)
         elif choicee == 2:
             pygame.mixer.music.stop()
             clear()
-
+            button = pygame.mixer.Sound("MUSIC/CONTINUE.mp3")
+            button.play()
             ADVENTURE.main(player, main_menu)
 
         elif choicee == 3:
             pygame.mixer.music.stop()
             clear()
+            button = pygame.mixer.Sound("MUSIC/CONTINUE.mp3")
+            button.play()
             shop.main(player, main_menu)
 
         elif choicee == 4:
             clear()
+            button = pygame.mixer.Sound("MUSIC/CONTINUE.mp3")
+            button.play()
             developers.programmers(player)
         elif choicee == 5:
             pygame.mixer.music.stop()
+            button = pygame.mixer.Sound("MUSIC/CONTINUE.mp3")
+            button.play()
             clear()
             exit()
         else:
@@ -2056,6 +2071,8 @@ def main_menu(player, item_name=None):
             input("\t\t\t\t\t\t\t\t\t\t[ Press Enter to continue... ]")
             print("\n" * 10)
             clear()
+            button = pygame.mixer.Sound("MUSIC/CONTINUE.mp3")
+            button.play()
             print(menu)
             continue
 
