@@ -1,193 +1,184 @@
-import os
-import time
+import pygame
 import random
-import msvcrt
 
+pygame.init()
 
-def clear_screen():
-    os.system("cls")
+# =========================
+# WINDOW
+# =========================
 
+screen = pygame.display.set_mode((800, 500))
+pygame.display.set_caption("Foes & Goals - Slot Machine")
 
-# ==============================================================
-# WORLD 3 - SLOT ATTACK (TRIAL)
-# ==============================================================
+clock = pygame.time.Clock()
 
-def slot_attack():
+# =========================
+# COLORS
+# =========================
 
-    symbols = ["⚔️", "🔫", "💣"]
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GRAY = (200, 200, 200)
 
-    # Starting symbols
-    slot1 = random.choice(symbols)
-    slot2 = random.choice(symbols)
-    slot3 = random.choice(symbols)
+# =========================
+# EMOJI FONT
+# =========================
 
-    clear_screen()
+emoji_font = pygame.font.Font(
+    r"C:\Windows\Fonts\seguiemj.ttf",
+    80
+)
 
-    print("""
-==============================================================
-                     WORLD 3 - FIRE
-                      SLOT ATTACK
-==============================================================
+small_font = pygame.font.Font(None, 40)
 
-                    WILD ENEMY
+# =========================
+# SYMBOLS
+# =========================
 
-==============================================================
-""")
+symbols = ["🏹", "⚔️", "💣"]
 
-    print("""
-                  Press SPACE to spin!
+# Starting symbols
+reels = [
+    random.choice(symbols),
+    random.choice(symbols),
+    random.choice(symbols)
+]
 
-==============================================================
-""")
+# =========================
+# REEL POSITIONS
+# =========================
 
-    input("Press ENTER to start...")
+reel_x = [220, 360, 500]
+reel_y = 190
 
-    # ==========================================================
-    # SPINNING
-    # ==========================================================
+# =========================
+# SPINNING
+# =========================
 
-    start_time = time.time()
+spinning = False
 
-    while True:
+# Controls how quickly the symbols change
+last_change = 0
+change_delay = 100
 
-        # Randomize the symbols
-        slot1 = random.choice(symbols)
-        slot2 = random.choice(symbols)
-        slot3 = random.choice(symbols)
+running = True
 
-        clear_screen()
+while running:
 
-        print("""
-==============================================================
-                     WORLD 3 - FIRE
-                      SLOT ATTACK
-==============================================================
+    # =========================
+    # EVENTS
+    # =========================
 
-                    WILD ENEMY
+    for event in pygame.event.get():
 
-==============================================================
-""")
+        if event.type == pygame.QUIT:
+            running = False
 
-        print(f"""
-                    {slot1}     {slot2}     {slot3}
+        if event.type == pygame.KEYDOWN:
 
-==============================================================
+            # SPACE = START / STOP
+            if event.key == pygame.K_SPACE:
 
-                 Press SPACE to STOP!
+                # Start spinning
+                if not spinning:
 
-==============================================================
-""")
+                    spinning = True
 
-        # Check for SPACE
-        if msvcrt.kbhit():
+                # Stop spinning
+                else:
 
-            key = msvcrt.getch()
+                    spinning = False
 
-            if key == b" ":
-                break
+    # =========================
+    # UPDATE
+    # =========================
 
-        time.sleep(0.1)
+    current_time = pygame.time.get_ticks()
 
-    # ==========================================================
-    # RESULT
-    # ==========================================================
+    if spinning:
 
-    clear_screen()
+        if current_time - last_change >= change_delay:
 
-    print("""
-==============================================================
-                       RESULT!
-==============================================================
-""")
+            # Change all 3 symbols
+            for i in range(3):
+                reels[i] = random.choice(symbols)
 
-    print(f"""
-                    {slot1}     {slot2}     {slot3}
-""")
+            last_change = current_time
 
-    print("""
-==============================================================
-""")
+    # =========================
+    # DRAW
+    # =========================
 
-    # ==========================================================
-    # CHECK COMBINATION
-    # ==========================================================
+    screen.fill(WHITE)
 
-    if slot1 == slot2 == slot3:
+    # Title
+    title = small_font.render(
+        "FOES & GOALS",
+        True,
+        BLACK
+    )
 
-        if slot1 == "⚔️":
+    screen.blit(
+        title,
+        (320, 80)
+    )
 
-            print("""
-                    ⚔️ SWORD COMBO! ⚔️
+    # =========================
+    # DRAW REELS
+    # =========================
 
-                       GREAT HIT!
-                       DAMAGE: 40
-""")
+    for i in range(3):
 
-        elif slot1 == "🔫":
+        # Slot box
+        pygame.draw.rect(
+            screen,
+            GRAY,
+            (reel_x[i], reel_y, 100, 110)
+        )
 
-            print("""
-                    🔫 GUN COMBO! 🔫
+        # Emoji
+        emoji = emoji_font.render(
+            reels[i],
+            True,
+            BLACK
+        )
 
-                       BULLSEYE!
-                       DAMAGE: 50
-""")
+        screen.blit(
+            emoji,
+            (
+                reel_x[i] + 50 - emoji.get_width() // 2,
+                reel_y + 10
+            )
+        )
 
-        elif slot1 == "💣":
+    # =========================
+    # INSTRUCTION
+    # =========================
 
-            print("""
-                    💣 BOMB JACKPOT! 💣
+    if spinning:
 
-                       MASSIVE HIT!
-                       DAMAGE: 70
-""")
-
-    elif slot1 == slot2 or slot1 == slot3 or slot2 == slot3:
-
-        print("""
-                    DOUBLE COMBO!
-
-                       GOOD HIT!
-                       DAMAGE: 25
-""")
+        message = "PRESS SPACE TO STOP"
 
     else:
 
-        print("""
-                    NO COMBO!
+        message = "PRESS SPACE TO START"
 
-                       WEAK HIT!
-                       DAMAGE: 10
-""")
+    text = small_font.render(
+        message,
+        True,
+        BLACK
+    )
 
-    print("""
-==============================================================
-""")
+    screen.blit(
+        text,
+        (
+            290,
+            370
+        )
+    )
 
-    input("Press ENTER to try again...")
+    pygame.display.flip()
 
+    clock.tick(60)
 
-# ==============================================================
-# TEST
-# ==============================================================
-
-while True:
-
-    slot_attack()
-
-    clear_screen()
-
-    print("""
-==============================================================
-                    PLAY AGAIN?
-==============================================================
-
-                    [1] YES
-                    [2] NO
-
-==============================================================
-""")
-
-    choice = input("Choose: ")
-
-    if choice == "2":
-        break
+pygame.quit()

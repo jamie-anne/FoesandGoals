@@ -1,95 +1,301 @@
-import os
+import pygame
+import sys
 
-from adventure import adventure_menu
-from shop import shop_menu
-from iphone import iphone_menu
-from hearts import init_player_hearts
-
-
-def clear_screen():
-    os.system("cls")
+from adventure import adventure
+from shop import shop
 
 
-def show_title():
-    print("""
-==============================================================
-                      FOES & GOALS
-==============================================================
+pygame.init()
 
-                    AN ADVENTURE GAME
+WIDTH = 1510
+HEIGHT = 890
 
-==============================================================
-""")
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Foes & Goals")
+
+# --------------------------------------------------
+# GAME DATA
+# --------------------------------------------------
+
+game_data = {
+    "coins": 0,
+    "parts_bought": 0
+}
+
+# --------------------------------------------------
+# IMAGES
+# --------------------------------------------------
 
 
-def main_menu():
+opening_image = pygame.image.load("foes.png")
+second_image = pygame.image.load("foes.png")
 
-    player_data = {
-        "coins": 0,
+opening_image = pygame.transform.scale(opening_image, (WIDTH, HEIGHT))
+second_image = pygame.transform.scale(second_image, (WIDTH, HEIGHT))
 
-        "iphone_parts": {
-            "Battery": False,
-            "Screen": False,
-            "Camera": False,
-            "Frame": False
-        },
 
-        # ---- LEVEL PROGRESS ----
-        # Levels the player has cleared, per world.
-        "world1_cleared": set(),
-        "world2_cleared": set(),
-        "world3_cleared": set(),
+# --------------------------------------------------
+# OPENING SCREEN
+# --------------------------------------------------
 
-        # ---- CHEAT-CODE WORLD ACCESS ----
-        # Lets 2_world / 3_world open a world's gate directly,
-        # without needing the earlier world(s) actually cleared.
-        "world2_unlocked": False,
-        "world3_unlocked": False
-    }
+def opening_screen():
 
-    # ---- HEART SYSTEM (global - shared across every world) ----
-    init_player_hearts(player_data)
+    screen.blit(opening_image, (0, 0))
+    pygame.display.update()
+
+    waiting = True
+
+    while waiting:
+
+        for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if event.type == pygame.KEYDOWN:
+
+                if event.key == pygame.K_RETURN:
+                    waiting = False
+
+
+# --------------------------------------------------
+# SECOND SCREEN
+# --------------------------------------------------
+
+def second_screen():
+
+    screen.blit(second_image, (0, 0))
+    pygame.display.update()
+
+    waiting = True
+
+    while waiting:
+
+        for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if event.type == pygame.KEYDOWN:
+
+                if event.key == pygame.K_RETURN:
+                    waiting = False
+
+
+# --------------------------------------------------
+# VIEW PHONE
+# --------------------------------------------------
+
+def view_phone(screen, game_data):
+
+    WIDTH = 1280
+    HEIGHT = 720
+
+    # ------------------------------------------------
+    # LOAD ALL PHONE STAGES
+    # ------------------------------------------------
+
+    phone_images = []
+
+    for i in range(13):
+
+        image = pygame.image.load(
+            f"phone_stage_{i}.png"
+        ).convert_alpha()
+
+        image = pygame.transform.smoothscale(
+            image,
+            (WIDTH, HEIGHT)
+        )
+
+        phone_images.append(image)
+
+    # ------------------------------------------------
+    # FONT
+    # ------------------------------------------------
+
+    font = pygame.font.Font(None, 35)
+
+    running = True
+
+    while running:
+
+        # ------------------------------------------------
+        # CURRENT PHONE
+        # ------------------------------------------------
+
+        current_stage = game_data["parts_bought"]
+
+        screen.blit(
+            phone_images[current_stage],
+            (0, 0)
+        )
+
+        # ------------------------------------------------
+        # COINS
+        # ------------------------------------------------
+
+        coins_text = font.render(
+            f"Coins: {game_data['coins']}",
+            True,
+            (255, 255, 255)
+        )
+
+        screen.blit(
+            coins_text,
+            (30, 30)
+        )
+
+        # ------------------------------------------------
+        # PARTS COMPLETED
+        # ------------------------------------------------
+
+        parts_text = font.render(
+            f"Parts Completed: {game_data['parts_bought']}/12",
+            True,
+            (255, 255, 255)
+        )
+
+        screen.blit(
+            parts_text,
+            (30, 70)
+        )
+
+        # ------------------------------------------------
+        # BACK INSTRUCTION
+        # ------------------------------------------------
+
+        back_text = font.render(
+            "Press ESC to return",
+            True,
+            (255, 255, 255)
+        )
+
+        screen.blit(
+            back_text,
+            (1000, 30)
+        )
+
+        pygame.display.update()
+
+        # ------------------------------------------------
+        # EVENTS
+        # ------------------------------------------------
+
+        for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+
+                pygame.quit()
+                sys.exit()
+
+            if event.type == pygame.KEYDOWN:
+
+                if event.key == pygame.K_ESCAPE:
+
+                    running = False
+
+
+# --------------------------------------------------
+# DEVELOPERS
+# --------------------------------------------------
+
+def developers():
+
+    font = pygame.font.Font(None, 60)
+
+    running = True
+
+    while running:
+
+        screen.fill((0, 0, 0))
+
+        text = font.render("DEVELOPERS", True, (255, 255, 255))
+        screen.blit(text, (480, 300))
+
+        pygame.display.update()
+
+        for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if event.type == pygame.KEYDOWN:
+
+                if event.key == pygame.K_ESCAPE:
+                    running = False
+
+
+# --------------------------------------------------
+# ADVENTURE MENU
+# --------------------------------------------------
+
+def adventure_menu():
+
+    font = pygame.font.Font(None, 50)
 
     while True:
 
-        clear_screen()
-        show_title()
+        screen.fill((0, 0, 0))
 
-        print(f"Coins: {player_data['coins']}\n")
+        title = font.render("FOES & GOALS", True, (255, 255, 255))
+        screen.blit(title, (500, 80))
 
-        print("[1] ADVENTURE")
-        print("[2] SHOP")
-        print("[3] IPHONE 17")
-        print("[4] EXIT GAME")
+        coins = font.render(
+            f"Coins: {game_data['coins']}",
+            True,
+            (255, 255, 0)
+        )
 
-        print("\n==============================================================")
+        screen.blit(coins, (30, 30))
 
-        choice = input("Enter your choice: ")
+        options = [
+            "1. Adventure",
+            "2. Shop",
+            "3. View Phone",
+            "4. Developers",
+            "5. Exit Game"
+        ]
 
-        if choice == "1":
-            adventure_menu(player_data)
+        y = 200
 
-        elif choice == "2":
-            shop_menu(player_data)
+        for option in options:
 
-        elif choice == "3":
-            iphone_menu(player_data)
+            text = font.render(option, True, (255, 255, 255))
+            screen.blit(text, (450, y))
 
-        elif choice == "4":
-            clear_screen()
+            y += 70
 
-            print("""
-==============================================================
-                  THANK YOU FOR PLAYING!
-                       FOES & GOALS
-==============================================================
-""")
-            break
+        pygame.display.update()
 
-        else:
-            print("\nInvalid choice!")
-            input("Press ENTER to continue...")
+        for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if event.type == pygame.KEYDOWN:
+
+                if event.key == pygame.K_1:
+                    adventure(screen, game_data)
+                elif event.key == pygame.K_2:
+                    shop(screen, game_data)
+                elif event.key == pygame.K_3:
+                    view_phone(screen, game_data)
+                elif event.key == pygame.K_4:
+                    developers()
+                elif event.key == pygame.K_5:
+                    pygame.quit()
+                    sys.exit()
 
 
-if __name__ == "__main__":
-    main_menu()
+# --------------------------------------------------
+# START GAME
+# --------------------------------------------------
+
+opening_screen()
+second_screen()
+adventure_menu()
