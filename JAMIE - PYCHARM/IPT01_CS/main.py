@@ -18,7 +18,7 @@ pygame.display.set_caption("Foes & Goals")
 # --------------------------------------------------
 
 game_data = {
-    "coins": 0,
+    "coins": 500,
     "parts_bought": 0
 }
 
@@ -27,8 +27,8 @@ game_data = {
 # --------------------------------------------------
 
 
-opening_image = pygame.image.load("foes.png")
-second_image = pygame.image.load("foes.png")
+opening_image = pygame.image.load("pictures/foes.png")
+second_image = pygame.image.load("pictures/foes.png")
 
 opening_image = pygame.transform.scale(opening_image, (WIDTH, HEIGHT))
 second_image = pygame.transform.scale(second_image, (WIDTH, HEIGHT))
@@ -89,149 +89,74 @@ def second_screen():
 # --------------------------------------------------
 
 def view_phone(screen, game_data):
-
-    WIDTH = 1280
-    HEIGHT = 720
-
-    # ------------------------------------------------
-    # LOAD ALL PHONE STAGES
-    # ------------------------------------------------
+    WIDTH = 1510
+    HEIGHT = 890
 
     phone_images = []
-
     for i in range(13):
-
         image = pygame.image.load(
             f"phone_stage_{i}.png"
         ).convert_alpha()
-
         image = pygame.transform.smoothscale(
             image,
             (WIDTH, HEIGHT)
         )
-
         phone_images.append(image)
 
-    # ------------------------------------------------
-    # FONT
-    # ------------------------------------------------
-
     font = pygame.font.Font(None, 35)
-
     running = True
-
     while running:
-
-        # ------------------------------------------------
-        # CURRENT PHONE
-        # ------------------------------------------------
-
         current_stage = game_data["parts_bought"]
-
         screen.blit(
             phone_images[current_stage],
             (0, 0)
         )
-
-        # ------------------------------------------------
-        # COINS
-        # ------------------------------------------------
-
-        coins_text = font.render(
-            f"Coins: {game_data['coins']}",
-            True,
-            (255, 255, 255)
-        )
-
-        screen.blit(
-            coins_text,
-            (30, 30)
-        )
-
-        # ------------------------------------------------
-        # PARTS COMPLETED
-        # ------------------------------------------------
 
         parts_text = font.render(
             f"Parts Completed: {game_data['parts_bought']}/12",
             True,
             (255, 255, 255)
         )
-
         screen.blit(
             parts_text,
             (30, 70)
         )
-
-        # ------------------------------------------------
-        # BACK INSTRUCTION
-        # ------------------------------------------------
 
         back_text = font.render(
             "Press ESC to return",
             True,
             (255, 255, 255)
         )
-
         screen.blit(
             back_text,
-            (1000, 30)
+            (1100, 30)
         )
 
         pygame.display.update()
 
-        # ------------------------------------------------
-        # EVENTS
-        # ------------------------------------------------
-
         for event in pygame.event.get():
-
             if event.type == pygame.QUIT:
-
                 pygame.quit()
                 sys.exit()
-
             if event.type == pygame.KEYDOWN:
-
                 if event.key == pygame.K_ESCAPE:
-
                     running = False
-
-
-# --------------------------------------------------
-# DEVELOPERS
-# --------------------------------------------------
 
 def developers():
-
     font = pygame.font.Font(None, 60)
-
     running = True
-
     while running:
-
         screen.fill((0, 0, 0))
-
         text = font.render("DEVELOPERS", True, (255, 255, 255))
         screen.blit(text, (480, 300))
-
         pygame.display.update()
-
         for event in pygame.event.get():
-
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-
             if event.type == pygame.KEYDOWN:
-
                 if event.key == pygame.K_ESCAPE:
                     running = False
-
-
-# --------------------------------------------------
-# ADVENTURE MENU
-# --------------------------------------------------
 
 def adventure_menu():
 

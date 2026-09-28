@@ -8,7 +8,7 @@ from world3 import world3
 
 def adventure(screen, game_data):
 
-    world_image = pygame.image.load("world_selection.png")
+    world_image = pygame.image.load("pictures/world_selection.png")
     world_image = pygame.transform.scale(world_image, (1510, 890))
 
     running = True
