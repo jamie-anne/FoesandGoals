@@ -14,7 +14,11 @@ pygame.display.set_caption("Foes & Goals")
 
 game_data = {
     "coins": 500,
-    "parts_bought": 0
+    "parts_bought": 0,
+
+    "world1_unlocked": 1,
+    "world2_unlocked": 1,
+    "world3_unlocked": 1
 }
 
 opening_image = pygame.image.load("pictures/foes.png")
@@ -57,7 +61,7 @@ def view_phone(screen, game_data):
     phone_images = []
     for i in range(13):
         image = pygame.image.load(
-            f"phone_stage_{i}.png"
+            f"pictures/phone_stage_{i}.png"
         ).convert_alpha()
         image = pygame.transform.smoothscale(
             image,

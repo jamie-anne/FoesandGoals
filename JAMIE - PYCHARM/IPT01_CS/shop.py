@@ -26,7 +26,7 @@ def shop(screen, game_data):
     part_images = []
     for i in range(1, 13):
         image = pygame.image.load(
-            f"shop_part{i}.png"
+            f"pictures/shop_part{i}.png"
         ).convert_alpha()
         part_images.append(image)
     # ------------------------------------------------

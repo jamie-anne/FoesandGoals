@@ -14,72 +14,59 @@ HEIGHT = 890
 
 # Level settings
 LEVEL_DATA = {
-    1: {
-        "hp": 100,
-        "bow": (15, 20),
-        "sword": (20, 30),
-        "bomb": (30, 35),
-        "enemy_attack": (15, 35),
-        "coins": (90, 100),
-        "hospital": 30
-    },
+    1: {"hp": 100, "two_combi": (20, 30), "three_combi": (25, 30), "enemy_attack": (20, 30), "coins": 100, "hospital": 30},
+    2: {"hp": 120, "two_combi": (30, 40), "three_combi": (35, 40), "enemy_attack": (30, 40), "coins": 110, "hospital": 30},
+    3: {"hp": 140, "two_combi": (40, 50), "three_combi": (45, 50), "enemy_attack": (40, 50), "coins":  120, "hospital": 30},
+    4: {"hp": 160, "two_combi": (50, 60), "three_combi": (55, 60), "enemy_attack": (50, 60), "coins": 130, "hospital": 30},
+    5: {"hp": 180, "two_combi": (60, 70), "three_combi": (65, 70), "enemy_attack": (60, 70), "coins": 150, "hospital": 40}
+}
 
-    2: {
-        "hp": 120,
-        "bow": (15, 20),
-        "sword": (20, 30),
-        "bomb": (30, 35),
-        "enemy_attack": (15, 35),
-        "coins": (100, 110),
-        "hospital": 40
-    },
+# =========================================================
+# WORLD 1 LOCATIONS
+# Weather is checked for the location of the selected level.
+# Coordinates are representative points for the locations.
+# =========================================================
 
-    3: {
-        "hp": 150,
-        "bow": (20, 30),
-        "sword": (30, 40),
-        "bomb": (40, 50),
-        "enemy_attack": (30, 50),
-        "coins": (110, 120),
-        "hospital": 40
-    },
-
-    4: {
-        "hp": 170,
-        "bow": (30, 40),
-        "sword": (40, 50),
-        "bomb": (50, 60),
-        "enemy_attack": (40, 60),
-        "coins": (120, 130),
-        "hospital": 50
-    },
-
-    5: {
-        "hp": 200,
-        "bow": (40, 50),
-        "sword": (50, 60),
-        "bomb": (60, 70),
-        "enemy_attack": (50, 70),
-        "coins": (130, 150),
-        "hospital": 60
-    }
+LOCATION_DATA = {
+    1: {"name": "Intramuros", "latitude": 14.5896, "longitude": 120.9747},
+    2: {"name": "Rizal Park", "latitude": 14.5827, "longitude": 120.9793},
+    3: {"name": "Tagaytay City", "latitude": 14.1153, "longitude": 120.9621},
+    4: {"name": "Gapan City", "latitude": 15.3077, "longitude": 120.9469},
+    5: {"name": "Dingalan", "latitude": 15.3897, "longitude": 121.3929}
 }
 
 
 # =========================================================
-# POKEMON LIST FOR WORLD 1
+# WEATHER-BASED POKEMON POOLS
+# Open-Meteo returns WMO weather codes.
 # =========================================================
 
-POKEMON_LIST = [
-    "bulbasaur",
-    "oddish",
-    "bellsprout",
-    "paras",
-    "caterpie",
-    "weedle",
-    "pidgey",
-    "rattata"
-]
+WEATHER_POKEMON_POOLS = {
+    "clear": [
+        "charmander", "growlithe", "vulpix",
+        "sandshrew", "geodude", "bellsprout", "oddish"
+    ],
+    "cloudy": [
+        "pidgey", "spearow", "rattata",
+        "eevee", "meowth", "farfetchd", "venonat"
+    ],
+    "fog": [
+        "gastly", "drowzee", "abra",
+        "zubat", "haunter", "misdreavus"
+    ],
+    "rain": [
+        "squirtle", "psyduck", "poliwag",
+        "oddish", "bellsprout", "lotad", "wingull"
+    ],
+    "storm": [
+        "pikachu", "magnemite", "voltorb",
+        "electabuzz", "plusle", "minun"
+    ],
+    "snow": [
+        "seel", "swinub", "spheal",
+        "snorunt", "snover", "sneasel"
+    ]
+}
 
 
 # =========================================================
@@ -101,17 +88,83 @@ def load_image(filename, size=None):
 
 
 # =========================================================
-# GET POKEMON FROM POKEAPI
+# GET CURRENT WEATHER FROM OPEN-METEO
 # =========================================================
 
-def get_pokemon():
+def get_weather_category(level):
 
-    pokemon_name = random.choice(POKEMON_LIST)
+    location = LOCATION_DATA[level]
+
+    try:
+        url = "https://api.open-meteo.com/v1/forecast"
+
+        params = {
+            "latitude": location["latitude"],
+            "longitude": location["longitude"],
+            "current": "weather_code",
+            "timezone": "auto"
+        }
+
+        response = requests.get(
+            url,
+            params=params,
+            timeout=5
+        )
+
+        if response.status_code != 200:
+            print("Open-Meteo error:", response.status_code)
+            return "clear"
+
+        data = response.json()
+        weather_code = data["current"]["weather_code"]
+
+        # WMO weather-code groups from Open-Meteo.
+        if weather_code in [0, 1]:
+            category = "clear"
+        elif weather_code in [2, 3]:
+            category = "cloudy"
+        elif weather_code in [45, 48]:
+            category = "fog"
+        elif weather_code in [51, 53, 55, 56, 57, 61, 63, 65,
+                              66, 67, 80, 81, 82]:
+            category = "rain"
+        elif weather_code in [95, 96, 97, 99]:
+            category = "storm"
+        elif weather_code in [71, 73, 75, 77, 85, 86]:
+            category = "snow"
+        else:
+            category = "clear"
+
+        print(
+            f"Weather at {location['name']}: "
+            f"WMO {weather_code} -> {category}"
+        )
+
+        return category
+
+    except Exception as error:
+        print("Open-Meteo error:", error)
+        print("Using clear-weather Pokémon pool as fallback.")
+        return "clear"
+
+
+# =========================================================
+# GET POKEMON FROM WEATHER + POKEAPI
+# =========================================================
+
+def get_pokemon(level):
+
+    weather_category = get_weather_category(level)
+    pokemon_pool = WEATHER_POKEMON_POOLS[weather_category]
+    pokemon_name = random.choice(pokemon_pool)
 
     try:
         url = f"https://pokeapi.co/api/v2/pokemon/{pokemon_name}"
 
-        response = requests.get(url, timeout=5)
+        response = requests.get(
+            url,
+            timeout=5
+        )
 
         if response.status_code != 200:
             return None, pokemon_name.capitalize()
@@ -141,7 +194,6 @@ def get_pokemon():
 
     except Exception as error:
         print("PokéAPI error:", error)
-
         return None, pokemon_name.capitalize()
 
 
@@ -155,138 +207,87 @@ def draw_text(
     size,
     x,
     y,
-    color=(255, 255, 255)
+    color=(255, 255, 255),
+    center=False
 ):
 
     font = pygame.font.Font(None, size)
 
     surface = font.render(
-        text,
+        str(text),
         True,
         color
     )
 
-    screen.blit(
-        surface,
-        (x, y)
-    )
+    if center:
+        rect = surface.get_rect(center=(x, y))
+        screen.blit(surface, rect)
+    else:
+        screen.blit(surface, (x, y))
 
 
 # =========================================================
 # LEVEL SELECTION
 # =========================================================
 
-def level_selection(screen, max_unlocked):
-    image = load_image(
-        "pictures/level_selection.png",
-        (WIDTH, HEIGHT)
-    )
+def level_selection(screen, game_data, progress_key, code_prefix):
+    image = load_image("pictures/level_selection.png", (WIDTH, HEIGHT))
+    cheat_input = ""
 
     while True:
+        max_unlocked = game_data.get(progress_key, 1)
 
         if image:
-            screen.blit(
-                image,
-                (0, 0)
-            )
-
+            screen.blit(image, (0, 0))
         else:
-            screen.fill(
-                (30, 30, 30)
-            )
+            screen.fill((30, 30, 30))
+            draw_text(screen, "LEVEL SELECTION", 60, WIDTH // 2, 150, center=True)
+            draw_text(screen, "1     2     3     4     5", 50, WIDTH // 2, 300, center=True)
 
-            draw_text(
-                screen,
-                "LEVEL SELECTION",
-                60,
-                560,
-                150
-            )
-
-            draw_text(
-                screen,
-                "1  2  3  4  5",
-                50,
-                600,
-                300
-            )
-
-        # ---------------------------------------------
-        # SHOW LOCKED LEVELS
-        # ---------------------------------------------
-
-        for level in range(1, 6):
-
-            if level > max_unlocked:
-                draw_text(
-                    screen,
-                    "LOCKED",
-                    25,
-                    550 + ((level - 1) * 110),
-                    470,
-                    (255, 80, 80)
-                )
-
-        # ---------------------------------------------
-        # INFORMATION
-        # ---------------------------------------------
-
-        draw_text(
-            screen,
-            f"Unlocked Levels: 1 - {max_unlocked}",
-            30,
-            550,
-            750,
-            (255, 215, 0)
-        )
-
+        draw_text(screen, f"Unlocked Levels: 1 - {max_unlocked}", 32,
+                  WIDTH // 2, HEIGHT - 45, (255, 215, 0), True)
         pygame.display.update()
 
-        # ---------------------------------------------
-        # EVENTS
-        # ---------------------------------------------
-
         for event in pygame.event.get():
-
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
 
-            if event.type == pygame.KEYDOWN:
+            if event.type != pygame.KEYDOWN:
+                continue
 
-                # LEVEL 1
-                if event.key == pygame.K_1:
+            if event.key == pygame.K_ESCAPE:
+                return None
 
-                    if max_unlocked >= 1:
-                        return 1
+            if event.key == pygame.K_BACKSPACE:
+                cheat_input = cheat_input[:-1]
+                continue
 
-                # LEVEL 2
-                elif event.key == pygame.K_2:
+            if event.key == pygame.K_RETURN:
+                code = cheat_input.lower().strip()
+                if code_prefix and code.startswith(code_prefix):
+                    suffix = code[len(code_prefix):]
+                    if suffix in ("1", "2", "3", "4", "5"):
+                        # "Cleared level N" -> unlock level N + 1 (max 5)
+                        requested_level = min(int(suffix) + 1, 5)
+                        game_data[progress_key] = max(
+                            game_data.get(progress_key, 1), requested_level
+                        )
+                cheat_input = ""
+                continue
 
-                    if max_unlocked >= 2:
-                        return 2
+            character = event.unicode.lower()
+            if character.isalnum() and len(character) == 1:
+                if cheat_input or character.isalpha():
+                    cheat_input += character
+                    continue
 
-                # LEVEL 3
-                elif event.key == pygame.K_3:
-
-                    if max_unlocked >= 3:
-                        return 3
-
-                # LEVEL 4
-                elif event.key == pygame.K_4:
-
-                    if max_unlocked >= 4:
-                        return 4
-
-                # LEVEL 5
-                elif event.key == pygame.K_5:
-
-                    if max_unlocked >= 5:
-                        return 5
-
-                elif event.key == pygame.K_ESCAPE:
-
-                    return None
+            for key, level in [
+                (pygame.K_1, 1), (pygame.K_2, 2), (pygame.K_3, 3),
+                (pygame.K_4, 4), (pygame.K_5, 5),
+            ]:
+                if event.key == key and level <= max_unlocked:
+                    return level
 
 
 # =========================================================
@@ -407,62 +408,27 @@ def battle_interface(
     pokemon_name
 ):
 
-    background = load_image(
-        "pictures/places_1.png",
-        (WIDTH, HEIGHT)
-    )
-
-    if background:
-        screen.blit(
-            background,
-            (0, 0)
-        )
-
-    else:
-        screen.fill(
-            (40, 70, 40)
-        )
+    # Light gray background like World 2.
+    screen.fill((235, 235, 235))
 
     # -----------------------------------------------------
-    # DARK SLANTED UI AREA
+    # ENEMY INFORMATION - TOP RIGHT
     # -----------------------------------------------------
-
-    pygame.draw.polygon(
-        screen,
-        (20, 20, 25),
-        [
-            (0, 620),
-            (1510, 570),
-            (1510, 890),
-            (0, 890)
-        ]
-    )
-
-    # -----------------------------------------------------
-    # ENEMY
-    # -----------------------------------------------------
-
-    if pokemon_image:
-
-        screen.blit(
-            pokemon_image,
-            (1050, 100)
-        )
 
     draw_text(
         screen,
-        pokemon_name,
-        40,
-        1080,
-        40
+        f"{pokemon_name} - LEVEL {level}",
+        38,
+        1050,
+        55,
+        (30, 30, 30)
     )
 
-    # Enemy HP
     draw_health_bar(
         screen,
-        1040,
-        85,
-        350,
+        1050,
+        105,
+        330,
         30,
         enemy_hp,
         max_enemy_hp
@@ -470,52 +436,82 @@ def battle_interface(
 
     draw_text(
         screen,
-        f"{enemy_hp}/{max_enemy_hp}",
-        25,
-        1400,
-        88
+        f"HP: {enemy_hp}/{max_enemy_hp}",
+        30,
+        1050,
+        145,
+        (30, 30, 30)
     )
 
     # -----------------------------------------------------
-    # PLAYER HP
+    # ENEMY POKEMON - RIGHT SIDE
+    # -----------------------------------------------------
+
+    if pokemon_image:
+
+        screen.blit(
+            pokemon_image,
+            (1030, 180)
+        )
+
+    # -----------------------------------------------------
+    # VS - CENTER
+    # -----------------------------------------------------
+
+    draw_text(
+        screen,
+        "VS",
+        70,
+        WIDTH // 2,
+        390,
+        (30, 30, 30),
+        center=True
+    )
+
+    # -----------------------------------------------------
+    # PLAYER INFORMATION - BOTTOM LEFT
     # -----------------------------------------------------
 
     draw_text(
         screen,
         "PLAYER",
-        40,
-        80,
-        650
+        42,
+        100,
+        610,
+        (30, 30, 30)
     )
 
     draw_health_bar(
         screen,
-        80,
-        700,
-        350,
-        35,
+        100,
+        670,
+        330,
+        30,
         player_hp,
-        LEVEL_DATA[level]["hp"]
+        max_enemy_hp
     )
 
     draw_text(
         screen,
-        f"{player_hp}/{LEVEL_DATA[level]['hp']}",
-        28,
-        440,
-        703
+        f"HP: {player_hp}/{max_enemy_hp}",
+        30,
+        100,
+        710,
+        (30, 30, 30)
     )
 
     # -----------------------------------------------------
-    # LEVEL
+    # WORLD LABEL - BOTTOM CENTER
     # -----------------------------------------------------
 
     draw_text(
         screen,
-        f"LEVEL {level}",
-        35,
-        80,
-        60
+        "WORLD 1",
+        32,
+        WIDTH // 2,
+        830,
+        (30, 30, 30),
+        center=True
     )
 
     pygame.display.update()
@@ -724,20 +720,27 @@ def slot_machine(screen):
                     else:
 
                         spinning = False
-                        # Middle reel determines attack
-                        selected_symbol = reels[1]
-                        if selected_symbol == "🏹":
-                            selected_attack = "BOW"
-                        elif selected_symbol == "⚔️":
-                            selected_attack = "SWORD"
-                        elif selected_symbol == "💣":
-                            selected_attack = "BOMB"
+                        # Determine the attack from the slot-machine combination.
+                        # 3 matching symbols = 3 combination
+                        # 2 matching symbols = 2 combination
+                        # No matching pair = 0 damage
+                        if reels[0] == reels[1] == reels[2]:
+                            combination = 3
+                        elif (
+                            reels[0] == reels[1]
+                            or reels[0] == reels[2]
+                            or reels[1] == reels[2]
+                        ):
+                            combination = 2
+                        else:
+                            combination = 0
+
                         # Freeze the current slot machine result
                         # for 2 seconds
                         pygame.display.flip()
                         pygame.time.delay(2000)
 
-                        return selected_attack
+                        return combination
 
                 elif event.key == pygame.K_ESCAPE:
 
@@ -956,39 +959,56 @@ def player_attack_screen(
             return
 
 
-# =========================================================
-# ENEMY ATTACK POINTS
-# DISPLAY FOR 2 SECONDS
-# =========================================================
 
-def enemy_attack_screen(
-    screen,
-    damage
-):
+def enemy_attack_screen(screen, damage, missed=False):
 
     start_time = pygame.time.get_ticks()
 
     while True:
 
-        screen.fill(
-            (40, 15, 15)
-        )
+        if missed:
+            screen.fill((30, 30, 50))
 
-        draw_text(
-            screen,
-            "ENEMY ATTACK!",
-            70,
-            550,
-            300
-        )
+            draw_text(
+                screen,
+                "ENEMY MISSED!",
+                70,
+                WIDTH // 2,
+                300,
+                (255, 215, 0),
+                center=True
+            )
 
-        draw_text(
-            screen,
-            f"-{damage} HP",
-            70,
-            620,
-            420
-        )
+            draw_text(
+                screen,
+                "You avoided the attack!",
+                45,
+                WIDTH // 2,
+                420,
+                (255, 255, 255),
+                center=True
+            )
+
+        else:
+            screen.fill((40, 15, 15))
+
+            draw_text(
+                screen,
+                "ENEMY ATTACK!",
+                70,
+                WIDTH // 2,
+                300,
+                center=True
+            )
+
+            draw_text(
+                screen,
+                f"-{damage} HP",
+                70,
+                WIDTH // 2,
+                420,
+                center=True
+            )
 
         pygame.display.update()
 
@@ -999,13 +1019,12 @@ def enemy_attack_screen(
                 sys.exit()
 
             if event.type == pygame.KEYDOWN:
-
                 if event.key == pygame.K_ESCAPE:
                     return
 
-        # 2 seconds
         if pygame.time.get_ticks() - start_time >= 2000:
             return
+
 
 
 # =========================================================
@@ -1173,7 +1192,7 @@ def start_battle(
 
     enemy_hp = stats["hp"]
 
-    pokemon_image, pokemon_name = get_pokemon()
+    pokemon_image, pokemon_name = get_pokemon(level)
 
     # =====================================================
     # 3. ENEMY INTRO
@@ -1229,14 +1248,12 @@ def start_battle(
         # 6. CALCULATE PLAYER DAMAGE
         # =================================================
 
-        damage_range = stats[
-            attack.lower()
-        ]
-
-        damage = random.randint(
-            damage_range[0],
-            damage_range[1]
-        )
+        if attack == 3:
+            damage = random.randint(stats["three_combi"][0], stats["three_combi"][1])
+        elif attack == 2:
+            damage = random.randint(stats["two_combi"][0], stats["two_combi"][1])
+        else:
+            damage = 0
 
         enemy_hp -= damage
 
@@ -1270,10 +1287,7 @@ def start_battle(
 
         if enemy_hp <= 0:
 
-            coins = random.randint(
-                stats["coins"][0],
-                stats["coins"][1]
-            )
+            coins = stats["coins"]
 
             game_data["coins"] += coins
 
@@ -1305,11 +1319,19 @@ def start_battle(
         # 11. ENEMY ATTACK
         # =================================================
 
-        enemy_damage = random.randint(
-            stats["enemy_attack"][0],
-            stats["enemy_attack"][1]
-        )
+        # 30% chance that the enemy misses
+        if random.random() < 0.30:
+            enemy_damage = 0
+            enemy_missed = True
 
+        else:
+            enemy_damage = random.randint(
+                stats["enemy_attack"][0],
+                stats["enemy_attack"][1]
+            )
+            enemy_missed = False
+
+        # Apply damage only if the enemy hits
         player_hp -= enemy_damage
 
         if player_hp < 0:
@@ -1322,7 +1344,8 @@ def start_battle(
 
         enemy_attack_screen(
             screen,
-            enemy_damage
+            enemy_damage,
+            enemy_missed
         )
 
         # =================================================
@@ -1371,10 +1394,7 @@ def world1(
         # LEVEL SELECTION
         # ---------------------------------------------
 
-        level = level_selection(
-            screen,
-            game_data["world1_unlocked"]
-        )
+        level = level_selection(screen, game_data, "world1_unlocked", "mac")
 
         if level is None:
             return
@@ -1410,23 +1430,4 @@ def world1(
 
                     game_data["world1_unlocked"] += 1
 
-        # =================================================
-        # 2. INSTRUCTIONS
-        # Press ENTER to continue
-        # =================================================
-
-        continue_game = instruction_screen(screen)
-
-        if not continue_game:
-            return
-
-        # =================================================
-        # 3. START BATTLE
-        # =================================================
-
-        start_battle(
-            screen,
-            level,
-            game_data
-        )
-
+# End of World 1 module.

@@ -9,26 +9,71 @@ WIDTH = 1510
 HEIGHT = 890
 
 LEVEL_DATA = {
-    1: {'hp': 150, 'characters': 5, 'memorize_time': 5,
-        'damage': {5: 40, 4: 30, 3: 20, 2: 10, 1: 5, 0: 0},
-        'enemy_attack': (20, 40), 'coins': 200},
-    2: {'hp': 160, 'characters': 6, 'memorize_time': 6,
-        'damage': {6: 40, 5: 30, 4: 20, 3: 20, 2: 10, 1: 10, 0: 0},
-        'enemy_attack': (20, 40), 'coins': 220},
-    3: {'hp': 170, 'characters': 7, 'memorize_time': 7,
-        'damage': {7: 50, 6: 45, 5: 40, 4: 35, 3: 30, 2: 20, 1: 20, 0: 0},
-        'enemy_attack': (35, 50), 'coins': 240},
-    4: {'hp': 180, 'characters': 8, 'memorize_time': 8,
-        'damage': {8: 70, 7: 65, 6: 60, 5: 50, 4: 45, 3: 40, 2: 35, 1: 30, 0: 0},
-        'enemy_attack': (40, 70), 'coins': 260},
-    5: {'hp': 190, 'characters': 8, 'memorize_time': 7,
-        'damage': {8: 75, 7: 65, 6: 60, 5: 50, 4: 45, 3: 40, 2: 35, 1: 30, 0: 0},
-        'enemy_attack': (45, 75), 'coins': 300}
+    1: {'hp': 160, 'characters': 5, 'memorize_time': 5, 'damage': {5: 40, 4: 30, 3: 20, 2: 10, 1: 5, 0: 0},'enemy_attack': (20, 40), 'coins': 200, 'hospital':40},
+    2: {'hp': 170, 'characters': 6, 'memorize_time': 6,'damage': {6: 40, 5: 30, 4: 20, 3: 20, 2: 10, 1: 10, 0: 0},'enemy_attack': (30, 40), 'coins': 220, 'hospital':40},
+    3: {'hp': 180, 'characters': 7, 'memorize_time': 7,'damage': {7: 50, 6: 45, 5: 40, 4: 35, 3: 30, 2: 20, 1: 20, 0: 0},'enemy_attack': (40, 50), 'coins': 240, 'hospital':40},
+    4: {'hp': 190, 'characters': 8, 'memorize_time': 8,'damage': {8: 70, 7: 65, 6: 60, 5: 50, 4: 45, 3: 40, 2: 35, 1: 30, 0: 0},'enemy_attack': (60, 70), 'coins': 260, 'hospital':40},
+    5: {'hp': 200, 'characters': 8, 'memorize_time': 7,'damage': {8: 75, 7: 65, 6: 60, 5: 50, 4: 45, 3: 40, 2: 35, 1: 30, 0: 0},'enemy_attack': (60, 75), 'coins': 300, 'hospital':50}
 }
 
-# World 2 water/ice-themed enemies. Change this list later if desired.
-POKEMON_LIST = ['squirtle', 'psyduck', 'slowpoke', 'seel', 'shellder',
-                'lapras', 'spheal', 'snorunt', 'swinub', 'wingull']
+# World 2 locations (levels 1-5). Coordinates are used for live weather.
+LOCATION_DATA = {
+    1: {"name": "Baguio City", "latitude": 16.4023, "longitude": 120.5960},
+    2: {"name": "Vigan, Ilocos Sur", "latitude": 17.5747, "longitude": 120.3869},
+    3: {"name": "Banaue Rice Terraces", "latitude": 16.9190, "longitude": 121.0590},
+    4: {"name": "Mayon Volcano, Albay", "latitude": 13.2570, "longitude": 123.6850},
+    5: {"name": "Chocolate Hills, Bohol", "latitude": 9.8290, "longitude": 124.1650},
+}
+
+# Water/ice-themed Pokémon pools selected from the location's current weather.
+WEATHER_POKEMON_POOLS = {
+    "clear": ["squirtle", "seel", "lapras", "spheal", "wingull"],
+    "cloudy": ["slowpoke", "shellder", "lapras", "wingull", "psyduck"],
+    "fog": ["slowpoke", "seel", "snorunt", "spheal", "swinub"],
+    "rain": ["squirtle", "psyduck", "shellder", "wingull", "chinchou"],
+    "storm": ["lapras", "wingull", "psyduck", "chinchou", "shellder"],
+    "snow": ["spheal", "snorunt", "swinub", "seel", "lapras"],
+}
+
+
+def get_weather_category(level):
+    """Return the current Open-Meteo weather category for this level's place."""
+    location = LOCATION_DATA[level]
+    try:
+        response = requests.get(
+            "https://api.open-meteo.com/v1/forecast",
+            params={
+                "latitude": location["latitude"],
+                "longitude": location["longitude"],
+                "current": "weather_code",
+                "timezone": "auto",
+            },
+            timeout=5,
+        )
+        response.raise_for_status()
+        weather_code = response.json()["current"]["weather_code"]
+
+        if weather_code in (0, 1):
+            category = "clear"
+        elif weather_code in (2, 3):
+            category = "cloudy"
+        elif weather_code in (45, 48):
+            category = "fog"
+        elif weather_code in (51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82):
+            category = "rain"
+        elif weather_code in (95, 96, 99):
+            category = "storm"
+        elif weather_code in (71, 73, 75, 77, 85, 86):
+            category = "snow"
+        else:
+            category = "clear"
+
+        print(f"World 2 weather at {location['name']}: WMO {weather_code} -> {category}")
+        return category
+    except (requests.RequestException, KeyError, TypeError, ValueError) as error:
+        print(f"Open-Meteo error for {location['name']}: {error}")
+        print("World 2 fallback: using the clear-weather Pokémon pool.")
+        return "clear"
 
 
 def load_image(filename, size=None):
@@ -45,13 +90,17 @@ def draw_text(screen, text, size, x, y, color=(255, 255, 255), center=False):
     screen.blit(surface, surface.get_rect(center=(x, y)) if center else (x, y))
 
 
-def get_pokemon():
-    name = random.choice(POKEMON_LIST)
+def get_pokemon(level):
+    # The selected level determines the location, its live weather, and the enemy pool.
+    weather_category = get_weather_category(level)
+    name = random.choice(WEATHER_POKEMON_POOLS[weather_category])
     try:
         r = requests.get(f'https://pokeapi.co/api/v2/pokemon/{name}', timeout=5)
         r.raise_for_status()
         data = r.json()
         url = data['sprites']['other']['official-artwork']['front_default']
+        if not url:
+            raise ValueError(f'No official artwork available for {name}')
         img_r = requests.get(url, timeout=5)
         img_r.raise_for_status()
         img = pygame.image.load(BytesIO(img_r.content)).convert_alpha()
@@ -61,25 +110,68 @@ def get_pokemon():
         return None, name.capitalize()
 
 
-def level_selection(screen, max_unlocked):
+def level_selection(screen, game_data, progress_key, code_prefix):
     image = load_image('pictures/level_selection.png', (WIDTH, HEIGHT))
+    cheat_input = ''
+
     while True:
+        max_unlocked = game_data.get(progress_key, 1)
+
         if image:
             screen.blit(image, (0, 0))
         else:
             screen.fill((30, 30, 30))
-            draw_text(screen, 'LEVEL SELECTION', 60, WIDTH//2, 150, center=True)
-            draw_text(screen, '1     2     3     4     5', 50, WIDTH//2, 300, center=True)
-        draw_text(screen, f'Unlocked Levels: 1 - {max_unlocked}', 32, WIDTH//2, HEIGHT-45, (255,215,0), True)
+            draw_text(screen, 'LEVEL SELECTION', 60, WIDTH // 2, 150, center=True)
+            draw_text(screen, '1     2     3     4     5', 50, WIDTH // 2, 300, center=True)
+
+        draw_text(screen, f'Unlocked Levels: 1 - {max_unlocked}', 32,
+                  WIDTH // 2, HEIGHT - 45, (255, 215, 0), True)
         pygame.display.update()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit(); sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE: return None
-                for key, level in [(pygame.K_1,1),(pygame.K_2,2),(pygame.K_3,3),(pygame.K_4,4),(pygame.K_5,5)]:
-                    if event.key == key and level <= max_unlocked:
-                        return level
+                pygame.quit()
+                sys.exit()
+
+            if event.type != pygame.KEYDOWN:
+                continue
+
+            if event.key == pygame.K_ESCAPE:
+                return None
+
+            if event.key == pygame.K_BACKSPACE:
+                cheat_input = cheat_input[:-1]
+                continue
+
+            if event.key == pygame.K_RETURN:
+                code = cheat_input.lower().strip()
+                if code_prefix and code.startswith(code_prefix):
+                    suffix = code[len(code_prefix):]
+                    if suffix in ('1', '2', '3', '4', '5'):
+                        requested_level = min(int(suffix) + 1, 5)
+                        game_data[progress_key] = max(
+                            game_data.get(progress_key, 1), requested_level
+                        )
+                cheat_input = ''
+                continue
+
+            # When a cheat code is being typed, collect letters and digits.
+            # With an empty input, number keys retain their normal level-selection behavior.
+            character = event.unicode.lower()
+            if character.isalnum() and len(character) == 1:
+                if cheat_input or character.isalpha():
+                    cheat_input += character
+                    continue
+
+            for key, level in [
+                (pygame.K_1, 1),
+                (pygame.K_2, 2),
+                (pygame.K_3, 3),
+                (pygame.K_4, 4),
+                (pygame.K_5, 5),
+            ]:
+                if event.key == key and level <= max_unlocked:
+                    return level
 
 
 def instruction_screen(screen):
@@ -101,15 +193,30 @@ def instruction_screen(screen):
                 if event.key == pygame.K_ESCAPE: return False
 
 
-def place_screen(screen):
-    image = load_image('pictures/places_2.png', (WIDTH, HEIGHT))
+
+def place_screen(screen, level):
+    place_number = level + 5
+    image = load_image(
+        f'pictures/places_{place_number}.png',
+        (WIDTH, HEIGHT)
+    )
+
     if image:
-        screen.blit(image, (0,0))
+        screen.blit(image, (0, 0))
     else:
-        screen.fill((30,30,30))
-        draw_text(screen, 'WORLD 2 PLACE', 70, WIDTH//2, HEIGHT//2, center=True)
+        screen.fill((30, 30, 30))
+        draw_text(
+            screen,
+            f'WORLD 2 - PLACE {place_number}',
+            70,
+            WIDTH // 2,
+            HEIGHT // 2,
+            center=True
+        )
+
     pygame.display.update()
-    pygame.time.delay(2000)
+    pygame.time.delay(1500)
+
 
 
 def enemy_intro_screen(screen, image, name):
@@ -142,7 +249,7 @@ def match_interface(screen, level, player_hp, enemy_hp, max_hp, enemy_image, ene
 
 
 def generate_sequence(amount):
-    chars = string.ascii_uppercase + string.digits + '!@#$%&*?+-='
+    chars = string.ascii_letters + string.digits + '!@#$%&*?+-='
     return [random.choice(chars) for _ in range(amount)]
 
 
@@ -242,13 +349,65 @@ def result_screen(screen, title, subtitle, title_color=(30,30,30)):
             if event.type == pygame.KEYDOWN and event.key in (pygame.K_RETURN, pygame.K_ESCAPE): return
 
 
+def hospital_screen(screen, seconds):
+    clock = pygame.time.Clock()
+    start_time = pygame.time.get_ticks()
+
+    while True:
+        elapsed = (pygame.time.get_ticks() - start_time) // 1000
+        remaining = seconds - elapsed
+
+        if remaining <= 0:
+            break
+
+        screen.fill((230, 230, 230))
+
+        draw_text(
+            screen, "HOSPITAL", 80,
+            WIDTH // 2, 220, (30, 30, 30), True
+        )
+
+        draw_text(
+            screen, "YOU LOST!", 60,
+            WIDTH // 2, 340, (180, 30, 30), True
+        )
+
+        draw_text(
+            screen, f"Recovery Time: {remaining}s", 45,
+            WIDTH // 2, 450, (30, 30, 30), True
+        )
+
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        clock.tick(30)
+
+    screen.fill((30, 30, 30))
+
+    draw_text(
+        screen, "RECOVERED!", 70,
+        WIDTH // 2, 350, (255, 255, 255), True
+    )
+
+    draw_text(
+        screen, "Returning to level selection...", 35,
+        WIDTH // 2, 440, (255, 255, 255), True
+    )
+
+    pygame.display.update()
+    pygame.time.delay(1500)
+
 def start_battle(screen, level, game_data):
     stats = LEVEL_DATA[level]
     player_hp = stats['hp']
     enemy_hp = stats['hp']
 
-    place_screen(screen)
-    enemy_image, enemy_name = get_pokemon()
+    place_screen(screen, level)
+    enemy_image, enemy_name = get_pokemon(level)
     enemy_intro_screen(screen, enemy_image, enemy_name)
 
     while player_hp > 0 and enemy_hp > 0:
@@ -274,7 +433,7 @@ def start_battle(screen, level, game_data):
         enemy_attack_screen(screen, enemy_damage)
 
         if player_hp <= 0:
-            result_screen(screen, 'YOU LOST!', 'No level was unlocked.', (180,30,30))
+            hospital_screen(screen, stats['hospital'])
             return False
 
     return False
@@ -285,7 +444,7 @@ def world2(screen, game_data):
         game_data['world2_unlocked'] = 1
 
     while True:
-        level = level_selection(screen, game_data['world2_unlocked'])
+        level = level_selection(screen, game_data, 'world2_unlocked', 'evo')
         if level is None: return
 
         if not instruction_screen(screen): return
