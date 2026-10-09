@@ -23,6 +23,7 @@ DIM_LOCKED = True          # darken the pictures of locked levels
 
 LOCKED_COLOR = (220, 60, 60)
 UNLOCKED_COLOR = (60, 220, 90)
+CLEARED_COLOR = (255, 215, 0)
 
 
 # =========================================================
@@ -91,6 +92,19 @@ def load_level_images(world_number):
 # =========================================================
 # LEVEL SELECTION (shared by World 1, 2 and 3)
 # =========================================================
+def get_cleared_key(progress_key):
+    # 'world1_unlocked' -> 'world1_cleared'
+    return progress_key.replace("unlocked", "cleared")
+
+
+def get_cleared(game_data, progress_key):
+    return game_data.setdefault(get_cleared_key(progress_key), [])
+
+
+def mark_cleared(game_data, progress_key, level):
+    cleared = get_cleared(game_data, progress_key)
+    if level not in cleared:
+        cleared.append(level)
 
 def level_selection(screen, game_data, progress_key, code_prefix, world_number):
     background = load_image("pictures/level_selection.png", (WIDTH, HEIGHT))
@@ -99,6 +113,7 @@ def level_selection(screen, game_data, progress_key, code_prefix, world_number):
 
     while True:
         max_unlocked = game_data.get(progress_key, 1)
+        cleared_levels = get_cleared(game_data, progress_key)
 
         # ---------- DRAW ----------
         if background:
@@ -119,14 +134,15 @@ def level_selection(screen, game_data, progress_key, code_prefix, world_number):
             rect = image.get_rect(center=(center_x, center_y))
             screen.blit(image, rect)
 
-            label = "[ UNLOCKED ]" if unlocked else "[ LOCKED ]"
-            color = UNLOCKED_COLOR if unlocked else LOCKED_COLOR
+            if level in cleared_levels:
+                label, color = "[ CLEARED ]", CLEARED_COLOR
+            elif unlocked:
+                label, color = "[ UNLOCKED ]", UNLOCKED_COLOR
+            else:
+                label, color = "[ LOCKED ]", LOCKED_COLOR
 
             draw_text(screen, label, LABEL_SIZE,
                       center_x, rect.bottom + LABEL_GAP, color, True)
-
-        draw_text(screen, f"Unlocked Levels: 1 - {max_unlocked}", 32,
-                  WIDTH // 2, HEIGHT - 45, (255, 215, 0), True)
 
         pygame.display.update()
 
@@ -151,9 +167,12 @@ def level_selection(screen, game_data, progress_key, code_prefix, world_number):
                 if code_prefix and code.startswith(code_prefix):
                     suffix = code[len(code_prefix):]
                     if suffix in ("1", "2", "3", "4", "5"):
-                        requested_level = min(int(suffix) + 1, 5)
+                        cleared_up_to = int(suffix)
+                        for lv in range(1, cleared_up_to + 1):
+                            mark_cleared(game_data, progress_key, lv)
+
                         game_data[progress_key] = max(
-                            game_data.get(progress_key, 1), requested_level
+                            game_data.get(progress_key, 1), min(cleared_up_to + 1, 5)
                         )
                 cheat_input = ""
                 continue

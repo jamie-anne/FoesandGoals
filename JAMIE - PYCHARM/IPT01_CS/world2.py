@@ -4,6 +4,7 @@ import random
 import string
 import requests
 from io import BytesIO
+from level_menu import level_selection, mark_cleared
 
 WIDTH = 1510
 HEIGHT = 890
@@ -109,69 +110,6 @@ def get_pokemon(level):
         print('PokéAPI error:', e)
         return None, name.capitalize()
 
-
-def level_selection(screen, game_data, progress_key, code_prefix):
-    image = load_image('pictures/level_selection.png', (WIDTH, HEIGHT))
-    cheat_input = ''
-
-    while True:
-        max_unlocked = game_data.get(progress_key, 1)
-
-        if image:
-            screen.blit(image, (0, 0))
-        else:
-            screen.fill((30, 30, 30))
-            draw_text(screen, 'LEVEL SELECTION', 60, WIDTH // 2, 150, center=True)
-            draw_text(screen, '1     2     3     4     5', 50, WIDTH // 2, 300, center=True)
-
-        draw_text(screen, f'Unlocked Levels: 1 - {max_unlocked}', 32,
-                  WIDTH // 2, HEIGHT - 45, (255, 215, 0), True)
-        pygame.display.update()
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-
-            if event.type != pygame.KEYDOWN:
-                continue
-
-            if event.key == pygame.K_ESCAPE:
-                return None
-
-            if event.key == pygame.K_BACKSPACE:
-                cheat_input = cheat_input[:-1]
-                continue
-
-            if event.key == pygame.K_RETURN:
-                code = cheat_input.lower().strip()
-                if code_prefix and code.startswith(code_prefix):
-                    suffix = code[len(code_prefix):]
-                    if suffix in ('1', '2', '3', '4', '5'):
-                        requested_level = min(int(suffix) + 1, 5)
-                        game_data[progress_key] = max(
-                            game_data.get(progress_key, 1), requested_level
-                        )
-                cheat_input = ''
-                continue
-
-            # When a cheat code is being typed, collect letters and digits.
-            # With an empty input, number keys retain their normal level-selection behavior.
-            character = event.unicode.lower()
-            if character.isalnum() and len(character) == 1:
-                if cheat_input or character.isalpha():
-                    cheat_input += character
-                    continue
-
-            for key, level in [
-                (pygame.K_1, 1),
-                (pygame.K_2, 2),
-                (pygame.K_3, 3),
-                (pygame.K_4, 4),
-                (pygame.K_5, 5),
-            ]:
-                if event.key == key and level <= max_unlocked:
-                    return level
 
 
 def instruction_screen(screen):
@@ -444,12 +382,14 @@ def world2(screen, game_data):
         game_data['world2_unlocked'] = 1
 
     while True:
-        level = level_selection(screen, game_data, 'world2_unlocked', 'evo')
+        level = level_selection(screen, game_data, 'world2_unlocked', 'evo',2)
         if level is None: return
 
         if not instruction_screen(screen): return
 
         result = start_battle(screen, level, game_data)
-        if result is True and level == game_data['world2_unlocked']:
-            if game_data['world2_unlocked'] < 5:
-                game_data['world2_unlocked'] += 1
+        if result is True:
+            mark_cleared(game_data, 'world2_unlocked', level)
+            if level == game_data['world2_unlocked']:
+                if game_data['world2_unlocked'] < 5:
+                    game_data['world2_unlocked'] += 1

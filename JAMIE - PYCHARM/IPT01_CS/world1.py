@@ -3,6 +3,7 @@ import sys
 import random
 import requests
 from io import BytesIO
+from level_menu import level_selection, mark_cleared
 
 
 # =========================================================
@@ -229,65 +230,6 @@ def draw_text(
 # =========================================================
 # LEVEL SELECTION
 # =========================================================
-
-def level_selection(screen, game_data, progress_key, code_prefix):
-    image = load_image("pictures/level_selection.png", (WIDTH, HEIGHT))
-    cheat_input = ""
-
-    while True:
-        max_unlocked = game_data.get(progress_key, 1)
-
-        if image:
-            screen.blit(image, (0, 0))
-        else:
-            screen.fill((30, 30, 30))
-            draw_text(screen, "LEVEL SELECTION", 60, WIDTH // 2, 150, center=True)
-            draw_text(screen, "1     2     3     4     5", 50, WIDTH // 2, 300, center=True)
-
-        draw_text(screen, f"Unlocked Levels: 1 - {max_unlocked}", 32,
-                  WIDTH // 2, HEIGHT - 45, (255, 215, 0), True)
-        pygame.display.update()
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-
-            if event.type != pygame.KEYDOWN:
-                continue
-
-            if event.key == pygame.K_ESCAPE:
-                return None
-
-            if event.key == pygame.K_BACKSPACE:
-                cheat_input = cheat_input[:-1]
-                continue
-
-            if event.key == pygame.K_RETURN:
-                code = cheat_input.lower().strip()
-                if code_prefix and code.startswith(code_prefix):
-                    suffix = code[len(code_prefix):]
-                    if suffix in ("1", "2", "3", "4", "5"):
-                        # "Cleared level N" -> unlock level N + 1 (max 5)
-                        requested_level = min(int(suffix) + 1, 5)
-                        game_data[progress_key] = max(
-                            game_data.get(progress_key, 1), requested_level
-                        )
-                cheat_input = ""
-                continue
-
-            character = event.unicode.lower()
-            if character.isalnum() and len(character) == 1:
-                if cheat_input or character.isalpha():
-                    cheat_input += character
-                    continue
-
-            for key, level in [
-                (pygame.K_1, 1), (pygame.K_2, 2), (pygame.K_3, 3),
-                (pygame.K_4, 4), (pygame.K_5, 5),
-            ]:
-                if event.key == key and level <= max_unlocked:
-                    return level
 
 
 # =========================================================
@@ -1394,7 +1336,7 @@ def world1(
         # LEVEL SELECTION
         # ---------------------------------------------
 
-        level = level_selection(screen, game_data, "world1_unlocked", "mac")
+        level = level_selection(screen, game_data, "world1_unlocked", "mac",1)
 
         if level is None:
             return
@@ -1408,26 +1350,11 @@ def world1(
         if not continue_game:
             return
 
-        # ---------------------------------------------
-        # START BATTLE
-        # ---------------------------------------------
 
-        result = start_battle(
-            screen,
-            level,
-            game_data
-        )
+        result = start_battle(screen, level, game_data)
 
-        # ---------------------------------------------
-        # UNLOCK NEXT LEVEL
-        # ---------------------------------------------
-
-        if result == True:
-
-            if level == game_data["world1_unlocked"]:
-
-                if game_data["world1_unlocked"] < 5:
-
-                    game_data["world1_unlocked"] += 1
-
-# End of World 1 module.
+        if result is True:
+            mark_cleared(game_data, 'world1_unlocked', level)
+            if level == game_data['world1_unlocked']:
+                if game_data['world1_unlocked'] < 5:
+                    game_data['world1_unlocked'] += 1
