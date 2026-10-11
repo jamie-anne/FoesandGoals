@@ -5,6 +5,7 @@ import string
 import requests
 from io import BytesIO
 from level_menu import level_selection, mark_cleared
+from pokemon_book import record_defeat
 
 WIDTH = 1510
 HEIGHT = 890
@@ -360,6 +361,7 @@ def start_battle(screen, level, game_data):
 
         if enemy_hp <= 0:
             game_data['coins'] += stats['coins']
+            record_defeat(game_data, enemy_name, 2, level)
             result_screen(screen, 'YOU WIN!', f"+{stats['coins']} COINS")
             return True
 

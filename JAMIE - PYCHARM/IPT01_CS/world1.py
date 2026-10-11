@@ -4,11 +4,7 @@ import random
 import requests
 from io import BytesIO
 from level_menu import level_selection, mark_cleared
-
-
-# =========================================================
-# WORLD 1 SETTINGS
-# =========================================================
+from pokemon_book import record_defeat
 
 WIDTH = 1510
 HEIGHT = 890
@@ -22,12 +18,6 @@ LEVEL_DATA = {
     5: {"hp": 180, "two_combi": (60, 70), "three_combi": (65, 70), "enemy_attack": (60, 70), "coins": 150, "hospital": 40}
 }
 
-# =========================================================
-# WORLD 1 LOCATIONS
-# Weather is checked for the location of the selected level.
-# Coordinates are representative points for the locations.
-# =========================================================
-
 LOCATION_DATA = {
     1: {"name": "Intramuros", "latitude": 14.5896, "longitude": 120.9747},
     2: {"name": "Rizal Park", "latitude": 14.5827, "longitude": 120.9793},
@@ -36,11 +26,6 @@ LOCATION_DATA = {
     5: {"name": "Dingalan", "latitude": 15.3897, "longitude": 121.3929}
 }
 
-
-# =========================================================
-# WEATHER-BASED POKEMON POOLS
-# Open-Meteo returns WMO weather codes.
-# =========================================================
 
 WEATHER_POKEMON_POOLS = {
     "clear": [
@@ -70,32 +55,20 @@ WEATHER_POKEMON_POOLS = {
 }
 
 
-# =========================================================
 # IMAGE LOADING
-# =========================================================
-
 def load_image(filename, size=None):
     try:
         image = pygame.image.load(filename).convert_alpha()
-
         if size:
             image = pygame.transform.scale(image, size)
-
         return image
-
     except pygame.error:
         print(f"Could not load image: {filename}")
         return None
 
-
-# =========================================================
 # GET CURRENT WEATHER FROM OPEN-METEO
-# =========================================================
-
 def get_weather_category(level):
-
     location = LOCATION_DATA[level]
-
     try:
         url = "https://api.open-meteo.com/v1/forecast"
 
@@ -119,7 +92,6 @@ def get_weather_category(level):
         data = response.json()
         weather_code = data["current"]["weather_code"]
 
-        # WMO weather-code groups from Open-Meteo.
         if weather_code in [0, 1]:
             category = "clear"
         elif weather_code in [2, 3]:
@@ -142,17 +114,13 @@ def get_weather_category(level):
         )
 
         return category
-
     except Exception as error:
         print("Open-Meteo error:", error)
         print("Using clear-weather Pokémon pool as fallback.")
         return "clear"
 
 
-# =========================================================
 # GET POKEMON FROM WEATHER + POKEAPI
-# =========================================================
-
 def get_pokemon(level):
 
     weather_category = get_weather_category(level)
@@ -161,19 +129,15 @@ def get_pokemon(level):
 
     try:
         url = f"https://pokeapi.co/api/v2/pokemon/{pokemon_name}"
-
         response = requests.get(
             url,
             timeout=5
         )
-
         if response.status_code != 200:
             return None, pokemon_name.capitalize()
 
         data = response.json()
-
         artwork_url = data["sprites"]["other"]["official-artwork"]["front_default"]
-
         image_response = requests.get(
             artwork_url,
             timeout=5
@@ -198,10 +162,7 @@ def get_pokemon(level):
         return None, pokemon_name.capitalize()
 
 
-# =========================================================
 # TEXT HELPER
-# =========================================================
-
 def draw_text(
     screen,
     text,
@@ -213,7 +174,6 @@ def draw_text(
 ):
 
     font = pygame.font.Font(None, size)
-
     surface = font.render(
         str(text),
         True,
@@ -227,72 +187,51 @@ def draw_text(
         screen.blit(surface, (x, y))
 
 
-# =========================================================
-# LEVEL SELECTION
-# =========================================================
-
-
-# =========================================================
-# INSTRUCTION SCREEN
-# =========================================================
-
 def instruction_screen(screen):
 
     image = load_image(
         "pictures/instruction_world1.png",
         (WIDTH, HEIGHT)
     )
-
     while True:
 
         if image:
             screen.blit(
                 image,
-                (0, 0)
-            )
-
+                (0, 0))
         else:
             screen.fill(
-                (20, 20, 20)
-            )
+                (20, 20, 20))
 
             draw_text(
                 screen,
                 "WORLD 1",
                 70,
                 650,
-                250
-            )
+                250)
 
             draw_text(
                 screen,
                 "Press ENTER to continue",
                 45,
                 560,
-                400
-            )
+                400)
 
         pygame.display.update()
 
         for event in pygame.event.get():
-
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-
             if event.type == pygame.KEYDOWN:
-
                 if event.key == pygame.K_RETURN:
                     return True
-
                 elif event.key == pygame.K_ESCAPE:
                     return False
 
 
-# =========================================================
-# HEALTH BAR
-# =========================================================
 
+# HEALTH BAR
 def draw_health_bar(
     screen,
     x,
@@ -300,8 +239,7 @@ def draw_health_bar(
     width,
     height,
     current_hp,
-    max_hp
-):
+    max_hp):
 
     # Background
     pygame.draw.rect(
@@ -336,10 +274,8 @@ def draw_health_bar(
     )
 
 
-# =========================================================
-# MATCH INTERFACE
-# =========================================================
 
+# MATCH INTERFACE
 def battle_interface(
     screen,
     level,
@@ -349,14 +285,10 @@ def battle_interface(
     pokemon_image,
     pokemon_name
 ):
-
     # Light gray background like World 2.
     screen.fill((235, 235, 235))
 
-    # -----------------------------------------------------
     # ENEMY INFORMATION - TOP RIGHT
-    # -----------------------------------------------------
-
     draw_text(
         screen,
         f"{pokemon_name} - LEVEL {level}",
@@ -385,20 +317,13 @@ def battle_interface(
         (30, 30, 30)
     )
 
-    # -----------------------------------------------------
+
     # ENEMY POKEMON - RIGHT SIDE
-    # -----------------------------------------------------
-
     if pokemon_image:
-
         screen.blit(
             pokemon_image,
             (1030, 180)
         )
-
-    # -----------------------------------------------------
-    # VS - CENTER
-    # -----------------------------------------------------
 
     draw_text(
         screen,
@@ -410,18 +335,14 @@ def battle_interface(
         center=True
     )
 
-    # -----------------------------------------------------
     # PLAYER INFORMATION - BOTTOM LEFT
-    # -----------------------------------------------------
-
     draw_text(
         screen,
         "PLAYER",
         42,
         100,
         610,
-        (30, 30, 30)
-    )
+        (30, 30, 30))
 
     draw_health_bar(
         screen,
@@ -430,8 +351,7 @@ def battle_interface(
         330,
         30,
         player_hp,
-        max_enemy_hp
-    )
+        max_enemy_hp)
 
     draw_text(
         screen,
@@ -439,63 +359,38 @@ def battle_interface(
         30,
         100,
         710,
-        (30, 30, 30)
-    )
-
-    # -----------------------------------------------------
-    # WORLD LABEL - BOTTOM CENTER
-    # -----------------------------------------------------
-
-    draw_text(
-        screen,
-        "WORLD 1",
-        32,
-        WIDTH // 2,
-        830,
-        (30, 30, 30),
-        center=True
-    )
+        (30, 30, 30))
 
     pygame.display.update()
 
 
-# =========================================================
 # PLACE SCREEN
 # Automatically continues after 2 seconds
-# =========================================================
-
 def place_screen(screen):
 
     place_image = load_image(
         "pictures/places_1.png",
         (WIDTH, HEIGHT)
     )
-
     start_time = pygame.time.get_ticks()
-
     while True:
 
         if place_image:
             screen.blit(
                 place_image,
-                (0, 0)
-            )
-
+                (0, 0))
         else:
             screen.fill(
-                (30, 30, 30)
-            )
+                (30, 30, 30))
 
             draw_text(
                 screen,
                 "PLACE 1",
                 70,
                 650,
-                300
-            )
+                300)
 
         pygame.display.update()
-
         # Allow window closing
         for event in pygame.event.get():
 
@@ -509,86 +404,63 @@ def place_screen(screen):
                     return False
 
         # 2 seconds
-        if pygame.time.get_ticks() - start_time >= 2000:
+        if pygame.time.get_ticks() - start_time >= 1000:
             return True
 
 
-# =========================================================
+
 # ENEMY INTRO SCREEN
 # White background + enemy in middle
 # 2 seconds
-# =========================================================
 
 def enemy_intro_screen(
     screen,
     pokemon_image,
-    pokemon_name
-):
+    pokemon_name):
 
     start_time = pygame.time.get_ticks()
-
     while True:
-
         screen.fill(
-            (255, 255, 255)
-        )
+            (255, 255, 255))
 
         # Enemy in the middle
         if pokemon_image:
-
             image_rect = pokemon_image.get_rect(
-                center=(WIDTH // 2, 390)
-            )
+                center=(WIDTH // 2, 390))
 
             screen.blit(
                 pokemon_image,
-                image_rect
-            )
+                image_rect)
 
         # Enemy name
         font = pygame.font.Font(
             None,
-            50
-        )
+            50)
 
         name_surface = font.render(
             pokemon_name,
             True,
-            (20, 20, 20)
-        )
+            (20, 20, 20))
 
         name_rect = name_surface.get_rect(
-            center=(WIDTH // 2, 700)
-        )
+            center=(WIDTH // 2, 700))
 
         screen.blit(
             name_surface,
-            name_rect
-        )
+            name_rect)
 
         pygame.display.update()
-
         for event in pygame.event.get():
-
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-
             if event.type == pygame.KEYDOWN:
-
                 if event.key == pygame.K_ESCAPE:
                     return False
 
         # 2 seconds
         if pygame.time.get_ticks() - start_time >= 2000:
             return True
-
-
-# =========================================================
-# SLOT MACHINE
-# SPACE = START
-# SPACE = STOP
-# =========================================================
 
 def slot_machine(screen):
 
@@ -627,45 +499,26 @@ def slot_machine(screen):
     ]
 
     reel_y = 300
-
     spinning = False
-
     last_change = 0
-
     change_delay = 100
-
     clock = pygame.time.Clock()
-
     while True:
 
-        # =================================================
-        # EVENTS
-        # =================================================
-
         for event in pygame.event.get():
-
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-
             if event.type == pygame.KEYDOWN:
-
                 # SPACE = START / STOP
                 if event.key == pygame.K_SPACE:
-
                     # START
                     if not spinning:
-
                         spinning = True
-
                     # STOP
                     else:
-
                         spinning = False
                         # Determine the attack from the slot-machine combination.
-                        # 3 matching symbols = 3 combination
-                        # 2 matching symbols = 2 combination
-                        # No matching pair = 0 damage
                         if reels[0] == reels[1] == reels[2]:
                             combination = 3
                         elif (
@@ -681,47 +534,29 @@ def slot_machine(screen):
                         # for 2 seconds
                         pygame.display.flip()
                         pygame.time.delay(2000)
-
                         return combination
-
                 elif event.key == pygame.K_ESCAPE:
-
                     return None
 
-        # =================================================
-        # UPDATE
-        # =================================================
-
         current_time = pygame.time.get_ticks()
-
         if spinning:
-
             if current_time - last_change >= change_delay:
-
                 for i in range(3):
                     reels[i] = random.choice(symbols)
-
                 last_change = current_time
-
-        # =================================================
-        # DRAW
-        # =================================================
 
         screen.fill(
             (25, 25, 30)
         )
-
         # Title
         title = title_font.render(
             "FOES & GOALS",
             True,
-            (255, 255, 255)
-        )
+            (255, 255, 255))
 
         screen.blit(
             title,
-            (620, 100)
-        )
+            (620, 100))
 
         # Slot machine
         for i in range(3):
@@ -840,11 +675,6 @@ def attack_animation_placeholder(
     pygame.time.delay(1200)
 
 
-# =========================================================
-# PLAYER ATTACK POINTS
-# DISPLAY FOR 2 SECONDS
-# =========================================================
-
 def player_attack_screen(
     screen,
     attack,
@@ -852,12 +682,9 @@ def player_attack_screen(
 ):
 
     start_time = pygame.time.get_ticks()
-
     while True:
-
         screen.fill(
-            (20, 30, 20)
-        )
+            (20, 30, 20))
 
         draw_text(
             screen,
@@ -886,16 +713,12 @@ def player_attack_screen(
         pygame.display.update()
 
         for event in pygame.event.get():
-
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-
             if event.type == pygame.KEYDOWN:
-
                 if event.key == pygame.K_ESCAPE:
                     return
-
         # 2 seconds
         if pygame.time.get_ticks() - start_time >= 2000:
             return
@@ -903,14 +726,10 @@ def player_attack_screen(
 
 
 def enemy_attack_screen(screen, damage, missed=False):
-
     start_time = pygame.time.get_ticks()
-
     while True:
-
         if missed:
             screen.fill((30, 30, 50))
-
             draw_text(
                 screen,
                 "ENEMY MISSED!",
@@ -953,31 +772,21 @@ def enemy_attack_screen(screen, damage, missed=False):
             )
 
         pygame.display.update()
-
         for event in pygame.event.get():
-
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return
-
         if pygame.time.get_ticks() - start_time >= 2000:
             return
 
-
-
-# =========================================================
-# WIN SCREEN
-# =========================================================
 
 def win_screen(
     screen,
     coins
 ):
-
     screen.fill(
         (20, 70, 30)
     )
@@ -1009,22 +818,13 @@ def win_screen(
     pygame.display.update()
 
     while True:
-
         for event in pygame.event.get():
-
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-
             if event.type == pygame.KEYDOWN:
-
                 if event.key == pygame.K_RETURN:
                     return
-
-
-# =========================================================
-# HOSPITAL / LOSE SCREEN
-# =========================================================
 
 def hospital_screen(
     screen,
@@ -1032,24 +832,17 @@ def hospital_screen(
 ):
 
     clock = pygame.time.Clock()
-
     start_time = pygame.time.get_ticks()
-
     while True:
-
         elapsed = (
             pygame.time.get_ticks() - start_time
         ) // 1000
-
         remaining = seconds - elapsed
-
         if remaining <= 0:
             break
-
         screen.fill(
             (230, 230, 230)
         )
-
         draw_text(
             screen,
             "HOSPITAL",
@@ -1078,11 +871,8 @@ def hospital_screen(
         )
 
         pygame.display.update()
-
         clock.tick(30)
-
         for event in pygame.event.get():
-
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
@@ -1100,69 +890,47 @@ def hospital_screen(
     )
 
     pygame.display.update()
-
     pygame.time.delay(1000)
 
-
-# =========================================================
-# START BATTLE
-# =========================================================
 
 def start_battle(
     screen,
     level,
     game_data
 ):
-
     stats = LEVEL_DATA[level]
 
-    # =====================================================
     # 1. PLACE
     # Automatically shown for 2 seconds
-    # =====================================================
-
     continue_game = place_screen(screen)
-
     if not continue_game:
         return
 
-    # =====================================================
+
     # 2. GET POKEMON
-    # =====================================================
-
     player_hp = stats["hp"]
-
     enemy_hp = stats["hp"]
-
     pokemon_image, pokemon_name = get_pokemon(level)
 
-    # =====================================================
+
     # 3. ENEMY INTRO
     # White background
     # Enemy in middle
     # 2 seconds
-    # =====================================================
-
     continue_game = enemy_intro_screen(
         screen,
         pokemon_image,
         pokemon_name
     )
-
     if not continue_game:
         return
 
-    # =====================================================
     # BATTLE LOOP
-    # =====================================================
-
     while player_hp > 0 and enemy_hp > 0:
 
-        # =================================================
+
         # 4. MATCH INTERFACE
         # 3 seconds
-        # =================================================
-
         battle_interface(
             screen,
             level,
@@ -1172,24 +940,19 @@ def start_battle(
             pokemon_image,
             pokemon_name
         )
-
         pygame.time.delay(3000)
 
-        # =================================================
+
         # 5. SLOT MACHINE
         # SPACE = START
         # SPACE = STOP
-        # =================================================
-
         attack = slot_machine(screen)
 
         if attack is None:
             return
 
-        # =================================================
-        # 6. CALCULATE PLAYER DAMAGE
-        # =================================================
 
+        # 6. CALCULATE PLAYER DAMAGE
         if attack == 3:
             damage = random.randint(stats["three_combi"][0], stats["three_combi"][1])
         elif attack == 2:
@@ -1202,49 +965,37 @@ def start_battle(
         if enemy_hp < 0:
             enemy_hp = 0
 
-        # =================================================
-        # 7. YOUR ATTACK ANIMATION
-        # =================================================
 
+        # 7. YOUR ATTACK ANIMATION
         attack_animation_placeholder(
             screen,
             attack,
             damage
         )
 
-        # =================================================
         # 8. PLAYER ATTACK POINTS
         # 2 seconds
-        # =================================================
-
         player_attack_screen(
             screen,
             attack,
             damage
         )
 
-        # =================================================
+
         # 9. CHECK IF ENEMY IS DEAD
-        # =================================================
-
         if enemy_hp <= 0:
-
             coins = stats["coins"]
-
             game_data["coins"] += coins
-
+            record_defeat(game_data, pokemon_name, 1, level)
             win_screen(
                 screen,
                 coins
             )
-
             return True
 
-        # =================================================
+
         # 10. MATCH INTERFACE AGAIN
         # 3 seconds
-        # =================================================
-
         battle_interface(
             screen,
             level,
@@ -1254,18 +1005,13 @@ def start_battle(
             pokemon_image,
             pokemon_name
         )
-
         pygame.time.delay(3000)
 
-        # =================================================
         # 11. ENEMY ATTACK
-        # =================================================
-
         # 30% chance that the enemy misses
         if random.random() < 0.30:
             enemy_damage = 0
             enemy_missed = True
-
         else:
             enemy_damage = random.randint(
                 stats["enemy_attack"][0],
@@ -1279,21 +1025,15 @@ def start_battle(
         if player_hp < 0:
             player_hp = 0
 
-        # =================================================
         # 12. ENEMY ATTACK POINTS
         # 2 seconds
-        # =================================================
-
         enemy_attack_screen(
             screen,
             enemy_damage,
             enemy_missed
         )
 
-        # =================================================
         # 13. CHECK IF PLAYER IS DEAD
-        # =================================================
-
         if player_hp <= 0:
 
             hospital_screen(

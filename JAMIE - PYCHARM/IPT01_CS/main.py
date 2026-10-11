@@ -3,6 +3,7 @@ import sys
 
 from adventure import adventure
 from shop import shop
+from pokemon_book import pokemon_book, load_game, save_game
 
 pygame.init()
 
@@ -20,6 +21,7 @@ game_data = {
     "world2_unlocked": 1,
     "world3_unlocked": 1
 }
+load_game(game_data)
 
 opening_image = pygame.image.load("pictures/foes.png")
 second_image = pygame.image.load("pictures/foes.png")
@@ -28,7 +30,6 @@ opening_image = pygame.transform.scale(opening_image, (WIDTH, HEIGHT))
 second_image = pygame.transform.scale(second_image, (WIDTH, HEIGHT))
 
 def opening_screen():
-
     screen.blit(opening_image, (0, 0))
     pygame.display.update()
     waiting = True
@@ -42,7 +43,6 @@ def opening_screen():
                     waiting = False
 
 def second_screen():
-
     screen.blit(second_image, (0, 0))
     pygame.display.update()
     waiting = True
@@ -68,7 +68,6 @@ def view_phone(screen, game_data):
             (WIDTH, HEIGHT)
         )
         phone_images.append(image)
-
     font = pygame.font.Font(None, 35)
     running = True
     while running:
@@ -77,7 +76,6 @@ def view_phone(screen, game_data):
             phone_images[current_stage],
             (0, 0)
         )
-
         parts_text = font.render(
             f"Parts Completed: {game_data['parts_bought']}/12",
             True,
@@ -87,7 +85,6 @@ def view_phone(screen, game_data):
             parts_text,
             (30, 70)
         )
-
         back_text = font.render(
             "Press ESC to return",
             True,
@@ -97,9 +94,7 @@ def view_phone(screen, game_data):
             back_text,
             (1100, 30)
         )
-
         pygame.display.update()
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -141,7 +136,8 @@ def adventure_menu():
             "2. Shop",
             "3. View Phone",
             "4. Developers",
-            "5. Exit Game"
+            "5. Pokemon Book",
+            "6. Exit Game"
         ]
         y = 200
         for option in options:
@@ -164,9 +160,11 @@ def adventure_menu():
                 elif event.key == pygame.K_4:
                     developers()
                 elif event.key == pygame.K_5:
+                    pokemon_book(screen, game_data)
+                elif event.key == pygame.K_6:
+                    save_game(game_data)
                     pygame.quit()
                     sys.exit()
-
 opening_screen()
 second_screen()
 adventure_menu()
