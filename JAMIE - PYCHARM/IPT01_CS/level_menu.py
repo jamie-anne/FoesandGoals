@@ -9,15 +9,15 @@ HEIGHT = 890
 # =========================================================
 
 PICTURE_FOLDER = "pictures"
-PICTURE_NAME = "{world}_lvl{level}.png"   # -> pictures/1_lvl1.png, 2_lvl3.png, ...
+PICTURE_NAME = "{world}_lvl{level}.png"
 
-IMAGE_SIZE = (300, 200)    # (width, height) of each level picture
-H_SPACING = 250            # horizontal distance between neighboring level centers
-ROW_GAP = 317              # vertical distance between the top row and bottom row
+IMAGE_SIZE = (360,300)    # (width, height) of each level picture
+H_SPACING = 240            # horizontal distance between neighboring level centers
+ROW_GAP = 310              # vertical distance between the top row and bottom row
 TOP_ROW_Y = 275            # center Y of the top row (lvl2, lvl4)
 
-LABEL_GAP = 28             # distance between a picture and its [ LOCKED ] text
-LABEL_SIZE = 34            # font size of [ LOCKED ] / [ UNLOCKED ]
+LABEL_GAP = 20             # distance between a picture and its [ LOCKED ] text
+LABEL_SIZE = 30            # font size of [ LOCKED ] / [ UNLOCKED ]
 
 DIM_LOCKED = True          # darken the pictures of locked levels
 

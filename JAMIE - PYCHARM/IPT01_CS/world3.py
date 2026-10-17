@@ -1,7 +1,6 @@
 import pygame
 import sys
 import random
-import string
 import requests
 from io import BytesIO
 from level_menu import level_selection, mark_cleared

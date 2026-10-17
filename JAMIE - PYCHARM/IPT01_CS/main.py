@@ -6,6 +6,11 @@ from shop import shop
 from pokemon_book import pokemon_book, load_game, save_game
 
 pygame.init()
+"""
+pygame.mixer.init()
+sound = pygame.mixer.Sound("sounds/attack.wav")
+sound.play()
+"""
 
 WIDTH = 1510
 HEIGHT = 890
