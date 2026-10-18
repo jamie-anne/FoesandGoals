@@ -11,7 +11,7 @@ HEIGHT = 890
 PICTURE_FOLDER = "pictures"
 PICTURE_NAME = "{world}_lvl{level}.png"
 
-IMAGE_SIZE = (360,300)    # (width, height) of each level picture
+IMAGE_SIZE = (370,300)    # (width, height) of each level picture
 H_SPACING = 240            # horizontal distance between neighboring level centers
 ROW_GAP = 310              # vertical distance between the top row and bottom row
 TOP_ROW_Y = 275            # center Y of the top row (lvl2, lvl4)

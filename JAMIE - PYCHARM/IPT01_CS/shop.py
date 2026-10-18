@@ -1,6 +1,6 @@
 import pygame
 import sys
-
+pygame.mixer.init()
 parts = [
     {"name": "LCD", "price": 100},
     {"name": "iPhone Case", "price": 200},
@@ -28,7 +28,7 @@ STATUS_COLORS = {
     "LOCKED": (130, 130, 140),
 }
 
-
+click = pygame.mixer.Sound("music/click.mp3")
 # SHOP
 def shop(screen, game_data):
     WIDTH = 1510
@@ -49,6 +49,7 @@ def shop(screen, game_data):
     except (pygame.error, OSError):
         background = pygame.Surface((WIDTH, HEIGHT))
         background.fill(BACKGROUND_COLOR)
+    click.play()
 
     # FONTS
     title_font = pygame.font.Font(None, 55)

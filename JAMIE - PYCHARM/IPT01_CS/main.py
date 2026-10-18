@@ -1,16 +1,14 @@
 import pygame
 import sys
 
+
 from adventure import adventure
 from shop import shop
 from pokemon_book import pokemon_book, load_game, save_game
 
 pygame.init()
-"""
 pygame.mixer.init()
-sound = pygame.mixer.Sound("sounds/attack.wav")
-sound.play()
-"""
+
 
 WIDTH = 1510
 HEIGHT = 890
@@ -28,7 +26,15 @@ game_data = {
 }
 load_game(game_data)
 
+#MUSIC
+click = pygame.mixer.Sound("music/click.mp3")
+lp_music = pygame.mixer.Sound("music/LP_music.mp3")
+
+
 opening_image = pygame.image.load("pictures/foes.png")
+lp_music.play(-1)
+input = " "
+lp_music.stop()
 second_image = pygame.image.load("pictures/foes.png")
 
 opening_image = pygame.transform.scale(opening_image, (WIDTH, HEIGHT))
@@ -73,6 +79,7 @@ def view_phone(screen, game_data):
             (WIDTH, HEIGHT)
         )
         phone_images.append(image)
+    click.play()
     font = pygame.font.Font(None, 35)
     running = True
     while running:
@@ -157,16 +164,20 @@ def adventure_menu():
             if event.type == pygame.KEYDOWN:
 
                 if event.key == pygame.K_1:
+                    click.play()
                     adventure(screen, game_data)
                 elif event.key == pygame.K_2:
                     shop(screen, game_data)
                 elif event.key == pygame.K_3:
                     view_phone(screen, game_data)
                 elif event.key == pygame.K_4:
+                    click.play()
                     developers()
                 elif event.key == pygame.K_5:
+                    click.play()
                     pokemon_book(screen, game_data)
                 elif event.key == pygame.K_6:
+                    click.play()
                     save_game(game_data)
                     pygame.quit()
                     sys.exit()
