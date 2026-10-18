@@ -32,25 +32,29 @@ lp_music = pygame.mixer.Sound("music/LP_music.mp3")
 
 
 opening_image = pygame.image.load("pictures/foes.png")
-lp_music.play(-1)
-input = " "
-lp_music.stop()
 second_image = pygame.image.load("pictures/foes.png")
 
 opening_image = pygame.transform.scale(opening_image, (WIDTH, HEIGHT))
 second_image = pygame.transform.scale(second_image, (WIDTH, HEIGHT))
 
+
 def opening_screen():
     screen.blit(opening_image, (0, 0))
     pygame.display.update()
+
+    lp_music.play(-1)
+
     waiting = True
     while waiting:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                lp_music.stop()
                 pygame.quit()
                 sys.exit()
+
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
+                    lp_music.stop()
                     waiting = False
 
 def second_screen():
@@ -167,6 +171,7 @@ def adventure_menu():
                     click.play()
                     adventure(screen, game_data)
                 elif event.key == pygame.K_2:
+                    click.play()
                     shop(screen, game_data)
                 elif event.key == pygame.K_3:
                     view_phone(screen, game_data)

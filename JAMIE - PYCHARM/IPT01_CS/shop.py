@@ -28,9 +28,13 @@ STATUS_COLORS = {
     "LOCKED": (130, 130, 140),
 }
 
+#MUSIC
 click = pygame.mixer.Sound("music/click.mp3")
+shop_bgm = pygame.mixer.Sound("music/SHOP.mp3")
+
 # SHOP
 def shop(screen, game_data):
+    shop_bgm.play()
     WIDTH = 1510
     HEIGHT = 890
 
@@ -49,7 +53,7 @@ def shop(screen, game_data):
     except (pygame.error, OSError):
         background = pygame.Surface((WIDTH, HEIGHT))
         background.fill(BACKGROUND_COLOR)
-    click.play()
+
 
     # FONTS
     title_font = pygame.font.Font(None, 55)
@@ -131,6 +135,7 @@ def shop(screen, game_data):
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
+                    shop_bgm.stop()
                     running = False
 
                 elif event.key == pygame.K_BACKSPACE:
