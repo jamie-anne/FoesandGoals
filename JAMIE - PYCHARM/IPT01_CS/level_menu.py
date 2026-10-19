@@ -7,13 +7,15 @@ HEIGHT = 890
 # =========================================================
 # ADJUST THESE
 # =========================================================
-
+pygame.mixer.init()
 PICTURE_FOLDER = "pictures"
 PICTURE_NAME = "{world}_lvl{level}.png"
+click = pygame.mixer.Sound("music/click.mp3")
 
-IMAGE_SIZE = (370,300)    # (width, height) of each level picture
-H_SPACING = 240            # horizontal distance between neighboring level centers
-ROW_GAP = 310              # vertical distance between the top row and bottom row
+
+IMAGE_SIZE = (380,310)    # (width, height) of each level picture
+H_SPACING = 250            # horizontal distance between neighboring level centers
+ROW_GAP = 320              # vertical distance between the top row and bottom row
 TOP_ROW_Y = 275            # center Y of the top row (lvl2, lvl4)
 
 LABEL_GAP = 20             # distance between a picture and its [ LOCKED ] text
@@ -156,6 +158,7 @@ def level_selection(screen, game_data, progress_key, code_prefix, world_number):
                 continue
 
             if event.key == pygame.K_ESCAPE:
+                click.play()
                 return None
 
             if event.key == pygame.K_BACKSPACE:
@@ -188,4 +191,5 @@ def level_selection(screen, game_data, progress_key, code_prefix, world_number):
                 (pygame.K_4, 4), (pygame.K_5, 5),
             ]:
                 if event.key == key and level <= max_unlocked:
+                    click.play()
                     return level

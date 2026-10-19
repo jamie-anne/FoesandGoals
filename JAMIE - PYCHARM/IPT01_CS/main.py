@@ -117,6 +117,7 @@ def view_phone(screen, game_data):
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
+                    click.play()
                     running = False
 
 def developers():
@@ -133,6 +134,7 @@ def developers():
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
+                    click.play()
                     running = False
 
 def adventure_menu():

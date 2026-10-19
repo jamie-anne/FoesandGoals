@@ -2,6 +2,7 @@ import pygame
 import sys
 import json
 import os
+pygame.mixer.init()
 
 WIDTH = 1510
 HEIGHT = 890
@@ -9,6 +10,7 @@ HEIGHT = 890
 SAVE_FILE = "savegame.json"
 PER_PAGE = 10
 
+click = pygame.mixer.Sound("music/click.mp3")
 def save_game(game_data):
     try:
         with open(SAVE_FILE, "w") as f:
@@ -85,6 +87,7 @@ def pokemon_book(screen, game_data):
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
+                    click.play()
                     return
                 elif event.key == pygame.K_RIGHT and page < total_pages - 1:
                     page += 1

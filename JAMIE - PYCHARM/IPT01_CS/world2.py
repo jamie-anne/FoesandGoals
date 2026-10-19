@@ -6,10 +6,11 @@ import requests
 from io import BytesIO
 from level_menu import level_selection, mark_cleared
 from pokemon_book import record_defeat
+pygame.mixer.init()
 
 WIDTH = 1510
 HEIGHT = 890
-
+click = pygame.mixer.Sound("music/click.mp3")
 LEVEL_DATA = {
     1: {'hp': 160, 'characters': 5, 'memorize_time': 5, 'damage': {5: 40, 4: 30, 3: 20, 2: 10, 1: 5, 0: 0},'enemy_attack': (20, 40), 'coins': 200, 'hospital':40},
     2: {'hp': 170, 'characters': 6, 'memorize_time': 6,'damage': {6: 40, 5: 30, 4: 20, 3: 20, 2: 10, 1: 10, 0: 0},'enemy_attack': (30, 40), 'coins': 220, 'hospital':40},

@@ -5,10 +5,11 @@ import requests
 from io import BytesIO
 from level_menu import level_selection, mark_cleared
 from pokemon_book import record_defeat
+pygame.mixer.init()
 
 WIDTH = 1510
 HEIGHT = 890
-
+click = pygame.mixer.Sound("music/click.mp3")
 # Level settings
 LEVEL_DATA = {
     1: {"hp": 100, "two_combi": (20, 30), "three_combi": (25, 30), "enemy_attack": (20, 30), "coins": 100, "hospital": 30},
@@ -221,12 +222,15 @@ def instruction_screen(screen):
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                click.play()
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
+                    click.play()
                     return True
                 elif event.key == pygame.K_ESCAPE:
+                    click.play()
                     return False
 
 
@@ -404,7 +408,7 @@ def place_screen(screen):
                     return False
 
         # 2 seconds
-        if pygame.time.get_ticks() - start_time >= 1000:
+        if pygame.time.get_ticks() - start_time >= 1500:
             return True
 
 
@@ -824,6 +828,7 @@ def win_screen(
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
+                    click.play()
                     return
 
 def hospital_screen(
