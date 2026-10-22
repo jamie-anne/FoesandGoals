@@ -4,7 +4,7 @@ import random
 import requests
 from io import BytesIO
 from level_menu import level_selection, mark_cleared
-from pokemon_book import record_defeat
+from character import draw_player_character
 pygame.mixer.init()
 
 WIDTH = 1510
@@ -367,6 +367,7 @@ def battle_interface(
         710,
         (30, 30, 30))
 
+    draw_player_character(screen)
     pygame.display.update()
 
 
@@ -1051,7 +1052,6 @@ def start_battle(
         if enemy_hp <= 0:
             coins = stats["coins"]
             game_data["coins"] += coins
-            record_defeat(game_data, pokemon_name, 1, level)
             win_screen(
                 screen,
                 coins

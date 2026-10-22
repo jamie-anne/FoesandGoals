@@ -5,13 +5,15 @@ import sys
 from adventure import adventure
 from shop import shop
 from pokemon_book import pokemon_book, load_game, save_game
+import character
 
 pygame.init()
 pygame.mixer.init()
 
 
 WIDTH = 1510
-HEIGHT = 890
+HEIGHT = 870
+ASK_EVERY_LAUNCH = False
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Foes & Goals")
@@ -19,12 +21,13 @@ pygame.display.set_caption("Foes & Goals")
 game_data = {
     "coins": 500,
     "parts_bought": 0,
-
+    "character": None,
     "world1_unlocked": 1,
     "world2_unlocked": 1,
     "world3_unlocked": 1
 }
 load_game(game_data)
+character.init(game_data, save_game)
 
 #MUSIC
 click = pygame.mixer.Sound("music/click.mp3")
@@ -137,7 +140,7 @@ def adventure_menu():
             "1. Adventure",
             "2. Shop",
             "3. View Phone",
-            "4. Pokemon Book",
+            "4. Character",
             "5. Exit Game"
         ]
         y = 200
@@ -151,7 +154,6 @@ def adventure_menu():
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
-
                 if event.key == pygame.K_1:
                     click.play()
                     adventure(screen, game_data)
@@ -162,7 +164,7 @@ def adventure_menu():
                     view_phone(screen, game_data)
                 elif event.key == pygame.K_4:
                     click.play()
-                    pokemon_book(screen, game_data)
+                    character.character_menu(screen, game_data)
                 elif event.key == pygame.K_5:
                     click.play()
                     save_game(game_data)
@@ -170,4 +172,6 @@ def adventure_menu():
                     sys.exit()
 opening_screen()
 second_screen()
+if ASK_EVERY_LAUNCH or game_data.get("character") is None:
+    character.choose_first_character(screen, game_data)
 adventure_menu()

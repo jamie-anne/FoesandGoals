@@ -5,7 +5,7 @@ import string
 import requests
 from io import BytesIO
 from level_menu import level_selection, mark_cleared
-from pokemon_book import record_defeat
+from character import draw_player_character
 pygame.mixer.init()
 
 WIDTH = 1510
@@ -193,6 +193,7 @@ def match_interface(screen, level, player_hp, enemy_hp, max_hp, enemy_image, ene
     draw_health_bar(screen, 100, 670, 330, 30, player_hp, max_hp)
     draw_text(screen, f'HP: {player_hp}/{max_hp}', 30, 100, 710, (30,30,30))
     draw_text(screen, 'WORLD 2', 32, WIDTH//2, 830, (30,30,30), True)
+    draw_player_character(screen)
     pygame.display.update()
 
 
@@ -430,7 +431,6 @@ def start_battle(screen, level, game_data):
 
         if enemy_hp <= 0:
             game_data['coins'] += stats['coins']
-            record_defeat(game_data, enemy_name, 2, level)
             result_screen(screen, 'YOU WIN!', f"+{stats['coins']} COINS")
             return True
 
