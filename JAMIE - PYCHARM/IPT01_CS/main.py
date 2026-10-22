@@ -120,22 +120,6 @@ def view_phone(screen, game_data):
                     click.play()
                     running = False
 
-def developers():
-    font = pygame.font.Font(None, 60)
-    running = True
-    while running:
-        screen.fill((0, 0, 0))
-        text = font.render("DEVELOPERS", True, (255, 255, 255))
-        screen.blit(text, (480, 300))
-        pygame.display.update()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    click.play()
-                    running = False
 
 def adventure_menu():
     font = pygame.font.Font(None, 50)
@@ -153,9 +137,8 @@ def adventure_menu():
             "1. Adventure",
             "2. Shop",
             "3. View Phone",
-            "4. Developers",
-            "5. Pokemon Book",
-            "6. Exit Game"
+            "4. Pokemon Book",
+            "5. Exit Game"
         ]
         y = 200
         for option in options:
@@ -179,11 +162,8 @@ def adventure_menu():
                     view_phone(screen, game_data)
                 elif event.key == pygame.K_4:
                     click.play()
-                    developers()
-                elif event.key == pygame.K_5:
-                    click.play()
                     pokemon_book(screen, game_data)
-                elif event.key == pygame.K_6:
+                elif event.key == pygame.K_5:
                     click.play()
                     save_game(game_data)
                     pygame.quit()

@@ -18,6 +18,8 @@ LEVEL_DATA = {
     4: {"hp": 160, "two_combi": (50, 60), "three_combi": (55, 60), "enemy_attack": (50, 60), "coins": 130, "hospital": 30},
     5: {"hp": 180, "two_combi": (60, 70), "three_combi": (65, 70), "enemy_attack": (60, 70), "coins": 150, "hospital": 40}
 }
+# Coins paid to skip the hospital after losing
+LOSS_FEE = {1: 50, 2: 60, 3: 70, 4: 80, 5: 90}
 
 LOCATION_DATA = {
     1: {"name": "Intramuros", "latitude": 14.5896, "longitude": 120.9747},
@@ -370,31 +372,29 @@ def battle_interface(
 
 # PLACE SCREEN
 # Automatically continues after 2 seconds
-def place_screen(screen):
+def place_screen(screen, level):
 
     place_image = load_image(
-        "pictures/places_1.png",
+        f"pictures/places_{level}.png",
         (WIDTH, HEIGHT)
     )
     start_time = pygame.time.get_ticks()
     while True:
 
         if place_image:
-            screen.blit(
-                place_image,
-                (0, 0))
+            screen.blit(place_image, (0, 0))
         else:
-            screen.fill(
-                (30, 30, 30))
+            screen.fill((30, 30, 30))
 
             draw_text(
                 screen,
-                "PLACE 1",
+                LOCATION_DATA[level]["name"],   # shows the real place name as fallback
                 70,
                 650,
                 300)
 
         pygame.display.update()
+        ...
         # Allow window closing
         for event in pygame.event.get():
 
@@ -897,6 +897,66 @@ def hospital_screen(
     pygame.display.update()
     pygame.time.delay(1000)
 
+def defeat_choice_screen(screen, level, game_data):
+    fee = LOSS_FEE[level]
+    hospital_seconds = LEVEL_DATA[level]["hospital"]
+    clock = pygame.time.Clock()
+
+    message = ""
+    message_time = 0
+
+    while True:
+        screen.fill((230, 230, 230))
+
+        draw_text(screen, "YOU LOST!", 90, WIDTH // 2, 170, (150, 30, 30), True)
+        draw_text(screen, "Choose what to do:", 50, WIDTH // 2, 270, (30, 30, 30), True)
+
+        draw_text(screen, f"1. Lose {fee} coins (no waiting)", 55,
+                  WIDTH // 2, 400, (30, 30, 30), True)
+        draw_text(screen, f"2. Stay in the hospital ({hospital_seconds}s)", 55,
+                  WIDTH // 2, 490, (30, 30, 30), True)
+
+        draw_text(screen, f"Your coins: {game_data['coins']}", 40,
+                  WIDTH // 2, 620, (60, 60, 60), True)
+
+        # Temporary "not enough coins" message (shows for 1.5 seconds)
+        if message and pygame.time.get_ticks() - message_time < 1500:
+            draw_text(screen, message, 50, WIDTH // 2, 710, (180, 30, 30), True)
+
+        pygame.display.update()
+        clock.tick(30)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if event.type == pygame.KEYDOWN:
+
+                # OPTION 1: PAY COINS
+                if event.key in (pygame.K_1, pygame.K_KP1):
+                    if game_data["coins"] >= fee:
+                        click.play()
+                        game_data["coins"] -= fee
+
+                        screen.fill((30, 30, 30))
+                        draw_text(screen, f"-{fee} COINS", 80,
+                                  WIDTH // 2, 380, (255, 215, 0), True)
+                        draw_text(screen, "Returning to level selection...", 40,
+                                  WIDTH // 2, 470, (255, 255, 255), True)
+                        pygame.display.update()
+                        pygame.time.delay(1500)
+                        return
+                    else:
+                        message = "NOT ENOUGH COINS!"
+                        message_time = pygame.time.get_ticks()
+
+                # OPTION 2: HOSPITAL
+                elif event.key in (pygame.K_2, pygame.K_KP2):
+                    click.play()
+                    hospital_screen(screen, hospital_seconds)
+                    return
+
 
 def start_battle(
     screen,
@@ -907,7 +967,7 @@ def start_battle(
 
     # 1. PLACE
     # Automatically shown for 2 seconds
-    continue_game = place_screen(screen)
+    continue_game = place_screen(screen, level)
     if not continue_game:
         return
 
@@ -1040,11 +1100,7 @@ def start_battle(
 
         # 13. CHECK IF PLAYER IS DEAD
         if player_hp <= 0:
-
-            hospital_screen(
-                screen,
-                stats["hospital"]
-            )
+            defeat_choice_screen(screen, level, game_data)
 
             return False
 

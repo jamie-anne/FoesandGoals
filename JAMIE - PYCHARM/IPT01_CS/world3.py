@@ -17,6 +17,7 @@ LEVEL_DATA = {
     4: {'hp': 270,'speed': 1.6,'critical': 90,'strong': 75,'weak': 60,'miss': 0,'enemy_attack': (75, 90),'coins': 500,'hospital': 50},
     5: {'hp': 300,'speed': 1.8,'critical': 100,'strong': 85,'weak': 65,'miss': 0,'enemy_attack': (85, 100),'coins': 1000,'hospital': 60}
 }
+LOSS_FEE = {1: 50, 2: 60, 3: 70, 4: 80, 5: 90}
 
 # World 3 locations (levels 1-5). Coordinates are used for live weather.
 LOCATION_DATA = {
@@ -285,6 +286,98 @@ def result_screen(screen, title, subtitle, title_color=(30,30,30)):
             if event.type == pygame.QUIT: pygame.quit(); sys.exit()
             if event.type == pygame.KEYDOWN and event.key in (pygame.K_RETURN, pygame.K_ESCAPE): return
 
+def hospital_screen(screen, seconds):
+    clock = pygame.time.Clock()
+    start_time = pygame.time.get_ticks()
+
+    while True:
+        elapsed = (pygame.time.get_ticks() - start_time) // 1000
+        remaining = seconds - elapsed
+
+        if remaining <= 0:
+            break
+
+        screen.fill((230, 230, 230))
+        draw_text(screen, 'HOSPITAL', 80, WIDTH // 2, 220, (30, 30, 30), True)
+        draw_text(screen, 'YOU LOST!', 60, WIDTH // 2, 340, (180, 30, 30), True)
+        draw_text(screen, f'Recovery Time: {remaining}s', 45,
+                  WIDTH // 2, 450, (30, 30, 30), True)
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        clock.tick(30)
+
+    screen.fill((30, 30, 30))
+    draw_text(screen, 'RECOVERED!', 70, WIDTH // 2, 350, (255, 255, 255), True)
+    draw_text(screen, 'Returning to level selection...', 35,
+              WIDTH // 2, 440, (255, 255, 255), True)
+    pygame.display.update()
+    pygame.time.delay(1500)
+
+def defeat_choice_screen(screen, level, game_data):
+    fee = LOSS_FEE[level]
+    hospital_seconds = LEVEL_DATA[level]['hospital']
+    clock = pygame.time.Clock()
+
+    message = ''
+    message_time = 0
+
+    while True:
+        screen.fill((230, 230, 230))
+
+        draw_text(screen, 'YOU LOST!', 90, WIDTH // 2, 170, (180, 30, 30), True)
+        draw_text(screen, 'Choose what to do:', 50, WIDTH // 2, 270, (30, 30, 30), True)
+
+        draw_text(screen, f'1. Lose {fee} coins (no waiting)', 55,
+                  WIDTH // 2, 400, (30, 30, 30), True)
+        draw_text(screen, f'2. Stay in the hospital ({hospital_seconds}s)', 55,
+                  WIDTH // 2, 490, (30, 30, 30), True)
+
+        draw_text(screen, f"Your coins: {game_data['coins']}", 40,
+                  WIDTH // 2, 620, (60, 60, 60), True)
+
+        # Temporary "not enough coins" message (1.5 seconds)
+        if message and pygame.time.get_ticks() - message_time < 1500:
+            draw_text(screen, message, 50, WIDTH // 2, 710, (180, 30, 30), True)
+
+        pygame.display.update()
+        clock.tick(30)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if event.type == pygame.KEYDOWN:
+
+                # OPTION 1: PAY COINS
+                if event.key in (pygame.K_1, pygame.K_KP1):
+                    if game_data['coins'] >= fee:
+                        click.play()
+                        game_data['coins'] -= fee
+
+                        screen.fill((30, 30, 30))
+                        draw_text(screen, f'-{fee} COINS', 80,
+                                  WIDTH // 2, 380, (255, 215, 0), True)
+                        draw_text(screen, 'Returning to level selection...', 40,
+                                  WIDTH // 2, 470, (255, 255, 255), True)
+                        pygame.display.update()
+                        pygame.time.delay(1500)
+                        return
+                    else:
+                        message = 'NOT ENOUGH COINS!'
+                        message_time = pygame.time.get_ticks()
+
+                # OPTION 2: HOSPITAL
+                elif event.key in (pygame.K_2, pygame.K_KP2):
+                    click.play()
+                    hospital_screen(screen, hospital_seconds)
+                    return
+
 
 def start_battle(screen, level, game_data):
     stats = LEVEL_DATA[level]
@@ -315,7 +408,7 @@ def start_battle(screen, level, game_data):
         player_hp = max(0, player_hp - enemy_damage)
         enemy_attack_screen(screen, enemy_damage)
         if player_hp <= 0:
-            result_screen(screen, 'YOU LOST!', f"Hospital: {stats['hospital']} seconds", (180,30,30))
+            defeat_choice_screen(screen, level, game_data)
             return False
         match_interface(screen, level, player_hp, enemy_hp, stats['hp'], enemy_image, enemy_name)
         pygame.time.delay(1000)

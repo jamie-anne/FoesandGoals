@@ -2,39 +2,44 @@ import pygame
 import sys
 pygame.mixer.init()
 parts = [
-    {"name": "LCD", "price": 100},
-    {"name": "iPhone Case", "price": 200},
-    {"name": "Battery", "price": 300},
-    {"name": "Camera", "price": 400},
-    {"name": "Speaker", "price": 500},
-    {"name": "Buttons", "price": 600},
-    {"name": "Charging Port", "price": 700},
-    {"name": "Back Glass", "price": 800},
-    {"name": "Front Glass", "price": 900},
-    {"name": "Face ID", "price": 1000},
-    {"name": "Motherboard", "price": 1100},
-    {"name": "Final Assembly", "price": 1200}
+    {"name": "Power Button", "price": 100},
+    {"name": "Volume Buttons", "price": 100},
+    {"name": "Battery", "price": 200},
+    {"name": "Microphone", "price": 250},
+    {"name": "Rear Camera", "price": 300},
+    {"name": "Front Camera", "price": 400},
+    {"name": "SIM Card Case", "price": 400},
+    {"name": "Charging Port", "price": 450},
+    {"name": "Main Speaker", "price": 500},
+    {"name": "LCD", "price": 550},
+    {"name": "Logic Board", "price": 600},
+    {"name": "Midframe", "price": 700}
 ]
 
 # SETTINGS (easy things to change)
 BACKGROUND_FILE = "pictures/shop_bg.jpg"   # your photo (optional)
-BACKGROUND_COLOR = (25, 30, 45)                    # used if no photo is found
-CARD_COLOR = (40, 45, 65)
-TEXT_COLOR = (255, 255, 255)
-GOLD = (255, 220, 0)
+BACKGROUND_COLOR = (25, 30, 45)       # Midnight navy background
+CARD_COLOR = (32, 40, 59)             # Dark navy cards
+TEXT_COLOR = (255, 255, 255)          # White text
+GOLD = (220, 168, 50)                 # Gold accents
+
 STATUS_COLORS = {
-    "BOUGHT": (80, 200, 120),
-    "AVAILABLE": (255, 220, 0),
-    "LOCKED": (130, 130, 140),
+    "BOUGHT": (74, 222, 128),         # Green
+    "AVAILABLE": (255, 210, 31),      # Bright gold
+    "LOCKED": (160, 165, 178),        # Muted gray
 }
+
+BORDER_COLOR = (104, 115, 134)        # Slate gray
+AVAILABLE_BORDER = (255, 210, 31)     # Gold
+BOUGHT_BORDER = (74, 222, 128)        # Green
 
 #MUSIC
 click = pygame.mixer.Sound("music/click.mp3")
-shop_bgm = pygame.mixer.Sound("music/SHOP.mp3")
+shop_bgm = pygame.mixer.Sound("music/shop_bg.mp3")
 
 # SHOP
 def shop(screen, game_data):
-    shop_bgm.play()
+    shop_bgm.play(-1)
     WIDTH = 1510
     HEIGHT = 890
 
@@ -98,9 +103,37 @@ def shop(screen, game_data):
             color = STATUS_COLORS[status]
 
             # Card
+
+            # Card
             card = pygame.Rect(x, y, card_w, card_h)
-            pygame.draw.rect(screen, CARD_COLOR, card, border_radius=12)
-            pygame.draw.rect(screen, color, card, 2, border_radius=12)
+
+            # 1. Draw the entire card in midnight navy
+            pygame.draw.rect(
+                screen, CARD_COLOR, card,
+                border_radius=12
+            )
+
+            # 2. Draw the white upper section for the image
+            image_area = pygame.Rect(
+                x + 2,
+                y + 2,
+                card_w - 4,
+                image_height + 12
+            )
+
+            pygame.draw.rect(
+                screen,
+                (255, 255, 255),
+                image_area,
+                border_top_left_radius=10,
+                border_top_right_radius=10
+            )
+
+            # 3. Draw the status-colored border on top
+            pygame.draw.rect(
+                screen, color, card,
+                2, border_radius=12
+            )
 
             # Image
             screen.blit(images[i], (x + (card_w - image_width) // 2, y + 10))

@@ -8,20 +8,13 @@ pygame.mixer.init()
 click = pygame.mixer.Sound("music/click.mp3")
 
 def adventure(screen, game_data):
-    world_image = pygame.image.load("pictures/world_selection.png")
+    world_image = pygame.image.load("pictures/world_selection.jpg")
     world_image = pygame.transform.scale(world_image, (1510, 890))
     running = True
     while running:
 
         screen.blit(world_image, (0, 0))
-        font = pygame.font.Font(None, 35)
-        text = font.render(
-            "Press 1, 2, or 3 to choose a world",
-            True,
-            (255, 255, 255)
-        )
 
-        screen.blit(text, (400, 650))
         pygame.display.update()
         for event in pygame.event.get():
 
