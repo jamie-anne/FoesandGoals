@@ -26,6 +26,8 @@ game_data = {
     "world2_unlocked": 1,
     "world3_unlocked": 1
 }
+import os
+print("Looking for save in:", os.getcwd(), os.listdir("."))
 load_game(game_data)
 character.init(game_data, save_game)
 

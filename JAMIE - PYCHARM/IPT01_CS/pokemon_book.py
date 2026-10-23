@@ -7,7 +7,7 @@ pygame.mixer.init()
 WIDTH = 1510
 HEIGHT = 890
 
-SAVE_FILE = "savegame.json"
+SAVE_FILE = "old_save.json"
 PER_PAGE = 10
 
 click = pygame.mixer.Sound("music/click.mp3")

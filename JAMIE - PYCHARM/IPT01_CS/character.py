@@ -11,12 +11,12 @@ HEIGHT = 890
 # =========================================================
 # Order matters: 1 = Girl, 2 = Boy, 3 = Girl (outfit 2), 4 = Boy (outfit 2)
 CHARACTER_FILES = [
-    "pictures/character_1.png",
+    "pictures/character_1.png", #girl
     "pictures/character_2.png",
-    "pictures/character_3.png",
+    "pictures/character_3.png", #girl2
     "pictures/character_4.png",
 ]
-CHARACTER_NAMES = ["Girl", "Boy", "Girl (Outfit 2)", "Boy (Outfit 2)"]
+CHARACTER_NAMES = ["Jamie", "Railey", "Shermie", "Justin"]
 
 # Where / how big the player is drawn during a match
 MATCH_POSITION = (100, 270)     # top-left of the area (just above "PLAYER")
@@ -137,7 +137,7 @@ def _draw_card(screen, rect, index, font, border_color, border_width, tag=""):
     screen.blit(image, image.get_rect(
         center=(rect.centerx, rect.y + 40 + image_area_h // 2)))
 
-    label = font.render(f"{index + 1}. {CHARACTER_NAMES[index]}",
+    label = font.render(f"{CHARACTER_NAMES[index]}",
                         True, TEXT_COLOR)
     screen.blit(label, label.get_rect(center=(rect.centerx, rect.bottom - 30)))
 

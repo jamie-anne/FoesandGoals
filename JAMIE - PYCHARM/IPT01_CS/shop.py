@@ -168,6 +168,7 @@ def shop(screen, game_data):
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
+                    click.play()
                     shop_bgm.stop()
                     running = False
 
