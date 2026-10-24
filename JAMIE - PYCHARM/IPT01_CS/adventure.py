@@ -45,7 +45,7 @@ def is_world_unlocked(game_data, world):
 
 def adventure(screen, game_data):
     world_bg.play(-1)
-    world_image = pygame.image.load("pictures/world_selection.jpg")
+    world_image = pygame.image.load("pictures/world_selection.png")
     world_image = pygame.transform.scale(world_image, (WIDTH, HEIGHT))
 
     label_font = pygame.font.Font(None, LOCKED_SIZE)

@@ -44,6 +44,8 @@ view_phonee = pygame.mixer.Sound("music/view_phone.mp3")
 
 opening_image = pygame.image.load("pictures/foes.png")
 second_image = pygame.image.load("pictures/foes.png")
+menu_bg = pygame.image.load("pictures/game_menu.png")
+menu_bg = pygame.transform.scale(menu_bg, (WIDTH, HEIGHT))
 
 opening_image = pygame.transform.scale(opening_image, (WIDTH, HEIGHT))
 second_image = pygame.transform.scale(second_image, (WIDTH, HEIGHT))
@@ -83,8 +85,6 @@ def second_screen():
 
 def view_phone(screen, game_data):
     view_phonee.play(-1)
-    WIDTH = 15102
-    HEIGHT = 890
     phone_images = []
     for i in range(13):
         image = pygame.image.load(
@@ -104,15 +104,6 @@ def view_phone(screen, game_data):
             phone_images[current_stage],
             (0, 0)
         )
-        parts_text = font.render(
-            f"Parts Completed: {game_data['parts_bought']}/12",
-            True,
-            (255, 255, 255)
-        )
-        screen.blit(
-            parts_text,
-            (30, 70)
-        )
         back_text = font.render(
             "Press ESC to return",
             True,
@@ -120,7 +111,7 @@ def view_phone(screen, game_data):
         )
         screen.blit(
             back_text,
-            (1100, 30)
+            (100, 30)
         )
         pygame.display.update()
         for event in pygame.event.get():
@@ -136,30 +127,27 @@ def view_phone(screen, game_data):
 
 def adventure_menu():
     game_menu.play(-1)
-    font = pygame.font.Font(None, 50)
+
+    GOLD = (255, 210, 31)
+    coin_font = pygame.font.Font(None, 46)
+
     while True:
-        screen.fill((0, 0, 0))
-        title = font.render("FOES & GOALS", True, (255, 255, 255))
-        screen.blit(title, (500, 80))
-        coins = font.render(
-            f"Coins: {game_data['coins']}",
-            True,
-            (255, 255, 0)
-        )
-        screen.blit(coins, (30, 30))
-        options = [
-            "1. Adventure",
-            "2. Shop",
-            "3. View Phone",
-            "4. Character",
-            "5. Exit Game"
-        ]
-        y = 200
-        for option in options:
-            text = font.render(option, True, (255, 255, 255))
-            screen.blit(text, (450, y))
-            y += 70
+        screen.blit(menu_bg, (0, 0))
+
+        # ---------- COINS (top-left) ----------
+        coin_text = coin_font.render(str(game_data["coins"]), True, (255, 255, 255))
+        pill_w = 95 + coin_text.get_width() + 25
+        pill = pygame.Surface((pill_w, 60), pygame.SRCALPHA)
+        pygame.draw.rect(pill, (15, 20, 35, 190), pill.get_rect(), border_radius=30)
+        screen.blit(pill, (30, 25))
+        pygame.draw.rect(screen, GOLD, (30, 25, pill_w, 60), 2, border_radius=30)
+        pygame.draw.circle(screen, GOLD, (70, 55), 20)
+        pygame.draw.circle(screen, (180, 130, 20), (70, 55), 20, 3)
+        pygame.draw.circle(screen, (180, 130, 20), (70, 55), 10, 2)
+        screen.blit(coin_text, coin_text.get_rect(midleft=(103, 55)))
+
         pygame.display.update()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()

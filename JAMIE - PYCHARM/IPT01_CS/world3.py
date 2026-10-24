@@ -4,7 +4,6 @@ import random
 import requests
 from io import BytesIO
 from level_menu import level_selection, mark_cleared
-from character import draw_player_character
 from character import draw_player_character, get_character_name
 pygame.mixer.init()
 
@@ -120,7 +119,7 @@ def get_pokemon(level):
 
 
 def instruction_screen(screen):
-    image = load_image('pictures/instruction_world1.png', (WIDTH, HEIGHT))
+    image = load_image('pictures/instruction_world3.png', (WIDTH, HEIGHT))
     while True:
         if image:
             screen.blit(image, (0,0))
@@ -442,19 +441,21 @@ def world3(screen, game_data):
         game_data['world3_unlocked'] = 1
 
     while True:
-        if match_bg.get_num_channels() == 0:   # don't stack a second copy
-            match_bg.play(-1)
         level = level_selection(screen, game_data, 'world3_unlocked', 'fire', 3)
 
         if level is None:
-            match_bg.stop()
             return
 
         if not instruction_screen(screen):
-            match_bg.stop()
             return
 
+        # ---------- PLAY: after the instructions ----------
+        match_bg.play(-1)
+
         result = start_battle(screen, level, game_data)
+
+        # ---------- STOP: safety net (e.g. ESC out of the match) ----------
+        match_bg.stop()
 
         if result is True:
             mark_cleared(game_data, 'world3_unlocked', level)

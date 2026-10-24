@@ -4,7 +4,6 @@ import random
 import requests
 from io import BytesIO
 from level_menu import level_selection, mark_cleared
-from character import draw_player_character
 from character import draw_player_character, get_character_name
 pygame.mixer.init()
 
@@ -1064,15 +1063,11 @@ def start_battle(
 # WORLD 1
 # =========================================================
 
-def world1(screen, game_data):          # same for world2 / world3
+def world1(screen, game_data):
     if "world1_unlocked" not in game_data:
         game_data["world1_unlocked"] = 1
 
     while True:
-        # ---------- PLAY: starts in level selection ----------
-        if match_bg.get_num_channels() == 0:   # don't stack a second copy
-            match_bg.play(-1)
-
         level = level_selection(screen, game_data, "world1_unlocked", "mac", 1)
 
         # World 1 finished (works for real wins and for the mac5 cheat)
@@ -1080,15 +1075,19 @@ def world1(screen, game_data):          # same for world2 / world3
             game_data["world2_unlocked"] = max(1, game_data.get("world2_unlocked", 0))
 
         if level is None:
-            match_bg.stop()                    # ESC on level selection, leaving World 1
             return
 
         continue_game = instruction_screen(screen)
         if not continue_game:
-            match_bg.stop()                    # ESC on instructions, leaving World 1
             return
 
+        # ---------- PLAY: after the instructions ----------
+        match_bg.play(-1)
+
         result = start_battle(screen, level, game_data)
+
+        # ---------- STOP: safety net (e.g. ESC out of the match) ----------
+        match_bg.stop()
 
         if result is True:
             mark_cleared(game_data, 'world1_unlocked', level)
