@@ -453,7 +453,12 @@ def world2(screen, game_data):
         game_data['world2_unlocked'] = 1
 
     while True:
-        level = level_selection(screen, game_data, 'world2_unlocked', 'evo',2)
+        level = level_selection(screen, game_data, 'world2_unlocked', 'evo', 2)
+
+        # World 2 finished (works for real wins and for the evo5 cheat)
+        if 5 in game_data.get('world2_cleared', []):
+            game_data['world3_unlocked'] = max(1, game_data.get('world3_unlocked', 0))
+
         if level is None: return
 
         if not instruction_screen(screen): return

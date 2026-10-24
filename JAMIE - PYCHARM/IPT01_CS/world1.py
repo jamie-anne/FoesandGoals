@@ -10,6 +10,9 @@ pygame.mixer.init()
 WIDTH = 1510
 HEIGHT = 890
 click = pygame.mixer.Sound("music/click.mp3")
+match_bg = pygame.mixer.Sound("music/match_1.mp3")
+world_bg = pygame.mixer.Sound("music/world_level.mp3")
+
 # Level settings
 LEVEL_DATA = {
     1: {"hp": 100, "two_combi": (20, 30), "three_combi": (25, 30), "enemy_attack": (20, 30), "coins": 100, "hospital": 30},
@@ -191,7 +194,6 @@ def draw_text(
 
 
 def instruction_screen(screen):
-
     image = load_image(
         "pictures/instruction_world1.png",
         (WIDTH, HEIGHT)
@@ -1119,38 +1121,26 @@ def start_battle(
 # WORLD 1
 # =========================================================
 
-def world1(
-    screen,
-    game_data
-):
-
-    # ---------------------------------------------
-    # WORLD 1 LEVEL PROGRESS
-    # ---------------------------------------------
-
+def world1(screen, game_data):
     if "world1_unlocked" not in game_data:
         game_data["world1_unlocked"] = 1
 
     while True:
+        # ---------- MUSIC 1: level selection ----------
+        level = level_selection(screen, game_data, "world1_unlocked", "mac", 1)
 
-        # ---------------------------------------------
-        # LEVEL SELECTION
-        # ---------------------------------------------
-
-        level = level_selection(screen, game_data, "world1_unlocked", "mac",1)
+        # World 1 finished (works for real wins and for the mac5 cheat)
+        if 5 in game_data.get("world1_cleared", []):
+            game_data["world2_unlocked"] = max(1, game_data.get("world2_unlocked", 0))
 
         if level is None:
             return
 
-        # ---------------------------------------------
-        # INSTRUCTIONS
-        # ---------------------------------------------
+        # ---------- MUSIC 2: instruction + match ----------
 
         continue_game = instruction_screen(screen)
-
         if not continue_game:
             return
-
 
         result = start_battle(screen, level, game_data)
 

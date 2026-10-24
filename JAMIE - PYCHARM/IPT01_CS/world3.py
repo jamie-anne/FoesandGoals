@@ -419,7 +419,7 @@ def world3(screen, game_data):
         game_data['world3_unlocked'] = 1
 
     while True:
-        level = level_selection(screen, game_data, 'world3_unlocked', 'bro',3)
+        level = level_selection(screen, game_data, 'world3_unlocked', 'fire', 3)
         if level is None: return
 
         if not instruction_screen(screen): return

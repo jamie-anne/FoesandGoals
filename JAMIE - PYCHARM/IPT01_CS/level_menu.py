@@ -13,18 +13,18 @@ PICTURE_NAME = "{world}_lvl{level}.png"
 click = pygame.mixer.Sound("music/click.mp3")
 
 
-IMAGE_SIZE = (380,310)    # (width, height) of each level picture
-H_SPACING = 250            # horizontal distance between neighboring level centers
-ROW_GAP = 320              # vertical distance between the top row and bottom row
-TOP_ROW_Y = 275            # center Y of the top row (lvl2, lvl4)
+IMAGE_SIZE = (335,280)    # width, height
+H_SPACING = 200            # horizontal distance
+ROW_GAP = 260              # vertical distance ng top row and bottom row
+TOP_ROW_Y = 350            # baba lahat
 
-LABEL_GAP = 20             # distance between a picture and its [ LOCKED ] text
+LABEL_GAP = 15             # distance between a picture and its [ LOCKED ] text
 LABEL_SIZE = 30            # font size of [ LOCKED ] / [ UNLOCKED ]
 
 DIM_LOCKED = True          # darken the pictures of locked levels
 
-LOCKED_COLOR = (220, 60, 60)
-UNLOCKED_COLOR = (60, 220, 90)
+LOCKED_COLOR = (0,0,0)
+UNLOCKED_COLOR = (255,255,255)
 CLEARED_COLOR = (255, 215, 0)
 
 
@@ -181,10 +181,21 @@ def level_selection(screen, game_data, progress_key, code_prefix, world_number):
                 continue
 
             character = event.unicode.lower()
-            if character.isalnum() and len(character) == 1:
-                if cheat_input or character.isalpha():
-                    cheat_input += character
+            prefix = code_prefix or ""
+            if len(character) == 1 and character.isalnum():
+                if character.isalpha():
+                    # keep the letter only if it continues the cheat code, else restart
+                    if prefix.startswith(cheat_input + character):
+                        cheat_input += character
+                    elif prefix.startswith(character):
+                        cheat_input = character
+                    else:
+                        cheat_input = ""
                     continue
+                if cheat_input == prefix and prefix:
+                    cheat_input += character  # digit after "mac" / "evo"
+                    continue
+                cheat_input = ""  # junk in buffer: clear it, let the digit pick the level
 
             for key, level in [
                 (pygame.K_1, 1), (pygame.K_2, 2), (pygame.K_3, 3),
