@@ -9,6 +9,7 @@ from save_system import save_game
 pygame.mixer.init()
 click = pygame.mixer.Sound("music/click.mp3")
 world_bg = pygame.mixer.Sound("music/world_level.mp3")
+world_bg.set_volume(0.3)
 
 WIDTH = 1510
 HEIGHT = 890
@@ -43,7 +44,7 @@ def is_world_unlocked(game_data, world):
 
 
 def adventure(screen, game_data):
-
+    world_bg.play(-1)
     world_image = pygame.image.load("pictures/world_selection.jpg")
     world_image = pygame.transform.scale(world_image, (WIDTH, HEIGHT))
 
@@ -76,8 +77,11 @@ def adventure(screen, game_data):
                     world = WORLD_KEYS[event.key]
                     if is_world_unlocked(game_data, world):
                         click.play()
+                        world_bg.stop()  # stop before entering the world
                         WORLD_FUNCTIONS[world](screen, game_data)
+                        world_bg.play(-1)  # music back after leaving the world
                         save_game(game_data)
                 elif event.key == pygame.K_ESCAPE:
                     click.play()
+                    world_bg.stop()  # stop when leaving world selection
                     running = False

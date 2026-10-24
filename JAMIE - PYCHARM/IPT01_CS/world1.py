@@ -5,13 +5,14 @@ import requests
 from io import BytesIO
 from level_menu import level_selection, mark_cleared
 from character import draw_player_character
+from character import draw_player_character, get_character_name
 pygame.mixer.init()
 
 WIDTH = 1510
 HEIGHT = 890
 click = pygame.mixer.Sound("music/click.mp3")
 match_bg = pygame.mixer.Sound("music/match_1.mp3")
-world_bg = pygame.mixer.Sound("music/world_level.mp3")
+match_bg.set_volume(0.4)
 
 # Level settings
 LEVEL_DATA = {
@@ -284,92 +285,36 @@ def draw_health_bar(
 
 
 # MATCH INTERFACE
-def battle_interface(
-    screen,
-    level,
-    player_hp,
-    enemy_hp,
-    max_enemy_hp,
-    pokemon_image,
-    pokemon_name
-):
-    # Light gray background like World 2.
+def battle_interface(screen, level, player_hp, enemy_hp, max_enemy_hp,
+                     pokemon_image, pokemon_name):
     screen.fill((235, 235, 235))
 
-    # ENEMY INFORMATION - TOP RIGHT
-    draw_text(
-        screen,
-        f"{pokemon_name} - LEVEL {level}",
-        38,
-        1050,
-        55,
-        (30, 30, 30)
-    )
+    # ---------- ADJUST THESE ----------
+    PLAYER_X = 500        # center x of the player (left)
+    ENEMY_X = 1080        # center x of the enemy (right)
+    CENTER_Y = 470        # vertical center of both fighters
+    BAR_W = 330
 
-    draw_health_bar(
-        screen,
-        1050,
-        105,
-        330,
-        30,
-        enemy_hp,
-        max_enemy_hp
-    )
+    # ----------------------------------
 
-    draw_text(
-        screen,
-        f"HP: {enemy_hp}/{max_enemy_hp}",
-        30,
-        1050,
-        145,
-        (30, 30, 30)
-    )
+    bar_y = CENTER_Y - 165 - 70     # above the head
+    name_y = CENTER_Y + 165 + 45    # below the feet
 
+    draw_text(screen, f"LEVEL {level}", 45, WIDTH // 2, 60, (30, 30, 30), True)
 
-    # ENEMY POKEMON - RIGHT SIDE
+    # ENEMY (right)
+    draw_health_bar(screen, ENEMY_X - BAR_W // 2, bar_y, BAR_W, 30, enemy_hp, max_enemy_hp)
+    draw_text(screen, f"HP: {enemy_hp}/{max_enemy_hp}", 30, ENEMY_X, bar_y - 22, (30, 30, 30), True)
     if pokemon_image:
-        screen.blit(
-            pokemon_image,
-            (1030, 180)
-        )
+        screen.blit(pokemon_image, pokemon_image.get_rect(center=(ENEMY_X, CENTER_Y)))
+    draw_text(screen, pokemon_name, 45, ENEMY_X, name_y, (30, 30, 30), True)
 
-    draw_text(
-        screen,
-        "VS",
-        70,
-        WIDTH // 2,
-        390,
-        (30, 30, 30),
-        center=True
-    )
+    # PLAYER (left)
+    draw_health_bar(screen, PLAYER_X - BAR_W // 2, bar_y, BAR_W, 30, player_hp, max_enemy_hp)
+    draw_text(screen, f"HP: {player_hp}/{max_enemy_hp}", 30, PLAYER_X, bar_y - 22, (30, 30, 30), True)
+    draw_player_character(screen, position=(PLAYER_X - 165, CENTER_Y - 165))
+    draw_text(screen, get_character_name(), 45, PLAYER_X, name_y, (30, 30, 30), True)
 
-    # PLAYER INFORMATION - BOTTOM LEFT
-    draw_text(
-        screen,
-        "PLAYER",
-        42,
-        100,
-        610,
-        (30, 30, 30))
-
-    draw_health_bar(
-        screen,
-        100,
-        670,
-        330,
-        30,
-        player_hp,
-        max_enemy_hp)
-
-    draw_text(
-        screen,
-        f"HP: {player_hp}/{max_enemy_hp}",
-        30,
-        100,
-        710,
-        (30, 30, 30))
-
-    draw_player_character(screen)
     pygame.display.update()
 
 
@@ -1052,12 +997,10 @@ def start_battle(
 
         # 9. CHECK IF ENEMY IS DEAD
         if enemy_hp <= 0:
+            match_bg.stop()  # STOP on win
             coins = stats["coins"]
             game_data["coins"] += coins
-            win_screen(
-                screen,
-                coins
-            )
+            win_screen(screen, coins)
             return True
 
 
@@ -1102,8 +1045,8 @@ def start_battle(
 
         # 13. CHECK IF PLAYER IS DEAD
         if player_hp <= 0:
+            match_bg.stop()  # STOP on lose
             defeat_choice_screen(screen, level, game_data)
-
             return False
 
         # =================================================
@@ -1121,12 +1064,15 @@ def start_battle(
 # WORLD 1
 # =========================================================
 
-def world1(screen, game_data):
+def world1(screen, game_data):          # same for world2 / world3
     if "world1_unlocked" not in game_data:
         game_data["world1_unlocked"] = 1
 
     while True:
-        # ---------- MUSIC 1: level selection ----------
+        # ---------- PLAY: starts in level selection ----------
+        if match_bg.get_num_channels() == 0:   # don't stack a second copy
+            match_bg.play(-1)
+
         level = level_selection(screen, game_data, "world1_unlocked", "mac", 1)
 
         # World 1 finished (works for real wins and for the mac5 cheat)
@@ -1134,12 +1080,12 @@ def world1(screen, game_data):
             game_data["world2_unlocked"] = max(1, game_data.get("world2_unlocked", 0))
 
         if level is None:
+            match_bg.stop()                    # ESC on level selection, leaving World 1
             return
-
-        # ---------- MUSIC 2: instruction + match ----------
 
         continue_game = instruction_screen(screen)
         if not continue_game:
+            match_bg.stop()                    # ESC on instructions, leaving World 1
             return
 
         result = start_battle(screen, level, game_data)

@@ -5,11 +5,16 @@ import requests
 from io import BytesIO
 from level_menu import level_selection, mark_cleared
 from character import draw_player_character
+from character import draw_player_character, get_character_name
 pygame.mixer.init()
 
 WIDTH = 1510
 HEIGHT = 890
 click = pygame.mixer.Sound("music/click.mp3")
+match_bg = pygame.mixer.Sound("music/match_3.mp3")
+match_bg.set_volume(0.4)
+
+
 LEVEL_DATA = {
     1: {'hp': 200,'speed': 1.0,'critical': 60,'strong': 50,'weak': 40,'miss': 0,'enemy_attack': (50, 60),'coins': 350,'hospital': 50},
     2: {'hp': 220,'speed': 1.2,'critical': 70,'strong': 55,'weak': 40,'miss': 0,'enemy_attack': (55, 70),'coins': 400,'hospital': 50},
@@ -173,17 +178,33 @@ def draw_health_bar(screen, x, y, width, height, hp, max_hp):
 
 
 def match_interface(screen, level, player_hp, enemy_hp, max_hp, enemy_image, enemy_name):
-    screen.fill((235,235,235))
-    draw_text(screen, f'{enemy_name} - LEVEL {level}', 38, 1050, 55, (30,30,30))
-    draw_health_bar(screen, 1050, 105, 330, 30, enemy_hp, max_hp)
-    draw_text(screen, f'HP: {enemy_hp}/{max_hp}', 30, 1050, 145, (30,30,30))
-    if enemy_image: screen.blit(enemy_image, (1030,180))
-    draw_text(screen, 'VS', 70, WIDTH//2, 390, (30,30,30), True)
-    draw_text(screen, 'PLAYER', 42, 100, 610, (30,30,30))
-    draw_health_bar(screen, 100, 670, 330, 30, player_hp, max_hp)
-    draw_text(screen, f'HP: {player_hp}/{max_hp}', 30, 100, 710, (30,30,30))
-    draw_text(screen, 'WORLD 3', 32, WIDTH//2, 830, (30,30,30), True)
-    draw_player_character(screen)
+    screen.fill((235, 235, 235))
+
+    PLAYER_X = 430
+    ENEMY_X = 1080
+    CENTER_Y = 470
+    BAR_W = 330
+    PLAYER_NAME = "PLAYER"
+
+    bar_y = CENTER_Y - 165 - 70
+    name_y = CENTER_Y + 165 + 45
+
+    draw_text(screen, f'LEVEL {level}', 45, WIDTH // 2, 60, (30, 30, 30), True)
+
+    # ENEMY (right)
+    draw_health_bar(screen, ENEMY_X - BAR_W // 2, bar_y, BAR_W, 30, enemy_hp, max_hp)
+    draw_text(screen, f'HP: {enemy_hp}/{max_hp}', 30, ENEMY_X, bar_y - 22, (30, 30, 30), True)
+    if enemy_image:
+        screen.blit(enemy_image, enemy_image.get_rect(center=(ENEMY_X, CENTER_Y)))
+    draw_text(screen, enemy_name, 45, ENEMY_X, name_y, (30, 30, 30), True)
+
+    # PLAYER (left)
+    draw_health_bar(screen, PLAYER_X - BAR_W // 2, bar_y, BAR_W, 30, player_hp, max_hp)
+    draw_text(screen, f'HP: {player_hp}/{max_hp}', 30, PLAYER_X, bar_y - 22, (30, 30, 30), True)
+    draw_player_character(screen, position=(PLAYER_X - 165, CENTER_Y - 165))
+    draw_text(screen, get_character_name(), 45, PLAYER_X, name_y, (30, 30, 30), True)
+
+    draw_text(screen, 'WORLD 3', 32, WIDTH // 2, 830, (30, 30, 30), True)
     pygame.display.update()
 
 
@@ -396,6 +417,7 @@ def start_battle(screen, level, game_data):
         enemy_hp = max(0, enemy_hp - damage)
         player_attack_screen(screen, result, damage)
         if enemy_hp <= 0:
+            match_bg.stop()
             game_data['coins'] += stats['coins']
             result_screen(screen, 'YOU WIN!', f"+{stats['coins']} COINS")
             return True
@@ -408,6 +430,7 @@ def start_battle(screen, level, game_data):
         player_hp = max(0, player_hp - enemy_damage)
         enemy_attack_screen(screen, enemy_damage)
         if player_hp <= 0:
+            match_bg.stop()
             defeat_choice_screen(screen, level, game_data)
             return False
         match_interface(screen, level, player_hp, enemy_hp, stats['hp'], enemy_image, enemy_name)
@@ -419,10 +442,17 @@ def world3(screen, game_data):
         game_data['world3_unlocked'] = 1
 
     while True:
+        if match_bg.get_num_channels() == 0:   # don't stack a second copy
+            match_bg.play(-1)
         level = level_selection(screen, game_data, 'world3_unlocked', 'fire', 3)
-        if level is None: return
 
-        if not instruction_screen(screen): return
+        if level is None:
+            match_bg.stop()
+            return
+
+        if not instruction_screen(screen):
+            match_bg.stop()
+            return
 
         result = start_battle(screen, level, game_data)
 

@@ -318,3 +318,9 @@ def character_menu(screen, game_data):
             elif len(event.unicode) == 1 and event.unicode in "0123456789":
                 input_text = event.unicode
                 message = ""
+
+def get_character_name():
+    index = get_character()
+    if index is None:
+        return "PLAYER"
+    return CHARACTER_NAMES[index]

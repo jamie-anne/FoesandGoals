@@ -39,7 +39,8 @@ atexit.register(lambda: save_game(game_data))
 #MUSIC
 click = pygame.mixer.Sound("music/click.mp3")
 lp_music = pygame.mixer.Sound("music/LP_music.mp3")
-
+game_menu = pygame.mixer.Sound("music/game_menu.mp3")
+view_phonee = pygame.mixer.Sound("music/view_phone.mp3")
 
 opening_image = pygame.image.load("pictures/foes.png")
 second_image = pygame.image.load("pictures/foes.png")
@@ -81,7 +82,8 @@ def second_screen():
                     waiting = False
 
 def view_phone(screen, game_data):
-    WIDTH = 1510
+    view_phonee.play(-1)
+    WIDTH = 15102
     HEIGHT = 890
     phone_images = []
     for i in range(13):
@@ -127,11 +129,13 @@ def view_phone(screen, game_data):
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
+                    view_phonee.stop()
                     click.play()
                     running = False
 
 
 def adventure_menu():
+    game_menu.play(-1)
     font = pygame.font.Font(None, 50)
     while True:
         screen.fill((0, 0, 0))
@@ -164,19 +168,28 @@ def adventure_menu():
 
                 if event.key == pygame.K_1:
                     click.play()
+                    game_menu.stop()
                     adventure(screen, game_data)
                     save_game(game_data)
+                    game_menu.play(-1)  # music back after Adventure
                 elif event.key == pygame.K_2:
                     click.play()
+                    game_menu.stop()
                     shop(screen, game_data)
                     save_game(game_data)
+                    game_menu.play(-1)  # music back after Shop
                 elif event.key == pygame.K_3:
+                    game_menu.stop()
                     view_phone(screen, game_data)
+                    game_menu.play(-1)  # music back after View Phone
                 elif event.key == pygame.K_4:
                     click.play()
+                    game_menu.stop()
                     character.character_menu(screen, game_data)
+                    game_menu.play(-1)  # music back after Character
                 elif event.key == pygame.K_5:
                     click.play()
+                    game_menu.stop()
                     save_game(game_data)
                     pygame.quit()
                     sys.exit()
