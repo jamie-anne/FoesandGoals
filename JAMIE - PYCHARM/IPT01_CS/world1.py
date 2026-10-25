@@ -319,50 +319,48 @@ def battle_interface(screen, level, player_hp, enemy_hp, max_enemy_hp,
 
 # PLACE SCREEN
 # Automatically continues after 2 seconds
+# PLACE SCREEN
+# Automatically continues after 1.5 seconds
 def place_screen(screen, level):
 
+    PLACE_SCALE = 0.8     # <-- CHANGE THIS: 1.0 = full screen, 0.8 = smaller, 0.5 = half
+
+    # Background (drawn first)
+    place_bg = load_image("pictures/place_background.png", (WIDTH, HEIGHT))
+
+    # Badge (drawn on top), resized by PLACE_SCALE
     place_image = load_image(
         f"pictures/places_{level}.png",
-        (WIDTH, HEIGHT)
+        (int(WIDTH * PLACE_SCALE), int(HEIGHT * PLACE_SCALE))
     )
     start_time = pygame.time.get_ticks()
     while True:
 
-        if place_image:
-            screen.blit(place_image, (0, 0))
+        # 1. BACKGROUND
+        if place_bg:
+            screen.blit(place_bg, (0, 0))
         else:
-            screen.fill((30, 30, 30))
+            screen.fill((20, 70, 130))
 
-            draw_text(
-                screen,
-                LOCATION_DATA[level]["name"],   # shows the real place name as fallback
-                70,
-                650,
-                300)
+        # 2. BADGE (centered on the screen)
+        if place_image:
+            screen.blit(place_image, place_image.get_rect(center=(WIDTH // 2, HEIGHT // 2)))
+        else:
+            draw_text(screen, LOCATION_DATA[level]["name"], 70,
+                      WIDTH // 2, HEIGHT // 2, center=True)
 
         pygame.display.update()
-        ...
-        # Allow window closing
-        for event in pygame.event.get():
 
+        for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-
             if event.type == pygame.KEYDOWN:
-
                 if event.key == pygame.K_ESCAPE:
                     return False
 
-        # 2 seconds
         if pygame.time.get_ticks() - start_time >= 1500:
             return True
-
-
-
-# ENEMY INTRO SCREEN
-# White background + enemy in middle
-# 2 seconds
 
 def enemy_intro_screen(
     screen,
@@ -497,13 +495,13 @@ def slot_machine(screen):
                 last_change = current_time
 
         screen.fill(
-            (25, 25, 30)
+            (255, 255, 255)
         )
         # Title
         title = title_font.render(
             "FOES & GOALS",
             True,
-            (255, 255, 255))
+            (30,30,30))
 
         screen.blit(
             title,
@@ -525,7 +523,7 @@ def slot_machine(screen):
 
             pygame.draw.rect(
                 screen,
-                (255, 215, 0),
+                (30,30,30),
                 (
                     reel_x[i],
                     reel_y,
@@ -555,7 +553,7 @@ def slot_machine(screen):
             30,
             reel_x[1] + 45,
             reel_y - 45,
-            (255, 215, 0)
+            (30,30,30)
         )
 
         # Instructions
@@ -567,7 +565,7 @@ def slot_machine(screen):
         text = small_font.render(
             message,
             True,
-            (255, 255, 255)
+            (30,30,30)
         )
 
         screen.blit(
@@ -580,52 +578,6 @@ def slot_machine(screen):
         clock.tick(60)
 
 
-# =========================================================
-# YOUR ATTACK ANIMATION
-# PLACE YOUR REAL ANIMATION HERE LATER
-# =========================================================
-
-def attack_animation_placeholder(
-    screen,
-    attack,
-    damage
-):
-
-    screen.fill(
-        (15, 15, 20)
-    )
-
-    draw_text(
-        screen,
-        "[ANIMATION]",
-        80,
-        580,
-        280
-    )
-
-    draw_text(
-        screen,
-        f"{attack} ATTACK!",
-        55,
-        590,
-        390
-    )
-
-    draw_text(
-        screen,
-        f"DAMAGE: {damage}",
-        45,
-        620,
-        470
-    )
-
-    pygame.display.update()
-
-    # Placeholder only.
-    # Your real animation can replace this.
-    pygame.time.delay(1200)
-
-
 def player_attack_screen(
     screen,
     attack,
@@ -634,35 +586,26 @@ def player_attack_screen(
 
     start_time = pygame.time.get_ticks()
     while True:
-        screen.fill(
-            (20, 30, 20))
+        screen.fill((255, 255, 255))           # was (20, 30, 20)
 
-        draw_text(
-            screen,
-            "PLAYER ATTACK",
-            70,
-            550,
-            250
-        )
+        draw_text(screen, "PLAYER ATTACK", 70,
+                  WIDTH // 2, 250, (30, 30, 30), True)
 
-        draw_text(
-            screen,
-            attack,
-            65,
-            650,
-            350
-        )
-
-        draw_text(
-            screen,
-            f"-{damage} HP",
-            70,
-            620,
-            450
-        )
+        draw_text(screen, f"-{damage} HP", 70,
+                  WIDTH // 2, 450, (180, 30, 30), True)
 
         pygame.display.update()
 
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return
+        # 2 seconds
+        if pygame.time.get_ticks() - start_time >= 2000:
+            return
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -679,48 +622,21 @@ def player_attack_screen(
 def enemy_attack_screen(screen, damage, missed=False):
     start_time = pygame.time.get_ticks()
     while True:
-        if missed:
-            screen.fill((30, 30, 50))
-            draw_text(
-                screen,
-                "ENEMY MISSED!",
-                70,
-                WIDTH // 2,
-                300,
-                (255, 215, 0),
-                center=True
-            )
+        screen.fill((255, 255, 255))           # was dark red / dark blue
 
-            draw_text(
-                screen,
-                "You avoided the attack!",
-                45,
-                WIDTH // 2,
-                420,
-                (255, 255, 255),
-                center=True
-            )
+        if missed:
+            draw_text(screen, "ENEMY MISSED!", 70,
+                      WIDTH // 2, 300, (200, 140, 0), True)
+
+            draw_text(screen, "You avoided the attack!", 45,
+                      WIDTH // 2, 420, (30, 30, 30), True)
 
         else:
-            screen.fill((40, 15, 15))
+            draw_text(screen, "ENEMY ATTACK!", 70,
+                      WIDTH // 2, 300, (30, 30, 30), True)
 
-            draw_text(
-                screen,
-                "ENEMY ATTACK!",
-                70,
-                WIDTH // 2,
-                300,
-                center=True
-            )
-
-            draw_text(
-                screen,
-                f"-{damage} HP",
-                70,
-                WIDTH // 2,
-                420,
-                center=True
-            )
+            draw_text(screen, f"-{damage} HP", 70,
+                      WIDTH // 2, 420, (180, 30, 30), True)
 
         pygame.display.update()
         for event in pygame.event.get():
@@ -976,14 +892,6 @@ def start_battle(
 
         if enemy_hp < 0:
             enemy_hp = 0
-
-
-        # 7. YOUR ATTACK ANIMATION
-        attack_animation_placeholder(
-            screen,
-            attack,
-            damage
-        )
 
         # 8. PLAYER ATTACK POINTS
         # 2 seconds

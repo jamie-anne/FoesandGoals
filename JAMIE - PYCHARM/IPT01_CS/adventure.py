@@ -20,9 +20,9 @@ HEIGHT = 890
 # Center (x, y) of the "[ LOCKED ]" text for each world.
 # Put it just below that world's name/location label on world_selection.jpg.
 LOCKED_LABEL_POSITIONS = {
-    1: (251, 520),
-    2: (755, 520),
-    3: (1259, 520),
+    1: (251, 680),
+    2: (745, 680),
+    3: (1220, 680),
 }
 LOCKED_COLOR = (0,0,0)
 LOCKED_SIZE = 40

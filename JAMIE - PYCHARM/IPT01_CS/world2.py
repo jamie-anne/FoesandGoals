@@ -146,16 +146,27 @@ def instruction_screen(screen):
 
 
 def place_screen(screen, level):
+    PLACE_SCALE = 0.8     # <-- CHANGE THIS: 1.0 = full screen, 0.8 = smaller, 0.5 = half
+
     place_number = level + 5
+
+    # Background (drawn first)
+    place_bg = load_image('pictures/place_background.png', (WIDTH, HEIGHT))
+
+    # Badge (drawn on top), resized by PLACE_SCALE
     image = load_image(
         f'pictures/places_{place_number}.png',
-        (WIDTH, HEIGHT)
+        (int(WIDTH * PLACE_SCALE), int(HEIGHT * PLACE_SCALE))
     )
 
-    if image:
-        screen.blit(image, (0, 0))
+    if place_bg:
+        screen.blit(place_bg, (0, 0))
     else:
-        screen.fill((30, 30, 30))
+        screen.fill((20, 70, 130))
+
+    if image:
+        screen.blit(image, image.get_rect(center=(WIDTH // 2, HEIGHT // 2)))
+    else:
         draw_text(
             screen,
             f'WORLD 2 - PLACE {place_number}',
@@ -211,8 +222,6 @@ def match_interface(screen, level, player_hp, enemy_hp, max_hp, enemy_image, ene
     draw_text(screen, f'HP: {player_hp}/{max_hp}', 30, PLAYER_X, bar_y - 22, (30, 30, 30), True)
     draw_player_character(screen, position=(PLAYER_X - 165, CENTER_Y - 165))
     draw_text(screen, get_character_name(), 45, PLAYER_X, name_y, (30, 30, 30), True)
-
-    draw_text(screen, 'WORLD 2', 32, WIDTH // 2, 830, (30, 30, 30), True)
     pygame.display.update()
 
 

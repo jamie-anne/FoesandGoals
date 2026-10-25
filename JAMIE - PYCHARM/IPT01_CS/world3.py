@@ -138,6 +138,8 @@ def instruction_screen(screen):
 
 
 def place_screen(screen, level):
+    PLACE_SCALE = 0.8     # <-- CHANGE THIS: 1.0 = full screen, 0.8 = smaller, 0.5 = half
+
     place_images = {
         1: 'pictures/places_11.png',
         2: 'pictures/places_12.png',
@@ -152,12 +154,26 @@ def place_screen(screen, level):
         4: 'Sirao Miracle Garden',
         5: 'Siargao - General Luna, Surigao Del Norte'
     }
-    image = load_image(place_images[level], (WIDTH, HEIGHT))
-    if image:
-        screen.blit(image, (0, 0))
+
+    # Background (drawn first)
+    place_bg = load_image('pictures/place_background.png', (WIDTH, HEIGHT))
+
+    # Badge (drawn on top), resized by PLACE_SCALE
+    image = load_image(
+        place_images[level],
+        (int(WIDTH * PLACE_SCALE), int(HEIGHT * PLACE_SCALE))
+    )
+
+    if place_bg:
+        screen.blit(place_bg, (0, 0))
     else:
-        screen.fill((30, 30, 30))
-        draw_text(screen, place_names[level], 55, WIDTH//2, HEIGHT//2, center=True)
+        screen.fill((20, 70, 130))
+
+    if image:
+        screen.blit(image, image.get_rect(center=(WIDTH // 2, HEIGHT // 2)))
+    else:
+        draw_text(screen, place_names[level], 55, WIDTH // 2, HEIGHT // 2, center=True)
+
     pygame.display.update()
     pygame.time.delay(2000)
 
@@ -202,8 +218,6 @@ def match_interface(screen, level, player_hp, enemy_hp, max_hp, enemy_image, ene
     draw_text(screen, f'HP: {player_hp}/{max_hp}', 30, PLAYER_X, bar_y - 22, (30, 30, 30), True)
     draw_player_character(screen, position=(PLAYER_X - 165, CENTER_Y - 165))
     draw_text(screen, get_character_name(), 45, PLAYER_X, name_y, (30, 30, 30), True)
-
-    draw_text(screen, 'WORLD 3', 32, WIDTH // 2, 830, (30, 30, 30), True)
     pygame.display.update()
 
 
@@ -268,8 +282,17 @@ def timing_attack(screen, level):
         for result, width in TIMING_ZONES:
             rect = pygame.Rect(x, line_y, width, 18)
             pygame.draw.rect(screen, colors[result], rect)
-            pygame.draw.rect(screen, (30,30,30), rect, 2)
-            draw_text(screen, result, 22, x + width//2, line_y + 55, (30,30,30), True)
+            pygame.draw.rect(screen, (30, 30, 30), rect, 2)
+
+            center_x = x + width // 2
+            if result == 'CRITICAL':
+                # lower row + a pointer line so it doesn't touch the STRONG labels
+                label_y = line_y + 110
+                pygame.draw.line(screen, (200, 30, 30),
+                                 (center_x, line_y + 20), (center_x, label_y - 14), 2)
+                draw_text(screen, result, 24, center_x, label_y, (200, 30, 30), True)
+            else:
+                draw_text(screen, result, 22, center_x, line_y + 70, (30, 30, 30), True)
             x += width
         pygame.draw.rect(screen, (30,30,30), (int(marker_x), line_y-45, TIMING_MARKER_WIDTH, 100))
         pygame.display.update()
