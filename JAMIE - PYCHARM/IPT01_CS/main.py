@@ -1,6 +1,7 @@
 import pygame
 import sys
 import atexit
+import os   # add this at the top with the other imports
 
 from adventure import adventure
 from shop import shop
@@ -42,13 +43,70 @@ lp_music = pygame.mixer.Sound("music/LP_music.mp3")
 game_menu = pygame.mixer.Sound("music/game_menu.mp3")
 view_phonee = pygame.mixer.Sound("music/view_phone.mp3")
 
+
+
+
+def play_stop_motion(folder, fps=12, loop=False, start=1, hold_last=800):
+    # loading message
+    font = pygame.font.Font(None, 40)
+    screen.fill((0, 0, 0))
+    msg = font.render("Loading...", True, (255, 255, 255))
+    screen.blit(msg, msg.get_rect(center=(WIDTH // 2, HEIGHT // 2)))
+    pygame.display.update()
+
+    # load every frame that exists: frame_1.png, frame_2.png, ...
+    frames = []
+    i = start
+    while os.path.exists(f"{folder}/frame_{i}.png"):
+        img = pygame.image.load(f"{folder}/frame_{i}.png").convert()
+        if img.get_size() != (WIDTH, HEIGHT):
+            img = pygame.transform.scale(img, (WIDTH, HEIGHT))
+        frames.append(img)
+        i += 1
+
+    print(f"Stop motion: loaded {len(frames)} frames")   # check this number
+    if not frames:
+        return
+
+    pygame.event.clear()                 # ignore keys pressed while loading
+
+    clock = pygame.time.Clock()
+    delay = 1000 / fps
+    begin = pygame.time.get_ticks()
+    total = delay * len(frames)
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN and event.key in (pygame.K_RETURN, pygame.K_ESCAPE):
+                return
+
+        elapsed = pygame.time.get_ticks() - begin
+        if elapsed >= total:
+            if loop:
+                elapsed %= total
+            elif elapsed >= total + hold_last:
+                return                   # finished, after holding the last frame
+
+        index = min(int(elapsed / delay), len(frames) - 1)
+        screen.blit(frames[index], (0, 0))
+        pygame.display.update()
+        clock.tick(60)
+
+
 opening_image = pygame.image.load("pictures/foes.png")
-second_image = pygame.image.load("pictures/foes.png")
+opening_image = pygame.transform.scale(opening_image, (WIDTH, HEIGHT))
+
+second_image = pygame.image.load("pictures/foes.png")   # <- change to your real filename
+second_image = pygame.transform.scale(second_image, (WIDTH, HEIGHT))
+
 menu_bg = pygame.image.load("pictures/game_menu.png")
 menu_bg = pygame.transform.scale(menu_bg, (WIDTH, HEIGHT))
 
-opening_image = pygame.transform.scale(opening_image, (WIDTH, HEIGHT))
-second_image = pygame.transform.scale(second_image, (WIDTH, HEIGHT))
+
+
 
 
 def opening_screen():
@@ -73,6 +131,8 @@ def opening_screen():
 def second_screen():
     screen.blit(second_image, (0, 0))
     pygame.display.update()
+
+    clock = pygame.time.Clock()
     waiting = True
     while waiting:
         for event in pygame.event.get():
@@ -82,6 +142,7 @@ def second_screen():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     waiting = False
+        clock.tick(60)
 
 def view_phone(screen, game_data):
     view_phonee.play(-1)
@@ -235,6 +296,7 @@ def adventure_menu():
 
 
 opening_screen()
+play_stop_motion("pictures", fps=6)
 second_screen()
 if ASK_EVERY_LAUNCH or game_data.get("character") is None:
     character.choose_first_character(screen, game_data)
