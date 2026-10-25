@@ -175,13 +175,18 @@ def shop(screen, game_data):
                 elif event.key == pygame.K_BACKSPACE:
                     input_text = input_text[:-1]
 
+
                 elif event.key == pygame.K_RETURN:
                     if input_text != "":
                         try:
                             selected_number = int(input_text)
+                            parts_before = game_data["parts_bought"]
                             result = buy_part(selected_number, game_data)
                             input_text = ""
                             message = result
+                            if parts_before < 12 and game_data["parts_bought"] == 12:
+                                shop_bgm.stop()
+                                running = False
                         except ValueError:
                             input_text = ""
                             message = "Please enter a valid number."

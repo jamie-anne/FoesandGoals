@@ -129,25 +129,31 @@ def draw_player_character(screen, position=MATCH_POSITION, size=MATCH_SIZE):
 # DRAWING HELPERS
 # =========================================================
 def _draw_card(screen, rect, index, font, border_color, border_width, tag=""):
+    NAME_H = 60   # height of the navy name strip at the bottom
+
+    # 1. whole card in navy (this becomes the name area)
     pygame.draw.rect(screen, CARD_COLOR, rect, border_radius=12)
 
-    # top 40px is kept free for the "SELECTED" tag, bottom 60px for the name
-    image_area_h = rect.h - 100
-    image = get_image(index, (rect.w - 40, image_area_h))
-    screen.blit(image, image.get_rect(
-        center=(rect.centerx, rect.y + 40 + image_area_h // 2)))
+    # 2. white area for the character
+    white_area = pygame.Rect(rect.x + 2, rect.y + 2, rect.w - 4, rect.h - NAME_H - 2)
+    pygame.draw.rect(screen, (255, 255, 255), white_area,
+                     border_top_left_radius=10, border_top_right_radius=10)
 
-    label = font.render(f"{CHARACTER_NAMES[index]}",
-                        True, TEXT_COLOR)
-    screen.blit(label, label.get_rect(center=(rect.centerx, rect.bottom - 30)))
+    # 3. character image, centered in the white area
+    image = get_image(index, (rect.w - 40, white_area.h - 20))
+    screen.blit(image, image.get_rect(center=white_area.center))
 
+    # 4. name (and SELECTED tag) in the navy strip, like the shop
+    label = font.render(CHARACTER_NAMES[index], True, TEXT_COLOR)
     if tag:
+        screen.blit(label, label.get_rect(midleft=(rect.x + 20, rect.bottom - 30)))
         tag_surface = font.render(tag, True, border_color)
-        screen.blit(tag_surface, (rect.right - tag_surface.get_width() - 15,
-                                  rect.y + 12))
+        screen.blit(tag_surface, tag_surface.get_rect(midright=(rect.right - 20, rect.bottom - 30)))
+    else:
+        screen.blit(label, label.get_rect(center=(rect.centerx, rect.bottom - 30)))
 
-    pygame.draw.rect(screen, border_color, rect, border_width,
-                     border_radius=12)
+    # 5. border on top
+    pygame.draw.rect(screen, border_color, rect, border_width, border_radius=12)
 
 
 def _draw_input(screen, font, prompt, input_text, message, y=820):
@@ -268,19 +274,16 @@ def character_menu(screen, game_data):
 
         # RIGHT: CHOSEN CHARACTER
         pygame.draw.rect(screen, CARD_COLOR, panel, border_radius=12)
-        pygame.draw.rect(screen, GOLD, panel, 3, border_radius=12)
+        white = pygame.Rect(panel.x + 2, panel.y + 70, panel.w - 4, panel.h - 70 - 80)
+        pygame.draw.rect(screen, (255, 255, 255), white)
         header = panel_font.render("YOUR CHARACTER", True, GOLD)
-        screen.blit(header, header.get_rect(center=(panel.centerx,
-                                                    panel.y + 35)))
+        screen.blit(header, header.get_rect(center=(panel.centerx, panel.y + 35)))
         if chosen is not None:
-            image_area_h = panel.h - 150
-            image = get_image(chosen, (panel.w - 80, image_area_h))
-            screen.blit(image, image.get_rect(
-                center=(panel.centerx, panel.y + 65 + image_area_h // 2)))
-            name = panel_font.render(CHARACTER_NAMES[chosen], True,
-                                     TEXT_COLOR)
-            screen.blit(name, name.get_rect(center=(panel.centerx,
-                                                    panel.bottom - 40)))
+            image = get_image(chosen, (white.w - 40, white.h - 30))
+            screen.blit(image, image.get_rect(center=white.center))
+            name = panel_font.render(CHARACTER_NAMES[chosen], True, TEXT_COLOR)
+            screen.blit(name, name.get_rect(center=(panel.centerx, panel.bottom - 40)))
+        pygame.draw.rect(screen, GOLD, panel, 3, border_radius=12)
 
         # INPUT AREA
         _draw_input(screen, info_font,

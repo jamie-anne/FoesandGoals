@@ -124,6 +124,54 @@ def view_phone(screen, game_data):
                     click.play()
                     running = False
 
+def phone_complete_screen():
+    view_phonee.play(-1)
+    picture = pygame.image.load("pictures/phone_complete.png").convert_alpha()
+    picture = pygame.transform.smoothscale(picture, (WIDTH, HEIGHT))
+
+    big_font = pygame.font.Font(None, 60)
+    font = pygame.font.Font(None, 40)
+    stage = "picture"   # first the picture, then the options
+
+    while True:
+        screen.blit(picture, (0, 0))
+
+        if stage == "picture":
+            hint = font.render("Press ENTER to continue", True, (255, 255, 255))
+            screen.blit(hint, hint.get_rect(midbottom=(WIDTH // 2, HEIGHT - 30)))
+        else:
+            # dim the picture a little so the options are easy to read
+            overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+            overlay.fill((0, 0, 0, 150))
+            screen.blit(overlay, (0, 0))
+
+            title = big_font.render("Phone Complete!", True, (255, 210, 31))
+            opt1 = font.render("1. Keep Playing", True, (255, 255, 255))
+            opt2 = font.render("2. Exit Game", True, (255, 255, 255))
+            screen.blit(title, title.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 90)))
+            screen.blit(opt1, opt1.get_rect(center=(WIDTH // 2, HEIGHT // 2)))
+            screen.blit(opt2, opt2.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 55)))
+
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if stage == "picture":
+                    if event.key == pygame.K_RETURN:
+                        click.play()
+                        stage = "options"
+                else:
+                    if event.key == pygame.K_1:
+                        click.play()
+                        view_phonee.stop()
+                        return                      # back to the game menu, nothing reset
+                    elif event.key == pygame.K_2:
+                        save_game(game_data)
+                        pygame.quit()
+                        sys.exit()
 
 def adventure_menu():
     game_menu.play(-1)
@@ -163,8 +211,11 @@ def adventure_menu():
                 elif event.key == pygame.K_2:
                     click.play()
                     game_menu.stop()
+                    parts_before = game_data["parts_bought"]
                     shop(screen, game_data)
                     save_game(game_data)
+                    if parts_before < 12 and game_data["parts_bought"] == 12:
+                        phone_complete_screen()
                     game_menu.play(-1)  # music back after Shop
                 elif event.key == pygame.K_3:
                     game_menu.stop()
