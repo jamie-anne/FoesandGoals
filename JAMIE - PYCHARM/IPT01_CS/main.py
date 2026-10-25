@@ -99,7 +99,7 @@ def play_stop_motion(folder, fps=12, loop=False, start=1, hold_last=800):
 opening_image = pygame.image.load("pictures/foes.png")
 opening_image = pygame.transform.scale(opening_image, (WIDTH, HEIGHT))
 
-second_image = pygame.image.load("pictures/foes.png")   # <- change to your real filename
+second_image = pygame.image.load("pictures/reminder.png")   # <- change to your real filename
 second_image = pygame.transform.scale(second_image, (WIDTH, HEIGHT))
 
 menu_bg = pygame.image.load("pictures/game_menu.png")
