@@ -650,37 +650,25 @@ def enemy_attack_screen(screen, damage, missed=False):
             return
 
 
-def win_screen(
-    screen,
-    coins
-):
-    screen.fill(
-        (20, 70, 30)
-    )
+def win_screen(screen, coins):
+    COIN_TEXT_Y = int(HEIGHT * 0.37)   # <-- move up/down: smaller = higher, bigger = lower
+    COIN_TEXT_SIZE = 80
 
-    draw_text(
-        screen,
-        "YOU WIN!",
-        90,
-        600,
-        250
-    )
+    bg = load_image("pictures/player_won.png", (WIDTH, HEIGHT))
+    if bg:
+        screen.blit(bg, (0, 0))
+    else:
+        screen.fill((20, 70, 30))      # fallback if the picture is missing
 
-    draw_text(
-        screen,
-        f"+{coins} COINS",
-        60,
-        620,
-        380
-    )
-
-    draw_text(
-        screen,
-        "Press ENTER to continue",
-        40,
-        550,
-        520
-    )
+    # gold text with a dark outline so it's readable on the picture
+    font = pygame.font.Font(None, COIN_TEXT_SIZE)
+    text = f"+{coins} COINS"
+    gold = font.render(text, True, (255, 215, 60))
+    outline = font.render(text, True, (60, 30, 5))
+    cx = WIDTH // 2
+    for dx, dy in [(-3, 0), (3, 0), (0, -3), (0, 3), (-2, -2), (2, -2), (-2, 2), (2, 2)]:
+        screen.blit(outline, outline.get_rect(center=(cx + dx, COIN_TEXT_Y + dy)))
+    screen.blit(gold, gold.get_rect(center=(cx, COIN_TEXT_Y)))
 
     pygame.display.update()
 
@@ -694,69 +682,51 @@ def win_screen(
                     click.play()
                     return
 
-def hospital_screen(
-    screen,
-    seconds
-):
-
+def hospital_screen(screen, seconds):
     clock = pygame.time.Clock()
+
+    # ---- adjust these to move the timer on the plank ----
+    TIMER_X = int(WIDTH * 0.518)      # horizontal center of the plain wood
+    TIMER_Y = int(HEIGHT * 0.175)     # vertical center of the plain wood
+    TIMER_SIZE = 95
+    TIMER_COLOR = (255, 240, 200)     # light cream so it stands out on the wood
+    OUTLINE_COLOR = (60, 30, 10)
+
+    bg = load_image("pictures/hospital.png", (WIDTH, HEIGHT))
+    font = pygame.font.Font(None, TIMER_SIZE)
+
     start_time = pygame.time.get_ticks()
     while True:
-        elapsed = (
-            pygame.time.get_ticks() - start_time
-        ) // 1000
-        remaining = seconds - elapsed
+        elapsed_ms = pygame.time.get_ticks() - start_time
+        remaining = (seconds * 1000 - elapsed_ms + 999) // 1000   # counts down 30, 29, ... 1
         if remaining <= 0:
             break
-        screen.fill(
-            (230, 230, 230)
-        )
-        draw_text(
-            screen,
-            "HOSPITAL",
-            80,
-            610,
-            220,
-            (30, 30, 30)
-        )
 
-        draw_text(
-            screen,
-            "YOU LOST!",
-            60,
-            630,
-            340,
-            (150, 30, 30)
-        )
+        if bg:
+            screen.blit(bg, (0, 0))
+        else:
+            screen.fill((230, 230, 230))
+            draw_text(screen, "HOSPITAL", 80, WIDTH // 2, 220, (30, 30, 30), True)
 
-        draw_text(
-            screen,
-            f"Recovery Time: {remaining}s",
-            50,
-            570,
-            450,
-            (30, 30, 30)
-        )
+        # timer text with a dark outline so it's easy to read on the wood
+        text = f"{remaining}s"
+        main = font.render(text, True, TIMER_COLOR)
+        outline = font.render(text, True, OUTLINE_COLOR)
+        for dx, dy in [(-3, 0), (3, 0), (0, -3), (0, 3), (-2, -2), (2, -2), (-2, 2), (2, 2)]:
+            screen.blit(outline, outline.get_rect(center=(TIMER_X + dx, TIMER_Y + dy)))
+        screen.blit(main, main.get_rect(center=(TIMER_X, TIMER_Y)))
 
         pygame.display.update()
-        clock.tick(30)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
 
-    screen.fill(
-        (30, 30, 30)
-    )
+        clock.tick(30)
 
-    draw_text(
-        screen,
-        "RECOVERED!",
-        70,
-        580,
-        350
-    )
-
+    screen.fill((30, 30, 30))
+    draw_text(screen, "RECOVERED!", 70, WIDTH // 2, HEIGHT // 2, (255, 255, 255), True)
     pygame.display.update()
     pygame.time.delay(1000)
 
@@ -765,26 +735,37 @@ def defeat_choice_screen(screen, level, game_data):
     hospital_seconds = LEVEL_DATA[level]["hospital"]
     clock = pygame.time.Clock()
 
+    # ---- adjust these to move things on the parchment ----
+    CHOICE1_Y = int(HEIGHT * 0.52)
+    CHOICE2_Y = int(HEIGHT * 0.62)
+    COINS_Y   = int(HEIGHT * 0.72)
+    MESSAGE_Y = int(HEIGHT * 0.79)
+    TEXT_COLOR = (70, 25, 15)          # dark brown to match the picture
+
+    bg = load_image("pictures/player_lost.png", (WIDTH, HEIGHT))
+
     message = ""
     message_time = 0
 
     while True:
-        screen.fill((230, 230, 230))
-
-        draw_text(screen, "YOU LOST!", 90, WIDTH // 2, 170, (150, 30, 30), True)
-        draw_text(screen, "Choose what to do:", 50, WIDTH // 2, 270, (30, 30, 30), True)
+        if bg:
+            screen.blit(bg, (0, 0))
+        else:
+            # fallback if the picture is missing
+            screen.fill((230, 230, 230))
+            draw_text(screen, "YOU LOST!", 90, WIDTH // 2, 170, (150, 30, 30), True)
+            draw_text(screen, "Choose what to do:", 50, WIDTH // 2, 270, (30, 30, 30), True)
 
         draw_text(screen, f"1. Lose {fee} coins (no waiting)", 55,
-                  WIDTH // 2, 400, (30, 30, 30), True)
+                  WIDTH // 2, CHOICE1_Y, TEXT_COLOR, True)
         draw_text(screen, f"2. Stay in the hospital ({hospital_seconds}s)", 55,
-                  WIDTH // 2, 490, (30, 30, 30), True)
+                  WIDTH // 2, CHOICE2_Y, TEXT_COLOR, True)
 
-        draw_text(screen, f"Your coins: {game_data['coins']}", 40,
-                  WIDTH // 2, 620, (60, 60, 60), True)
+        draw_text(screen, f"Your coins: {game_data['coins']}", 45,
+                  WIDTH // 2, COINS_Y, TEXT_COLOR, True)
 
-        # Temporary "not enough coins" message (shows for 1.5 seconds)
         if message and pygame.time.get_ticks() - message_time < 1500:
-            draw_text(screen, message, 50, WIDTH // 2, 710, (180, 30, 30), True)
+            draw_text(screen, message, 50, WIDTH // 2, MESSAGE_Y, (180, 30, 30), True)
 
         pygame.display.update()
         clock.tick(30)

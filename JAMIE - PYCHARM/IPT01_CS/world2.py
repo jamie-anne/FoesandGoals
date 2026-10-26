@@ -383,26 +383,38 @@ def defeat_choice_screen(screen, level, game_data):
     hospital_seconds = LEVEL_DATA[level]['hospital']
     clock = pygame.time.Clock()
 
+    # ---- adjust these to move things on the parchment ----
+    CHOICE1_Y = int(HEIGHT * 0.52)
+    CHOICE2_Y = int(HEIGHT * 0.62)
+    COINS_Y   = int(HEIGHT * 0.72)
+    MESSAGE_Y = int(HEIGHT * 0.79)
+    TEXT_COLOR = (70, 25, 15)          # dark brown to match the picture
+
+    bg = load_image('pictures/player_lost.png', (WIDTH, HEIGHT))
+
     message = ''
     message_time = 0
 
     while True:
-        screen.fill((230, 230, 230))
-
-        draw_text(screen, 'YOU LOST!', 90, WIDTH // 2, 170, (180, 30, 30), True)
-        draw_text(screen, 'Choose what to do:', 50, WIDTH // 2, 270, (30, 30, 30), True)
+        if bg:
+            screen.blit(bg, (0, 0))
+        else:
+            # fallback if the picture is missing
+            screen.fill((230, 230, 230))
+            draw_text(screen, 'YOU LOST!', 90, WIDTH // 2, 170, (180, 30, 30), True)
+            draw_text(screen, 'Choose what to do:', 50, WIDTH // 2, 270, (30, 30, 30), True)
 
         draw_text(screen, f'1. Lose {fee} coins (no waiting)', 55,
-                  WIDTH // 2, 400, (30, 30, 30), True)
+                  WIDTH // 2, CHOICE1_Y, TEXT_COLOR, True)
         draw_text(screen, f'2. Stay in the hospital ({hospital_seconds}s)', 55,
-                  WIDTH // 2, 490, (30, 30, 30), True)
+                  WIDTH // 2, CHOICE2_Y, TEXT_COLOR, True)
 
-        draw_text(screen, f"Your coins: {game_data['coins']}", 40,
-                  WIDTH // 2, 620, (60, 60, 60), True)
+        draw_text(screen, f"Your coins: {game_data['coins']}", 45,
+                  WIDTH // 2, COINS_Y, TEXT_COLOR, True)
 
         # Temporary "not enough coins" message (1.5 seconds)
         if message and pygame.time.get_ticks() - message_time < 1500:
-            draw_text(screen, message, 50, WIDTH // 2, 710, (180, 30, 30), True)
+            draw_text(screen, message, 50, WIDTH // 2, MESSAGE_Y, (180, 30, 30), True)
 
         pygame.display.update()
         clock.tick(30)
@@ -438,6 +450,37 @@ def defeat_choice_screen(screen, level, game_data):
                     hospital_screen(screen, hospital_seconds)
                     return
 
+def win_screen(screen, coins):
+    COIN_TEXT_Y = int(HEIGHT * 0.37)   # smaller = higher, bigger = lower
+    COIN_TEXT_SIZE = 80
+
+    bg = load_image('pictures/player_won.png', (WIDTH, HEIGHT))
+    if bg:
+        screen.blit(bg, (0, 0))
+    else:
+        screen.fill((20, 70, 30))      # fallback if the picture is missing
+
+    font = pygame.font.Font(None, COIN_TEXT_SIZE)
+    text = f'+{coins} COINS'
+    gold = font.render(text, True, (255, 215, 60))
+    outline = font.render(text, True, (60, 30, 5))
+    cx = WIDTH // 2
+    for dx, dy in [(-3, 0), (3, 0), (0, -3), (0, 3), (-2, -2), (2, -2), (-2, 2), (2, 2)]:
+        screen.blit(outline, outline.get_rect(center=(cx + dx, COIN_TEXT_Y + dy)))
+    screen.blit(gold, gold.get_rect(center=(cx, COIN_TEXT_Y)))
+
+    pygame.display.update()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    click.play()
+                    return
+
 def start_battle(screen, level, game_data):
     stats = LEVEL_DATA[level]
     player_hp = stats['hp']
@@ -460,7 +503,7 @@ def start_battle(screen, level, game_data):
         if enemy_hp <= 0:
             match_bg.stop()
             game_data['coins'] += stats['coins']
-            result_screen(screen, 'YOU WIN!', f"+{stats['coins']} COINS")
+            win_screen(screen, stats['coins'])
             return True
 
         match_interface(screen, level, player_hp, enemy_hp, stats['hp'], enemy_image, enemy_name)
