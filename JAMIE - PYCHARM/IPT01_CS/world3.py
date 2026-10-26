@@ -332,20 +332,38 @@ def result_screen(screen, title, subtitle, title_color=(30,30,30)):
 
 def hospital_screen(screen, seconds):
     clock = pygame.time.Clock()
+
+    # ---- adjust these to move the timer on the plank ----
+    TIMER_X = int(WIDTH * 0.518)      # horizontal center of the plain wood
+    TIMER_Y = int(HEIGHT * 0.175)     # vertical center of the plain wood
+    TIMER_SIZE = 95
+    TIMER_COLOR = (255, 240, 200)     # light cream so it stands out on the wood
+    OUTLINE_COLOR = (60, 30, 10)
+
+    bg = load_image('pictures/hospital.png', (WIDTH, HEIGHT))
+    font = pygame.font.Font(None, TIMER_SIZE)
+
     start_time = pygame.time.get_ticks()
-
     while True:
-        elapsed = (pygame.time.get_ticks() - start_time) // 1000
-        remaining = seconds - elapsed
-
+        elapsed_ms = pygame.time.get_ticks() - start_time
+        remaining = (seconds * 1000 - elapsed_ms + 999) // 1000   # counts down 40, 39, ... 1
         if remaining <= 0:
             break
 
-        screen.fill((230, 230, 230))
-        draw_text(screen, 'HOSPITAL', 80, WIDTH // 2, 220, (30, 30, 30), True)
-        draw_text(screen, 'YOU LOST!', 60, WIDTH // 2, 340, (180, 30, 30), True)
-        draw_text(screen, f'Recovery Time: {remaining}s', 45,
-                  WIDTH // 2, 450, (30, 30, 30), True)
+        if bg:
+            screen.blit(bg, (0, 0))
+        else:
+            screen.fill((230, 230, 230))
+            draw_text(screen, 'HOSPITAL', 80, WIDTH // 2, 220, (30, 30, 30), True)
+
+        # timer text with a dark outline so it's easy to read on the wood
+        text = f'{remaining}s'
+        main = font.render(text, True, TIMER_COLOR)
+        outline = font.render(text, True, OUTLINE_COLOR)
+        for dx, dy in [(-3, 0), (3, 0), (0, -3), (0, 3), (-2, -2), (2, -2), (-2, 2), (2, 2)]:
+            screen.blit(outline, outline.get_rect(center=(TIMER_X + dx, TIMER_Y + dy)))
+        screen.blit(main, main.get_rect(center=(TIMER_X, TIMER_Y)))
+
         pygame.display.update()
 
         for event in pygame.event.get():
@@ -356,11 +374,9 @@ def hospital_screen(screen, seconds):
         clock.tick(30)
 
     screen.fill((30, 30, 30))
-    draw_text(screen, 'RECOVERED!', 70, WIDTH // 2, 350, (255, 255, 255), True)
-    draw_text(screen, 'Returning to level selection...', 35,
-              WIDTH // 2, 440, (255, 255, 255), True)
+    draw_text(screen, 'RECOVERED!', 70, WIDTH // 2, HEIGHT // 2, (255, 255, 255), True)
     pygame.display.update()
-    pygame.time.delay(1500)
+    pygame.time.delay(1000)
 
 def defeat_choice_screen(screen, level, game_data):
     fee = LOSS_FEE[level]
