@@ -185,34 +185,45 @@ def view_phone(screen, game_data):
                     click.play()
                     running = False
 
+# ---- phone complete stop motion settings ----
+PHONE_COMPLETE_FOLDER = "pictures/"
+PHONE_COMPLETE_FRAMES = 40
+PHONE_COMPLETE_FPS = 5      # higher = faster
+PHONE_COMPLETE_LOOP = False    # True = repeat forever, False = play once and hold the last frame
 def phone_complete_screen():
-    view_phonee.play(-1)
-    picture = pygame.image.load("pictures/phone_complete.png").convert_alpha()
-    picture = pygame.transform.smoothscale(picture, (WIDTH, HEIGHT))
+    load_font = pygame.font.Font(None, 40)
+    screen.fill((0, 0, 0))
+    msg = load_font.render("Loading...", True, (255, 255, 255))
+    screen.blit(msg, msg.get_rect(center=(WIDTH // 2, HEIGHT // 2)))
+    pygame.display.update()
 
-    big_font = pygame.font.Font(None, 60)
-    font = pygame.font.Font(None, 40)
-    stage = "picture"   # first the picture, then the options
+    frames = []
+    for i in range(1, PHONE_COMPLETE_FRAMES + 1):
+        img = pygame.image.load(f"{PHONE_COMPLETE_FOLDER}/{i}.png").convert_alpha()
+        img = pygame.transform.smoothscale(img, (WIDTH, HEIGHT))
+        frames.append(img)
+
+    pygame.event.clear()            # ignore keys pressed while loading
+
+    clock = pygame.time.Clock()
+    delay = 1000 / PHONE_COMPLETE_FPS
+    total = delay * len(frames)     # total length of the stop motion in ms
+    begin = pygame.time.get_ticks()
+    stage = "picture"   # first the stop motion, then waiting for 1 or 2
 
     while True:
-        screen.blit(picture, (0, 0))
-
-        if stage == "picture":
-            hint = font.render("Press ENTER to continue", True, (255, 255, 255))
-            screen.blit(hint, hint.get_rect(midbottom=(WIDTH // 2, HEIGHT - 30)))
+        elapsed = pygame.time.get_ticks() - begin
+        index = int(elapsed / delay)
+        if PHONE_COMPLETE_LOOP:
+            index %= len(frames)
         else:
-            # dim the picture a little so the options are easy to read
-            overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
-            overlay.fill((0, 0, 0, 150))
-            screen.blit(overlay, (0, 0))
+            index = min(index, len(frames) - 1)
 
-            title = big_font.render("Phone Complete!", True, (255, 210, 31))
-            opt1 = font.render("1. Keep Playing", True, (255, 255, 255))
-            opt2 = font.render("2. Exit Game", True, (255, 255, 255))
-            screen.blit(title, title.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 90)))
-            screen.blit(opt1, opt1.get_rect(center=(WIDTH // 2, HEIGHT // 2)))
-            screen.blit(opt2, opt2.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 55)))
+        # once the stop motion finishes, 1 and 2 start working
+        if stage == "picture" and not PHONE_COMPLETE_LOOP and elapsed >= total:
+            stage = "options"
 
+        screen.blit(frames[index], (0, 0))
         pygame.display.update()
 
         for event in pygame.event.get():
@@ -221,18 +232,20 @@ def phone_complete_screen():
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if stage == "picture":
-                    if event.key == pygame.K_RETURN:
+                    if event.key == pygame.K_RETURN:    # skip to the last frame
                         click.play()
+                        begin = pygame.time.get_ticks() - total
                         stage = "options"
                 else:
                     if event.key == pygame.K_1:
                         click.play()
-                        view_phonee.stop()
                         return                      # back to the game menu, nothing reset
                     elif event.key == pygame.K_2:
                         save_game(game_data)
                         pygame.quit()
                         sys.exit()
+
+        clock.tick(60)
 
 def adventure_menu():
     game_menu.play(-1)
@@ -296,7 +309,7 @@ def adventure_menu():
 
 
 opening_screen()
-play_stop_motion("pictures", fps=6)
+#play_stop_motion("pictures", fps=6)
 second_screen()
 if ASK_EVERY_LAUNCH or game_data.get("character") is None:
     character.choose_first_character(screen, game_data)

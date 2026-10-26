@@ -43,7 +43,6 @@ def shop(screen, game_data):
     WIDTH = 1510
     HEIGHT = 890
 
-    # LOAD + RESIZE PART IMAGES
     image_width = 250
     image_height = 150
     images = []
