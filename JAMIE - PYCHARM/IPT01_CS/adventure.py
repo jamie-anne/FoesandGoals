@@ -9,7 +9,7 @@ from save_system import save_game
 pygame.mixer.init()
 click = pygame.mixer.Sound("music/click.mp3")
 world_bg = pygame.mixer.Sound("music/world_level.mp3")
-world_bg.set_volume(0.3)
+world_bg.set_volume(0.2)
 
 WIDTH = 1510
 HEIGHT = 890

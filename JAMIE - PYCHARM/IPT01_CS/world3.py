@@ -15,11 +15,11 @@ match_bg.set_volume(0.4)
 
 
 LEVEL_DATA = {
-    1: {'hp': 200,'speed': 1.0,'critical': 60,'strong': 50,'weak': 40,'miss': 0,'enemy_attack': (50, 60),'coins': 350,'hospital': 50},
-    2: {'hp': 220,'speed': 1.2,'critical': 70,'strong': 55,'weak': 40,'miss': 0,'enemy_attack': (55, 70),'coins': 400,'hospital': 50},
-    3: {'hp': 250,'speed':1.4,'critical': 80,'strong': 65,'weak': 50,'miss': 0,'enemy_attack': (65, 80),'coins': 450,'hospital': 50},
-    4: {'hp': 270,'speed': 1.6,'critical': 90,'strong': 75,'weak': 60,'miss': 0,'enemy_attack': (75, 90),'coins': 500,'hospital': 50},
-    5: {'hp': 300,'speed': 1.8,'critical': 100,'strong': 85,'weak': 65,'miss': 0,'enemy_attack': (85, 100),'coins': 1000,'hospital': 60}
+    1: {'hp': 200,'speed': 1.2,'critical': 60,'strong': 50,'weak': 40,'miss': 0,'enemy_attack': (50, 60),'coins': 350,'hospital': 50},
+    2: {'hp': 220,'speed': 1.4,'critical': 70,'strong': 55,'weak': 40,'miss': 0,'enemy_attack': (55, 70),'coins': 400,'hospital': 50},
+    3: {'hp': 250,'speed':1.6,'critical': 80,'strong': 65,'weak': 50,'miss': 0,'enemy_attack': (65, 80),'coins': 450,'hospital': 50},
+    4: {'hp': 270,'speed': 1.8,'critical': 90,'strong': 75,'weak': 60,'miss': 0,'enemy_attack': (75, 90),'coins': 500,'hospital': 50},
+    5: {'hp': 300,'speed': 2.0,'critical': 100,'strong': 85,'weak': 65,'miss': 0,'enemy_attack': (85, 100),'coins': 1000,'hospital': 60}
 }
 LOSS_FEE = {1: 50, 2: 60, 3: 70, 4: 80, 5: 90}
 

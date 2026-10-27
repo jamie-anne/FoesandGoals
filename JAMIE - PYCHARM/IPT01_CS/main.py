@@ -309,7 +309,7 @@ def adventure_menu():
 
 
 opening_screen()
-#play_stop_motion("pictures", fps=6)
+play_stop_motion("pictures", fps=6)
 second_screen()
 if ASK_EVERY_LAUNCH or game_data.get("character") is None:
     character.choose_first_character(screen, game_data)
