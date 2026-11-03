@@ -42,12 +42,12 @@ click = pygame.mixer.Sound("music/click.mp3")
 lp_music = pygame.mixer.Sound("music/LP_music.mp3")
 game_menu = pygame.mixer.Sound("music/game_menu.mp3")
 view_phonee = pygame.mixer.Sound("music/view_phone.mp3")
-starting_music = pygame.mixer.Sound("music/STARTING_MUSIC.mp3")
+starting_music = pygame.mixer.Sound("music/starting_music.mp3")
+ending_music = pygame.mixer.Sound("music/ending_music.mp3")
 
 
 
-
-def play_stop_motion(folder, fps=12, loop=False, start=1, hold_last=800):
+def play_stop_motion(folder, fps=12, loop=False, start=1, hold_last=800, music=None):
     # loading message
     font = pygame.font.Font(None, 40)
     screen.fill((0, 0, 0))
@@ -65,23 +65,30 @@ def play_stop_motion(folder, fps=12, loop=False, start=1, hold_last=800):
         frames.append(img)
         i += 1
 
-    print(f"Stop motion: loaded {len(frames)} frames")   # check this number
+    print(f"Stop motion: loaded {len(frames)} frames")
     if not frames:
         return
 
-    pygame.event.clear()                 # ignore keys pressed while loading
+    pygame.event.clear()
 
     clock = pygame.time.Clock()
     delay = 1000 / fps
     begin = pygame.time.get_ticks()
     total = delay * len(frames)
 
+    if music:
+        music.play()
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                if music:
+                    music.stop()
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN and event.key in (pygame.K_RETURN, pygame.K_ESCAPE):
+                if music:
+                    music.stop()
                 return
 
         elapsed = pygame.time.get_ticks() - begin
@@ -89,7 +96,9 @@ def play_stop_motion(folder, fps=12, loop=False, start=1, hold_last=800):
             if loop:
                 elapsed %= total
             elif elapsed >= total + hold_last:
-                return                   # finished, after holding the last frame
+                if music:
+                    music.stop()
+                return
 
         index = min(int(elapsed / delay), len(frames) - 1)
         screen.blit(frames[index], (0, 0))
@@ -212,6 +221,8 @@ def phone_complete_screen():
     begin = pygame.time.get_ticks()
     stage = "picture"   # first the stop motion, then waiting for 1 or 2
 
+    ending_music.play()           # NEW: starts after loading, in sync with frame 1
+
     while True:
         elapsed = pygame.time.get_ticks() - begin
         index = int(elapsed / delay)
@@ -220,28 +231,32 @@ def phone_complete_screen():
         else:
             index = min(index, len(frames) - 1)
 
-        # once the stop motion finishes, 1 and 2 start working
         if stage == "picture" and not PHONE_COMPLETE_LOOP and elapsed >= total:
             stage = "options"
+            ending_music.fadeout(1500)  # NEW: fades out over 1.5 seconds
 
         screen.blit(frames[index], (0, 0))
         pygame.display.update()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                ending_music.stop()             # NEW
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if stage == "picture":
-                    if event.key == pygame.K_RETURN:    # skip to the last frame
+                    if event.key == pygame.K_RETURN:  # skip to the last frame
                         click.play()
+                        ending_music.fadeout(3000)  # NEW
                         begin = pygame.time.get_ticks() - total
                         stage = "options"
                 else:
                     if event.key == pygame.K_1:
                         click.play()
-                        return                      # back to the game menu, nothing reset
+                        ending_music.stop()     # NEW: stop before returning to the menu
+                        return                  # back to the game menu, nothing reset
                     elif event.key == pygame.K_2:
+                        ending_music.stop()     # NEW
                         save_game(game_data)
                         pygame.quit()
                         sys.exit()
@@ -310,7 +325,7 @@ def adventure_menu():
 
 
 opening_screen()
-play_stop_motion("pictures", fps=6)
+play_stop_motion("pictures", fps=6, music=starting_music)
 second_screen()
 if ASK_EVERY_LAUNCH or game_data.get("character") is None:
     character.choose_first_character(screen, game_data)
