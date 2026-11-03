@@ -42,6 +42,7 @@ click = pygame.mixer.Sound("music/click.mp3")
 lp_music = pygame.mixer.Sound("music/LP_music.mp3")
 game_menu = pygame.mixer.Sound("music/game_menu.mp3")
 view_phonee = pygame.mixer.Sound("music/view_phone.mp3")
+starting_music = pygame.mixer.Sound("music/STARTING_MUSIC.mp3")
 
 
 
